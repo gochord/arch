@@ -194,15 +194,26 @@
         element.setAttribute('aria-label',level>=7?'지도를 확대해 기록 보기':spatialCluster?recordCount+'개의 가까운 기록 확대':recordCount>1?'같은 장소의 기록 '+recordCount+'개 보기':'기록 상세 보기');
         const stopMapEvent=event=>{event.stopPropagation();kakao.maps.event.preventMap()};
         ['mousedown','touchstart','pointerdown'].forEach(name=>element.addEventListener(name,stopMapEvent,{passive:true}));
-        element.onclick=event=>{stopMapEvent(event);const currentLevel=archMap.getLevel();
-          if(currentLevel>=7){archMap.setLevel(Math.min(6,Math.max(1,currentLevel-2)),{anchor:primary.position,animate:true});archMap.panTo(primary.position);return}
-          if(spatialCluster){if(currentLevel<=1){const dialog=collectionDialog('nearbyMapRecords','가까운 기록',entries.map((entry,i)=>'<button class="nearby-record-choice" data-nearby-record="'+i+'"><strong>'+escapeSearchText(entry.record.caption||'현장 기록')+'</strong><small>'+escapeSearchText(entry.record.place||'장소 정보 없음')+'</small></button>').join(''));dialog.querySelectorAll('[data-nearby-record]').forEach(button=>button.onclick=()=>{const entry=entries[Number(button.dataset.nearbyRecord)];dialog.remove();const freshIndex=mapRecords.findIndex(item=>item===entry.record||entry.record.remoteId&&item.remoteId===entry.record.remoteId);if(freshIndex>=0)showMapPost(freshIndex)});return}const bounds=new kakao.maps.LatLngBounds();cluster.forEach(group=>bounds.extend(group.position));archMap.setBounds(bounds,90,90,90,90);if(archMap.getLevel()>=currentLevel){archMap.setLevel(Math.max(1,currentLevel-2),{anchor:primary.position,animate:true});archMap.panTo(primary.position)}return}
-          if(recordCount>1){showPlaceDetailFromRecord(record);return}showMapPost(index)
-        };
+        element.onclick=event=>{stopMapEvent(event);focusMapEntriesAndOpen(entries,primary.position,spatialCluster)};
         archMapMarkerElements.push(element);archMapOverlays.push(new kakao.maps.CustomOverlay({map:archMap,position:primary.position,content:element,yAnchor:1.2,clickable:true,zIndex:2}));
       });resizeMapPostMarkers()
     }
-    function initMap(){if(!window.kakao?.maps){mapstatus.textContent='지도를 불러오는 중';return}if(mapReady&&archMap){setTimeout(()=>{archMap.relayout();renderRemoteMapPosts();const cached=readCachedLocation();if(cached)centerMapAt(cached)},0);return}kakao.maps.load(()=>{try{const container=document.getElementById('map'),center=new kakao.maps.LatLng(37.5665,126.9780);archMap=new kakao.maps.Map(container,{center,level:5});mapReady=true;kakao.maps.event.addListener(archMap,'idle',renderRemoteMapPosts);renderRemoteMapPosts();const cached=readCachedLocation();if(cached)centerMapAt(cached);else mapstatus.textContent='⌖ 위치 권한 확인 필요';requestAnimationFrame(()=>archMap.relayout())}catch(error){mapReady=false;archMap=null;mapstatus.textContent='지도를 불러오지 못했습니다'}})}
+    let cancelMapFocus=null;
+    function focusMapEntriesAndOpen(entries,position,spatialCluster){
+      if(!archMap||!entries.length)return;if(cancelMapFocus)cancelMapFocus();
+      const map=archMap;let settledTimer=null,fallbackTimer=null,finished=false;
+      document.body.classList.add('map-focus-pending');
+      const cleanup=()=>{clearTimeout(settledTimer);clearTimeout(fallbackTimer);kakao.maps.event.removeListener(map,'idle',onIdle);document.body.classList.remove('map-focus-pending');cancelMapFocus=null};
+      const finish=()=>{if(finished)return;finished=true;try{if(!document.getElementById('archive').classList.contains('active'))return;
+        const fresh=entries.map(entry=>mapRecords.find(record=>record===entry.record||(entry.record.remoteId&&record.remoteId===entry.record.remoteId))).filter(Boolean);if(!fresh.length)return;
+        if(spatialCluster&&fresh.length>1){const dialog=collectionDialog('nearbyMapRecords','가까운 기록',fresh.map((record,i)=>'<button class="nearby-record-choice" data-nearby-record="'+i+'"><strong>'+escapeSearchText(record.caption||'현장 기록')+'</strong><small>'+escapeSearchText(record.place||'장소 정보 없음')+'</small></button>').join(''));dialog.querySelectorAll('[data-nearby-record]').forEach(button=>button.onclick=()=>{const record=fresh[Number(button.dataset.nearbyRecord)],index=mapRecords.indexOf(record);dialog.remove();if(index>=0)showMapPost(index)})}
+        else if(fresh.length>1)showPlaceDetailFromRecord(fresh[0]);else showMapPost(mapRecords.indexOf(fresh[0]));
+      }finally{cleanup()}};
+      const onIdle=()=>{clearTimeout(settledTimer);settledTimer=setTimeout(finish,220)};
+      cancelMapFocus=()=>{finished=true;cleanup()};kakao.maps.event.addListener(map,'idle',onIdle);
+      try{map.setLevel(Math.min(3,map.getLevel()),{anchor:position,animate:{duration:450}});map.panTo(position);fallbackTimer=setTimeout(finish,1200)}catch(error){finish()}
+    }
+    function initMap(){if(!window.kakao?.maps){mapstatus.textContent='지도를 불러오는 중';return}if(mapReady&&archMap){setTimeout(()=>{archMap.relayout();renderRemoteMapPosts();const cached=readCachedLocation();if(cached)centerMapAt(cached);},0);return}kakao.maps.load(()=>{try{const container=document.getElementById('map'),center=new kakao.maps.LatLng(37.5665,126.9780);archMap=new kakao.maps.Map(container,{center,level:5});mapReady=true;kakao.maps.event.addListener(archMap,'idle',renderRemoteMapPosts);renderRemoteMapPosts();const cached=readCachedLocation();if(cached)centerMapAt(cached);else mapstatus.textContent='⌖ 위치 권한 확인 필요';requestAnimationFrame(()=>archMap.relayout())}catch(error){mapReady=false;archMap=null;mapstatus.textContent='지도를 불러오지 못했습니다'}})}
     document.querySelectorAll('.modal').forEach(modal=>modal.addEventListener('click',event=>{if(event.target!==modal||modal.hasAttribute('data-required'))return;if(modal===authModal)closeAuthDialog();else modal.classList.remove('show')}));
     const ks=document.createElement('script');ks.src='https://dapi.kakao.com/v2/maps/sdk.js?appkey=13fe7b8d7c2c035da229b2d89845cd31&autoload=false';ks.onload=()=>{if(document.getElementById('archive').classList.contains('active'))initMap()};ks.onerror=()=>mapstatus.textContent='지도를 불러오지 못했습니다';document.head.appendChild(ks);
 
@@ -471,6 +482,9 @@
   </script>
   <style>
     .map-post{position:relative;pointer-events:auto;cursor:pointer;touch-action:manipulation;user-select:none}.map-post>*{pointer-events:none}.map-post.compact,.map-post.tiny{cursor:zoom-in}.map-post.compact{min-height:22px}.map-post.tiny{min-height:14px}.map-post:focus-visible{outline:3px solid #333;outline-offset:4px}.nearby-record-choice{width:100%;border:0;border-bottom:1px solid #ddd;background:#fff;display:block;text-align:left;padding:14px 0}.nearby-record-choice strong{display:block;font-size:13px}.nearby-record-choice small{display:block;color:#777;font-size:10px;margin-top:6px}
+  </style>
+  <style>
+    body.map-focus-pending .map-post{width:14px!important;height:14px!important;min-width:14px!important;min-height:14px!important;padding:0!important;border:2px solid #fff!important;border-radius:50%!important;background:#111!important;box-shadow:0 2px 7px #0003;overflow:hidden;transition:none!important}body.map-focus-pending .map-post>*{display:none!important}body.map-focus-pending .map-post:after{display:none!important}
   </style>
 </body>
 </html>
