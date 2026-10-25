@@ -591,28 +591,27 @@
   </script>
 
 <style id="profile-ticket-styles">
-/* Three tickets per row, including mobile. Each ticket scales with its column. */
-#profile #posts{grid-template-columns:repeat(3,minmax(0,1fr));gap:24px 18px;margin-top:26px;align-items:start}
-#posts .profile-ticket{--ticket-ink:#3f5335;container-type:inline-size;position:relative;display:block;min-width:0;width:100%;padding:0;border:0;border-radius:15px;background:transparent;color:var(--ticket-ink);text-align:left;aspect-ratio:auto;overflow:hidden;font-family:Arial,'Apple SD Gothic Neo',sans-serif;isolation:isolate;transition:transform .18s ease}
+/* Fixed proportions prevent tall photos or captions from stretching tickets. */
+#profile #posts{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px 16px;margin-top:22px;align-items:start}
+#posts .profile-ticket{--ticket-ink:#3f5335;container-type:inline-size;position:relative;display:grid;grid-template-rows:9% 54% 37%;min-width:0;width:100%;padding:0;border:0;border-radius:12px;background:transparent;color:var(--ticket-ink);text-align:left;aspect-ratio:1/1.7;overflow:hidden;font-family:Arial,'Apple SD Gothic Neo',sans-serif;isolation:isolate;transition:transform .18s ease}
 #posts .profile-ticket:focus-visible{outline:3px solid #637853;outline-offset:4px}
 @media(hover:hover){#posts .profile-ticket:hover{transform:translateY(-3px)}}
-.profile-ticket span,.profile-ticket strong{box-sizing:border-box}
-.ticket-header{display:flex;justify-content:space-between;align-items:center;padding:5.5%;background:#425535;color:#faf9f1;gap:5px;font-size:clamp(7px,3cqi,11px)}
-.ticket-header b{font-size:clamp(10px,5cqi,19px);font-weight:500}.ticket-header>span{letter-spacing:.1em;font-size:clamp(6px,2.4cqi,9px)}
-.ticket-main{display:flex;flex-direction:column;background:#f5f3e9;padding:6% 6% 8%}
-.ticket-label{display:block;font-size:clamp(6px,2.7cqi,10px);letter-spacing:.17em;line-height:1.5}
-.ticket-place{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere;font-size:clamp(12px,7.6cqi,29px);line-height:1.2;margin:3% 0 6%;height:2.4em;letter-spacing:-.04em}
-.ticket-photo{display:grid;place-items:center;aspect-ratio:1/1.12;width:100%;background:#e0e5d7;overflow:hidden}
-.ticket-photo img{display:block;width:100%;height:100%;object-fit:cover;min-height:0}.ticket-no-photo,.ticket-photo-missing:after{font-size:clamp(7px,3cqi,11px);color:#67745b}.ticket-photo-missing:after{content:'사진을 불러올 수 없습니다'}
-.ticket-serial{display:block;font-size:clamp(6px,2.6cqi,10px);letter-spacing:.13em;margin-top:5%}
-.ticket-stub{display:flex;flex-direction:column;position:relative;padding:6%;background:#dce2cc;border-top:1px dashed #6c7b5d;/* Transparent side notches expose any page background. */mask-image:radial-gradient(circle at 0 0,transparent 0 8px,#000 8.5px),radial-gradient(circle at 100% 0,transparent 0 8px,#000 8.5px);mask-composite:intersect}
-.ticket-main{mask-image:radial-gradient(circle at 0 100%,transparent 0 8px,#000 8.5px),radial-gradient(circle at 100% 100%,transparent 0 8px,#000 8.5px);mask-composite:intersect}
-.ticket-field{display:block;padding-bottom:4%;margin-bottom:4%;border-bottom:1px solid #a9b39a;min-width:0}
-.ticket-date{display:block;font-size:clamp(8px,4.6cqi,17px);line-height:1.5;margin-top:2%}
-.ticket-caption{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere;white-space:pre-line;height:3em;font-size:clamp(8px,4cqi,15px);line-height:1.5;margin-top:2%}
-.ticket-coordinates{display:block;font-size:clamp(6px,3.2cqi,12px);line-height:1.5;overflow-wrap:anywhere;margin-top:2%;min-height:3em;font-variant-numeric:tabular-nums}
-.ticket-owner{display:block;font-size:clamp(8px,4cqi,15px);font-weight:700;overflow-wrap:anywhere;line-height:1.5;min-height:3em}
-@media(max-width:760px){#profile #posts{gap:16px 7px;margin-top:18px}#posts .profile-ticket{border-radius:7px}.ticket-header{padding:7% 5%}.ticket-header>span{letter-spacing:0}.ticket-stub,.ticket-main{padding-left:7%;padding-right:7%}.ticket-stub{mask-image:radial-gradient(circle at 0 0,transparent 0 4px,#000 4.5px),radial-gradient(circle at 100% 0,transparent 0 4px,#000 4.5px)}.ticket-main{mask-image:radial-gradient(circle at 0 100%,transparent 0 4px,#000 4.5px),radial-gradient(circle at 100% 100%,transparent 0 4px,#000 4.5px)}}
+.profile-ticket span,.profile-ticket strong{box-sizing:border-box;min-width:0;min-height:0}
+.ticket-header{display:flex;justify-content:space-between;align-items:center;padding:0 5%;background:#425535;color:#faf9f1;gap:3%;font-size:3cqi}
+.ticket-header b{font-size:5cqi;font-weight:500}.ticket-header>span{letter-spacing:.07em;font-size:2.4cqi;white-space:nowrap}
+.ticket-main{display:grid;grid-template-rows:4cqi 10cqi minmax(0,1fr) 4cqi;gap:2cqi;background:#f5f3e9;padding:4cqi 5cqi 5cqi;mask-image:radial-gradient(circle at 0 100%,transparent 0 2cqi,#000 2.15cqi),radial-gradient(circle at 100% 100%,transparent 0 2cqi,#000 2.15cqi);mask-composite:intersect}
+.ticket-label{display:block;font-size:2.5cqi;letter-spacing:.12em;line-height:1.4}
+.ticket-place{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere;font-size:4.5cqi;line-height:1.1;letter-spacing:-.035em;margin:0}
+.ticket-photo{display:grid;place-items:center;position:relative;width:100%;height:100%;background:#e0e5d7;overflow:hidden}
+.ticket-photo img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;min-height:0}.ticket-no-photo,.ticket-photo-missing:after{font-size:3cqi;color:#67745b}.ticket-photo-missing:after{content:'사진을 불러올 수 없습니다'}
+.ticket-serial{display:block;font-size:2.4cqi;line-height:1.5;letter-spacing:.1em;margin:0}
+.ticket-stub{display:grid;grid-template-rows:1fr 1.35fr 1fr .7fr;gap:2cqi;position:relative;padding:4cqi 5cqi;background:#dce2cc;border-top:1px dashed #6c7b5d;mask-image:radial-gradient(circle at 0 0,transparent 0 2cqi,#000 2.15cqi),radial-gradient(circle at 100% 0,transparent 0 2cqi,#000 2.15cqi);mask-composite:intersect}
+.ticket-field{display:flex;flex-direction:column;justify-content:flex-start;gap:1cqi;padding:0 0 1cqi;margin:0;border-bottom:1px solid #a9b39a;overflow:hidden}
+.ticket-date{display:block;font-size:3.8cqi;line-height:1.25;margin:0}
+.ticket-caption{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere;white-space:pre-line;font-size:3.3cqi;line-height:1.3;margin:0}
+.ticket-coordinates{display:block;font-size:3cqi;line-height:1.25;overflow-wrap:anywhere;margin:0;font-variant-numeric:tabular-nums}
+.ticket-owner{display:block;font-size:3.5cqi;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.5}
+@media(max-width:760px){#profile #posts{gap:12px 7px;margin-top:16px}#posts .profile-ticket{border-radius:6px}}
 @media(prefers-reduced-motion:reduce){#posts .profile-ticket{transition:none}}
 </style>
 </body>
