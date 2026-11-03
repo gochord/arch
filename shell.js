@@ -36,7 +36,8 @@
       [...ring.children].forEach((slot, i) => {
         const faces = slot.querySelectorAll(':scope > .face');
         if (faces.length < 2) return;
-        const front = Math.cos(a + (i * 2 * Math.PI) / ring.children.length) > 0;
+        // a ticket at radius R faces a camera D away when cos(angle) > R / D (ring: translateZ(426px), stage: perspective 1800px)
+        const front = Math.cos(a + (i * 2 * Math.PI) / ring.children.length) > 426 / 1800;
         faces[0].style.visibility = front ? 'visible' : 'hidden';
         faces[1].style.visibility = front ? 'hidden' : 'visible';
       });
