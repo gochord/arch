@@ -11,7 +11,7 @@
     /* Safari: masked ticket halves ignore the face's backface-visibility, so hide every piece's back and keep them in one 3D layer */
     '.face{transform-style:preserve-3d;-webkit-transform-style:preserve-3d}.face>*,.face>*>*{-webkit-backface-visibility:hidden;backface-visibility:hidden}';
   /* home ticket: the stage fills the window instead of a fixed 1280x960 frame, so the ring is never cut off */
-  if (/^Ticket(Desktop|DesktopIn)\.dc\.html$/.test(f)) s.textContent += '.amb-home{width:100vw!important;height:100vh!important;min-height:760px}body{overflow:hidden}';
+  if (/^Ticket(Desktop|DesktopIn)\.dc\.html$/.test(f)) s.textContent += '.amb-home{position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;width:auto!important;height:auto!important;margin:0!important}body{overflow:hidden}';
   document.head.appendChild(s);
 })();
 
