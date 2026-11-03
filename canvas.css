@@ -430,3 +430,31 @@ main>.view :is(img,video,canvas,iframe),.modal :is(img,video,canvas,iframe),main
 .modal>:not(.composer) :is(h1,h2,h3,p,strong,span,small,label,li){color:inherit}
 .modal>* .black,.modal>* .primary{border:0!important;border-radius:999px!important;background:var(--cream)!important;color:var(--ink)!important}
 .modal>* button:not(.close):not(.kakao-btn){border-radius:999px}
+
+/* ---------- home: tear on pick (all sizes) + desktop spinning ticket ring ---------- */
+.tk-upper.jolt{animation:tkJolt .5s cubic-bezier(.3,.6,.3,1)}
+.tk-stub.tear{transform-origin:100% 0;animation:tkTear .95s cubic-bezier(.55,0,.8,.3) forwards}
+@keyframes tkJolt{25%{transform:translateY(-3px)}60%{transform:translateY(1px)}}
+@keyframes tkTear{16%{transform:rotate(-1.4deg) translateY(2px)}34%{transform:rotate(-3deg) translate(-2px,8px)}100%{transform:translate(-50px,640px) rotate(-16deg);opacity:0}}
+.tk-ring-stage,.tk-repick,.tk-taphint{display:none}
+@media(min-width:761px){
+  #home.view.active{position:relative;overflow:hidden;height:calc(100vh - 68px);min-height:640px;padding:0;align-items:center}
+  .tk-ring-stage{display:block;position:absolute;inset:0;perspective:1800px;perspective-origin:50% 38%;transition:filter .5s ease;cursor:pointer}
+  .tk-ring-pos{position:absolute;left:50%;top:50%;transform-style:preserve-3d;transform:rotateX(-4deg)}
+  .tk-ring{transform-style:preserve-3d;animation:tkSpin 48s linear infinite}
+  @keyframes tkSpin{to{transform:rotateY(-360deg)}}
+  .tk-slot{position:absolute;left:-195px;top:-359px;width:390px;height:718px;transform-style:preserve-3d}
+  .tk-slot>.tk,.tk-slot>.tk-back{position:absolute;inset:0 auto auto 0;width:390px;backface-visibility:hidden;-webkit-backface-visibility:hidden;animation:none;filter:none;pointer-events:none}
+  .tk-back{height:100%;border-radius:26px;background:var(--neon);transform:rotateY(180deg);filter:brightness(.38) saturate(.8) blur(1.5px)!important;display:grid;place-items:center}
+  .tk-back img{width:70%;filter:brightness(0)}
+  .tk-taphint{display:block;position:absolute;left:0;right:0;bottom:44px;text-align:center;font-size:11px;font-weight:500;letter-spacing:.2em;color:#9a9a9a;pointer-events:none}
+  #home>.tk{position:relative;z-index:6;display:none}
+  #home::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,0);transition:background .5s ease;pointer-events:none;z-index:4}
+  #home.tk-picked::after{background:rgba(0,0,0,.75)}
+  #home.tk-picked .tk-ring-stage{filter:blur(3px);pointer-events:none}
+  #home.tk-picked .tk-taphint{display:none}
+  #home.tk-picked>.tk{display:flex;animation:tkZoom .55s var(--spring) both}
+  @keyframes tkZoom{from{transform:translateY(-58px) scale(.76);opacity:.5}}
+  .tk-repick{display:none;position:absolute;top:28px;left:36px;z-index:7;border:0;background:none;color:var(--cream);padding:12px 0;font:500 14px/1 inherit;cursor:pointer}
+  #home.tk-picked:not(.tk-going) .tk-repick{display:block}
+}

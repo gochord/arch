@@ -45,19 +45,94 @@
     home.querySelector('[data-go="about"]').onclick = () => go('about');
     $('#tkStore').onclick = () => go('store');
     $('#tkAccount').onclick = () => $('#accountBtn')?.click();
+    const upper = home.querySelector('.tk-upper'), stub = home.querySelector('.tk-stub');
     home.querySelectorAll('.tk-tile').forEach((tile) => {
       tile.onclick = () => {
         if (home.querySelector('.tk-tile[aria-pressed="true"]')) return;
         tile.setAttribute('aria-pressed', 'true');
         tile.insertAdjacentHTML('beforeend', CHECK);
+        home.classList.add('tk-going');
+        setTimeout(() => { upper.classList.add('jolt'); stub.classList.add('tear'); }, 520);
         setTimeout(() => {
           go(tile.dataset.dest);
           tile.setAttribute('aria-pressed', 'false');
           tile.querySelector('svg')?.remove();
-        }, 650);
+          upper.classList.remove('jolt');
+          stub.classList.remove('tear');
+          home.classList.remove('tk-going');
+          ring?.resume();
+        }, 1550);
       };
     });
+    const ring = setupRing(home);
     syncAccount();
+  }
+
+  /* desktop: eight tickets spin on a 3D ring; tap stops it and zooms the picked one in */
+  function setupRing(home) {
+    const tk = home.querySelector('.tk');
+    const stage = document.createElement('div');
+    stage.className = 'tk-ring-stage';
+    stage.setAttribute('aria-label', '회전을 멈추고 티켓 고르기');
+    stage.setAttribute('role', 'button');
+    stage.tabIndex = 0;
+    stage.innerHTML = '<div class="tk-ring-pos"><div class="tk-ring"></div></div>';
+    const ringEl = stage.querySelector('.tk-ring');
+    for (let i = 0; i < 8; i++) {
+      const slot = document.createElement('div');
+      slot.className = 'tk-slot';
+      slot.style.transform = `rotateY(${i * 45}deg) translateZ(426px) scale(.58)`;
+      const face = tk.cloneNode(true);
+      face.removeAttribute('role');
+      face.querySelectorAll('[id]').forEach((n) => n.removeAttribute('id'));
+      face.setAttribute('aria-hidden', 'true');
+      face.inert = true;
+      slot.append(face);
+      slot.insertAdjacentHTML('beforeend', '<div class="tk-back" aria-hidden="true"><img src="assets/arch-logo.png" alt=""></div>');
+      ringEl.append(slot);
+    }
+    home.prepend(stage);
+    home.insertAdjacentHTML('beforeend', '<span class="tk-taphint" aria-hidden="true">TAP TO STOP · 눌러서 티켓 고르기</span><button type="button" class="tk-repick">← 다시 고르기</button>');
+    const P = 48;
+    let from = 0, start = performance.now(), ang = 0, mode = 'spin';
+    const spin = () => {
+      ringEl.style.transition = 'none';
+      ringEl.style.transform = '';
+      ringEl.style.animation = `tkSpin ${P}s linear ${-((from % 360) / 360) * P}s infinite`;
+    };
+    const stop = () => {
+      if (mode !== 'spin') return;
+      mode = 'stopping';
+      ang = from + (performance.now() - start) / 1000 / P * 360;
+      const target = Math.ceil(ang / 45 + 0.2) * 45;
+      ringEl.style.animation = 'none';
+      ringEl.style.transform = `rotateY(${-ang}deg)`;
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        ringEl.style.transition = 'transform 1.2s cubic-bezier(.12,.6,.2,1)';
+        ringEl.style.transform = `rotateY(${-target}deg)`;
+        ang = target;
+      }));
+      setTimeout(() => {
+        mode = 'picked';
+        const sel = Math.round(target / 45) % 8;
+        ringEl.children[sel].style.opacity = '0';
+        home.classList.add('tk-picked');
+      }, 1250);
+    };
+    const resume = () => {
+      if (mode === 'spin') return;
+      mode = 'spin';
+      from = ang;
+      start = performance.now();
+      [...ringEl.children].forEach((c) => (c.style.opacity = ''));
+      home.classList.remove('tk-picked');
+      spin();
+    };
+    stage.onclick = stop;
+    stage.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); stop(); } };
+    home.querySelector('.tk-repick').onclick = resume;
+    spin();
+    return { resume };
   }
 
   function syncAccount() {
