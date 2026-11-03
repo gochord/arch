@@ -221,7 +221,7 @@ a.ic-btn[aria-label="설정"]{margin-left:8px}
 </div>
 <h2 class="g-h">계정 관리</h2>
 <div class="g-box">
-<a class="g-row" href="{{logoutHref}}"><span>로그아웃</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; opacity: .7;"><path d="M9 5l7 7-7 7"></path></svg></a>
+<a class="g-row" href="{{logoutHref}}" onClick="{{doLogout}}"><span>로그아웃</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; opacity: .7;"><path d="M9 5l7 7-7 7"></path></svg></a>
 <button type="button" class="g-row" onClick="{{openWithdraw}}" style="color: #F28B82;"><span>회원 탈퇴</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; opacity: .7;"><path d="M9 5l7 7-7 7"></path></svg></button>
 </div>
 </div>
@@ -326,7 +326,7 @@ a.ic-btn[aria-label="설정"]{margin-left:8px}
 <input class="s-field" type="text" aria-label="탈퇴 확인 입력" placeholder="탈퇴" value="{{wd.text}}" onChange="{{onWdText}}" style="margin-top: 14px;">
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px;">
 <button type="button" class="s-btn line" onClick="{{closeWithdraw}}">닫기</button>
-<sc-if value="{{wd.ready}}" hint-placeholder-val="{{false}}"><a class="s-btn" href="{{logoutHref}}" style="background: #F28B82; color: #141414;">탈퇴하기</a></sc-if>
+<sc-if value="{{wd.ready}}" hint-placeholder-val="{{false}}"><a class="s-btn" href="{{logoutHref}}" onClick="{{doWithdraw}}" style="background: #F28B82; color: #141414;">탈퇴하기</a></sc-if>
 <sc-if value="{{wd.notReady}}" hint-placeholder-val="{{true}}"><button type="button" class="s-btn" disabled="{{yes}}" style="background: #F28B82; color: #141414;">탈퇴하기</button></sc-if>
 </div>
 </div>
@@ -421,7 +421,26 @@ a.ic-btn[aria-label="설정"]{margin-left:8px}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"myRecordCount":{"editor":"range","default":9,"min":0,"max":30,"step":1},"$preview":{"width":1280,"height":960}}'>
 class Component extends DCLogic {
-  __archSub() { if (!this.__unsub && window.archApi) this.__unsub = archApi.onChange(() => this.forceUpdate()); }
+  __archSub() {
+    if (this.__unsub || !window.archApi) return;
+    const load = () => {
+      this.forceUpdate();
+      if (!archApi.ready || this.__loaded) return;
+      if (!archApi.user) { location.replace('TicketDesktop.dc.html'); return; }
+      this.__loaded = true;
+      archApi.notifPrefs().then((p) => p && this.setState({ notify: { like: p.likes !== false, comment: p.comments !== false, follow: p.follows !== false, request: p.notices !== false } }));
+    };
+    this.__unsub = archApi.onChange(load);
+    load();
+  }
+  renderLogoutHref() { return 'TicketDesktop.dc.html'; }
+  saveNotify(n) {
+    if (archApi.user) archApi.saveNotifPrefs({ likes: n.like, comments: n.comment, follows: n.follow, notices: n.request }).catch(() => this.showToast('알림 설정을 저장하지 못했어요.'));
+  }
+  componentDidUpdate(_p, prev) {
+    if (prev && prev.notify !== this.state.notify && this.__loaded && this.__notifyReady) this.saveNotify(this.state.notify);
+    if (this.__loaded) this.__notifyReady = true;
+  }
   constructor(props) {
     super(props);
     this.colors = ['#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42'];
@@ -675,8 +694,10 @@ class Component extends DCLogic {
       openMobileOnly: () => this.setState({ mobileOnly: true }),
       closeMobileOnly: () => this.setState({ mobileOnly: false }),
       version: '0.1.0',
+      doLogout: (ev) => { ev.preventDefault(); archApi.signOut().then(() => location.replace(this.renderLogoutHref())); },
+      doWithdraw: (ev) => { ev.preventDefault(); archApi.deleteAccount().then(() => location.replace(this.renderLogoutHref()), (err) => this.showToast(err.message)); },
       logoutHref: 'TicketDesktop.dc.html',
-      acct: { id: '아이디', email: 'me@archyourview.kr' },
+      acct: { id: archApi.handle().replace(/^@/, ''), email: (archApi.user && archApi.user.email) || '' },
       secIdx: Math.max(0, this.sections.findIndex(([id]) => id === sec)),
       navItems: this.sections.map(([id, label]) => ({
         label: label, current: sec === id ? 'page' : 'false', bg: sec === id ? 'rgba(200,255,66,.14)' : 'transparent', weight: sec === id ? 700 : 500,
@@ -690,8 +711,8 @@ class Component extends DCLogic {
       onPwCur: (ev) => this.set('pw', { cur: ev.target.value }),
       onPwNext: (ev) => this.set('pw', { next: ev.target.value }),
       onPwNext2: (ev) => this.set('pw', { next2: ev.target.value }),
-      savePw: (ev) => { ev.preventDefault(); if (!pwOk) return; this.set('pw', { open: false, cur: '', next: '', next2: '' }); this.showToast('비밀번호를 바꿨어요.'); },
-      kakao: () => this.showToast('카카오 계정 연결은 곧 열릴 예정이에요.'),
+      savePw: (ev) => { ev.preventDefault(); if (!pwOk) return; const nx = this.state.pw.next; archApi.sb.auth.updateUser({ password: nx }).then(({ error }) => { if (error) { this.showToast('바꾸지 못했어요: ' + error.message); return; } this.set('pw', { open: false, cur: '', next: '', next2: '' }); this.showToast('비밀번호를 바꿨어요.'); }); },
+      kakao: () => archApi.sb.auth.linkIdentity ? archApi.sb.auth.linkIdentity({ provider: 'kakao' }).then(({ error }) => error && this.showToast(error.message)) : this.showToast('카카오 연결을 지원하지 않는 환경이에요.'),
       openWithdraw: () => this.setState({ wd: { open: true, text: '' } }),
       closeWithdraw: () => this.setState({ wd: { open: false, text: '' } }),
       onWdText: (ev) => this.set('wd', { text: ev.target.value }),
@@ -729,7 +750,7 @@ class Component extends DCLogic {
       })),
       ask: { text: a.text, count: a.text.length, disabled: a.text.trim().length < 5, sent: a.sent, notSent: !a.sent },
       onAskText: (ev) => this.set('ask', { text: ev.target.value.slice(0, 500) }),
-      sendAsk: (ev) => { ev.preventDefault(); if (this.state.ask.text.trim().length < 5) return; this.set('ask', { sent: true, text: '' }); this.showToast('문의를 보냈어요.'); },
+      sendAsk: (ev) => { ev.preventDefault(); const a = this.state.ask; if (a.text.trim().length < 5) return; archApi.support(a.cat === 'bug' ? 'bug' : 'inquiry', (a.cat === 'idea' ? '[제안] ' : '') + a.text.trim()).then(() => { this.set('ask', { sent: true, text: '' }); this.showToast('문의를 보냈어요.'); }, (err) => this.showToast('보내지 못했어요: ' + err.message)); },
       askAgain: () => this.set('ask', { sent: false }),
       toast: s.toast, hasToast: !!s.toast
     };

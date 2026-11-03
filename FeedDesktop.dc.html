@@ -764,7 +764,22 @@ a.ic-btn[aria-label="설정"]{margin-left:8px}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"postCount":{"editor":"range","default":12,"min":1,"max":40,"step":1},"$preview":{"width":1280,"height":960}}'>
 class Component extends DCLogic {
-  __archSub() { if (!this.__unsub && window.archApi) this.__unsub = archApi.onChange(() => this.forceUpdate()); }
+  __archSub() {
+    if (this.__unsub || !window.archApi) return;
+    const load = () => archApi.feed().then((rows) => {
+      this.live = rows.map((r) => ({ id: r.id, userId: r.userId, name: r.mine ? '나' : r.name, handle: r.handle, time: r.time, ago: (Date.now() - new Date(r.createdAt)) / 60000, caption: r.caption, place: r.place, coords: r.address, following: r.following, likes: r.likes - (r.liked ? 1 : 0), photo: r.photo, mine: r.mine }));
+      const liked = {}; rows.forEach((r, i) => { if (r.liked) liked[i] = true; });
+      this.setState({ liked, follow: {}, comments: {} });
+    }).catch((e) => console.error('[feed]', e));
+    this.__unsub = archApi.onChange(load);
+    load();
+  }
+  loadComments(i) {
+    const p = this.live && this.live[i];
+    if (!p || this.__cm === p.id) return;
+    this.__cm = p.id;
+    archApi.comments(p.id).then((list) => this.setState({ comments: { ...this.state.comments, [i]: list } }), () => {});
+  }
   constructor(props) {
     super(props);
     this.colors = ['#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42'];
@@ -949,6 +964,8 @@ class Component extends DCLogic {
     } catch (e) { return null; }
   }
   makePosts(n) {
+    if (this.live) return this.live;
+    if (window.archApi && archApi.sb) return [];
     const out = [];
     const base = this.samples.length;
     for (let i = 0; i < n; i++) {
@@ -981,6 +998,7 @@ class Component extends DCLogic {
     const following = this.followOf(p, i);
     const color = '#C8FF42';
     const comments = s.comments[i] || [];
+    this.loadComments(i);
     return {
       dialogLabel: p.name + '의 기록',
       color: color,
@@ -990,7 +1008,7 @@ class Component extends DCLogic {
       profileLabel: p.name + ' 프로필 보기',
       goAuthor: () => { this.setFrom('feed'); this.setViewUser(p.handle); },
       ratio: p.ratio || this.ratios[i % this.ratios.length],
-      photo: p.photo || '', hasPhoto: !!p.photo, notMine: !p.mine, profileHref: p.mine ? 'ProfileDesktop.dc.html' : 'OtherProfileDesktop.dc.html',
+      photo: p.photo || '', hasPhoto: !!p.photo, notMine: !p.mine, profileHref: p.mine ? 'ProfileDesktop.dc.html' : 'OtherProfileDesktop.dc.html?u=' + encodeURIComponent((typeof p !== 'undefined' && p && p.userId) || ''),
       no: String(i + 1).padStart(4, '0'),
       coords: p.coords || '',
       time: p.time,
@@ -1023,8 +1041,8 @@ class Component extends DCLogic {
       followPressed: following ? 'true' : 'false',
       followBg: following ? 'rgba(20,20,20,.13)' : '#141414',
       followFg: following ? '#141414' : '#C8FF42',
-      toggleFollow: () => this.setState({ follow: { ...s.follow, [i]: !following } }),
-      comments: comments.map((c, ci) => ({ ...c, mine: c.name === '나', del: () => this.setState({ comments: { ...this.state.comments, [i]: (this.state.comments[i] || []).filter((_, j) => j !== ci) } }) })),
+      toggleFollow: () => { this.setState({ follow: { ...s.follow, [i]: !following } }); if (p.userId) archApi.toggleFollow(p.userId, following).catch(() => this.setState({ follow: { ...this.state.follow, [i]: following } })); },
+      comments: comments.map((c, ci) => ({ ...c, mine: c.name === '나', del: () => { if (c.id) archApi.deleteComment(c.id).catch(() => {}); this.setState({ comments: { ...this.state.comments, [i]: (this.state.comments[i] || []).filter((_, j) => j !== ci) } }); } })),
       share: () => {
         try { if (navigator.clipboard) navigator.clipboard.writeText('https://arch.example/record/' + i); } catch (e) {}
         this.feedToastShow('링크를 복사했어요');
@@ -1037,6 +1055,8 @@ class Component extends DCLogic {
         if (!t) return;
         const list = (this.state.comments[i] || []).concat([{ name: '나', text: t }]);
         this.setState({ comments: { ...this.state.comments, [i]: list }, draft: '' });
+        const lp = this.live && this.live[i];
+        if (lp) archApi.addComment(lp.id, t).then(() => { this.__cm = null; this.loadComments(i); }, () => {});
       }
     };
   }
@@ -1057,6 +1077,8 @@ class Component extends DCLogic {
     const next = { ...this.state[key] };
     next[i] = !next[i];
     this.setState({ [key]: next, [flag]: next[i] ? i : null });
+    const p = this.live && this.live[i];
+    if (p && key === 'liked') archApi.toggleLike(p.id, !next[i]).catch(() => { const back = { ...this.state.liked }; back[i] = !next[i]; this.setState({ liked: back }); });
   }
   setFrom(v) {
     try { sessionStorage.setItem('arch.from', v); } catch (e) {}
@@ -1137,7 +1159,7 @@ class Component extends DCLogic {
       this.notifStore('arch.notifRead', this.notifRead);
       this.setState({ notifTick: (this.state.notifTick || 0) + 1 });
     };
-    const profileHref = (h) => (h === 'harin.k' ? 'OtherProfilePrivateDesktop.dc.html' : 'OtherProfileDesktop.dc.html');
+    const profileHref = (h) => (h === 'harin.k' ? 'OtherProfilePrivateDesktop.dc.html' : 'OtherProfileDesktop.dc.html?u=' + encodeURIComponent((typeof p !== 'undefined' && p && p.userId) || ''));
     const rows = data.map((n, k) => {
       const unread = !read.includes(n.id);
       const isRec = n.type === 'like' || n.type === 'comment';
@@ -1190,7 +1212,7 @@ class Component extends DCLogic {
     };
   }
   isGuest() {
-    try { return sessionStorage.getItem('arch.guest') === '1'; } catch (e) { return false; }
+    return !(window.archApi && archApi.user);
   }
   feedToastShow(t) {
     this.setState({ feedToast: t });
@@ -1437,7 +1459,7 @@ class Component extends DCLogic {
           ...p,
           color: color,
           ratio: p.ratio || this.ratios[i % this.ratios.length],
-          hasPhoto: !!p.photo, notMine: !p.mine, profileHref: p.mine ? 'ProfileDesktop.dc.html' : 'OtherProfileDesktop.dc.html',
+          hasPhoto: !!p.photo, notMine: !p.mine, profileHref: p.mine ? 'ProfileDesktop.dc.html' : 'OtherProfileDesktop.dc.html?u=' + encodeURIComponent((typeof p !== 'undefined' && p && p.userId) || ''),
           vAlign: this.vAligns[i % this.vAligns.length],
           hAlign: this.hAligns[i % this.hAligns.length],
           rot: this.angles[i % this.angles.length],

@@ -1063,7 +1063,33 @@ a.ic-btn[aria-label="설정"]{margin-left:8px}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"other":{"editor":"boolean","default":false},"otherPrivate":{"editor":"boolean","default":false},"myRecordCount":{"editor":"range","default":9,"min":0,"max":30,"step":1},"demoCollections":{"editor":"boolean","default":true},"$preview":{"width":1280,"height":960}}'>
 class Component extends DCLogic {
-  __archSub() { if (!this.__unsub && window.archApi) this.__unsub = archApi.onChange(() => this.forceUpdate()); }
+  __archSub() {
+    if (this.__unsub || !window.archApi) return;
+    this.__unsub = archApi.onChange(() => this.archLoad());
+    this.archLoad();
+  }
+  archLoad() {
+    if (!archApi.ready) return;
+    const other = !!this.props.other;
+    const uid = other ? new URLSearchParams(location.search).get('u') : archApi.user && archApi.user.id;
+    if (!uid) { if (!other) location.replace('TicketDesktop.dc.html'); return; }
+    if (other && archApi.user && uid === archApi.user.id) { location.replace('ProfileDesktop.dc.html'); return; }
+    if (this.__loadedFor === uid + ':' + !!archApi.user) return;
+    this.__loadedFor = uid + ':' + !!archApi.user;
+    Promise.all([other ? archApi.profileById(uid) : Promise.resolve(archApi.profile), archApi.userPosts(uid), archApi.people(uid), archApi.collections(uid), other ? archApi.isFollowing(uid) : false]).then(([pr, posts, people, colls, fol]) => {
+      if (!pr) return;
+      if (other && !!pr.is_private !== !!this.props.otherPrivate) { location.replace((pr.is_private ? 'OtherProfilePrivateDesktop' : 'OtherProfileDesktop') + '.dc.html' + location.search); return; }
+      const pad = (x) => String(x).padStart(2, '0');
+      const fmt = (iso) => { const d = new Date(iso); return d.getFullYear() + '/' + pad(d.getMonth() + 1) + '/' + pad(d.getDate()); };
+      this.uid = uid;
+      this.posts = posts.map((r) => ({ id: r.id, name: pr.nickname || '', handle: pr.username || '', caption: r.caption || '', place: r.place_name || '', photo: r.photo || '', date: fmt(r.created_at), at: r.created_at }));
+      this.livePeople = people;
+      const idx = new Map(this.posts.map((p, i) => [p.id, i]));
+      const collections = colls.map((c) => ({ id: c.id, title: c.title || '', desc: c.description || '', records: (c.collection_items || []).filter((it) => idx.has(it.post_id)).map((it) => 'm' + idx.get(it.post_id)), color: '#C8FF42', vis: c.visibility || 'public', cover: c.cover_url || null, updated: new Date(c.created_at).getTime() }));
+      const profile = { ...this.state.profile, name: pr.nickname || '', id: pr.username || '', status: pr.status_message || '', interests: pr.interests || [], isPrivate: !!pr.is_private, photo: pr.avatar_url || null };
+      this.setState({ profile, collections, savedPosts: [], savedPlaces: [], followOther: other ? fol : false });
+    }).catch((e) => console.error('[profile]', e));
+  }
   constructor(props) {
     super(props);
     this.colors = ['#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42'];
@@ -1161,7 +1187,7 @@ class Component extends DCLogic {
     for (let k = 0; k < n; k++) {
       if ((this.state.recDeleted || {})[k]) continue;
       const b = this.posts[k % this.posts.length];
-      const d = new Date(Date.now() - k * 2 * 86400000);
+      const d = b.at ? new Date(b.at) : new Date(Date.now() - k * 2 * 86400000);
       list.push({
         place: b.place, caption: (this.state.recEdits || {})[k] ?? b.caption,
         color: '#C8FF42',
@@ -1359,6 +1385,7 @@ class Component extends DCLogic {
     const next = cur === true || cur === 'requested' ? false : (priv ? 'requested' : true);
     this.setState({ followOther: next });
     this.setRel(this.state.profile.id, next);
+    if (this.uid) { if (!archApi.user) { location.href = 'TicketDesktop.dc.html'; return; } archApi.toggleFollow(this.uid, cur === true || cur === 'requested').catch(() => this.setState({ followOther: cur })); }
     if (next === 'requested') this.showToast('팔로우 요청을 보냈어요');
   }
   shareLink(path, label) {
@@ -1387,8 +1414,8 @@ class Component extends DCLogic {
     const self = s.profile.id;
     const pool = this.people.filter((u) => u.handle !== self);
     const removed = this.state.removedFollowers || {};
-    const followers = pool.filter((u) => !removed[u.handle]);
-    const following = pool.filter((u, i) => i % 2 === 0);
+    const followers = (this.livePeople ? this.livePeople.followers : pool).filter((u) => !removed[u.handle]);
+    const following = this.livePeople ? this.livePeople.following : pool.filter((u, i) => i % 2 === 0);
     const pk = s.peopleOpen;
     const out = {
       followers: String(followers.length + (this.props.other && s.followOther === true ? 1 : 0)),
@@ -1438,6 +1465,7 @@ class Component extends DCLogic {
     return out;
   }
   myRecordTotal() {
+    if (this.uid) return this.posts.length;
     return Math.max(0, Math.min(30, this.props.myRecordCount ?? 9));
   }
   collItem(key, handle) {
@@ -2049,6 +2077,7 @@ class Component extends DCLogic {
         if (!this.idValid(dr.id) || this.idTaken(dr.id) || !dr.name.trim()) return;
         const { customText, ...rest } = dr;
         this.setState({ profile: { ...rest, name: dr.name.trim(), status: dr.status.trim() }, draft: null });
+        if (archApi.user) archApi.updateProfile({ nickname: dr.name.trim(), username: String(dr.id || '').replace(/^@/, '').toLowerCase(), status_message: dr.status.trim(), interests: dr.interests || [], is_private: !!dr.isPrivate }).catch((err) => this.showToast('저장하지 못했어요: ' + err.message));
       }
     };
   }

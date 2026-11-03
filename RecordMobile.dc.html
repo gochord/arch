@@ -417,16 +417,7 @@ class Component extends DCLogic {
     super(props);
     this.colors = ['#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42'];
     this.ratios = [['4 / 5', 0.8], ['1 / 1', 1], ['3 / 4', 0.75], ['4 / 3', 4 / 3], ['5 / 4', 1.25]];
-    this.places = [
-      { name: '북촌', region: '서울', category: '한옥마을', coords: '37° 34′ N, 126° 59′ E' },
-      { name: '성수동', region: '서울', category: '카페거리', coords: '37° 32′ N, 127° 03′ E' },
-      { name: '영도', region: '부산', category: '섬', coords: '35° 05′ N, 129° 04′ E' },
-      { name: '해운대', region: '부산', category: '해수욕장', coords: '35° 09′ N, 129° 09′ E' },
-      { name: '황남동', region: '경주', category: '문화유적', coords: '35° 50′ N, 129° 13′ E' },
-      { name: '남부시장', region: '전주', category: '전통시장', coords: '35° 49′ N, 127° 08′ E' },
-      { name: '주문진', region: '강릉', category: '항구', coords: '37° 54′ N, 128° 49′ E' },
-      { name: '협재', region: '제주', category: '해변', coords: '33° 23′ N, 126° 14′ E' }
-    ];
+    this.places = [];
     this.box = [358, 420];
     this.state = this.fresh();
     this.drag = null;
@@ -437,6 +428,24 @@ class Component extends DCLogic {
       placeQ: '', place: null, locating: false, nearby: null, caption: '', vis: 'public', error: '', dropOver: false, uploading: false,
       color: Math.floor(Math.random() * this.colors.length)
     };
+  }
+  kplace(p) {
+    const addr = p.road_address_name || p.address_name || '';
+    const cat = (p.category_name || p.category_group_name || '').split('>').pop().trim();
+    const d = Number(p.distance);
+    return { name: p.place_name, region: addr.split(' ').slice(0, 2).join(' '), category: cat, coords: addr, dist: d ? (d < 1000 ? d + 'm' : (d / 1000).toFixed(1) + 'km') : '', raw: p };
+  }
+  searchPlaces(q) {
+    clearTimeout(this.__qt);
+    if (!q.trim()) { this.setState({ results: [] }); return; }
+    this.__qt = setTimeout(() => archApi.searchPlaces(q.trim(), this.state.loc).then((r) => this.setState({ results: r.map((p) => this.kplace(p)) }), (e) => this.setState({ error: e.message })), 300);
+  }
+  findNearby() {
+    this.setState({ locating: true, error: '' });
+    archApi.locate()
+      .then((loc) => { this.setState({ loc }); return archApi.nearbyPlaces(loc); })
+      .then((r) => this.setState({ locating: false, nearby: r.map((p) => this.kplace(p)) }))
+      .catch((e) => this.setState({ locating: false, error: e.message }));
   }
   frameSize() {
     const r = this.ratios[this.state.ratio][1];
@@ -699,7 +708,7 @@ class Component extends DCLogic {
     const q = s.placeQ.trim();
     const pl = s.place;
     const visL = { public: '전체 공개', followers: '팔로워만', private: '나만 보기' };
-    const list = this.places.filter((p) => !q || (p.region + ' ' + p.name + ' ' + p.category).includes(q));
+    const list = s.results || [];
     return {
       steps: steps.map(([id, label], k) => ({ num: pad(k + 1), label: label, cls: k === idx ? 'on' : k < idx ? 'done' : '', current: k === idx ? 'step' : 'false' })),
       isPhoto: s.step === 'photo', isCrop: s.step === 'crop', isInfo: s.step === 'info', isPreview: s.step === 'preview',
@@ -731,7 +740,7 @@ class Component extends DCLogic {
       toCrop: () => this.setState({ step: 'crop' }),
       toInfo: () => this.setState({ step: 'info', thumb: s.step === 'crop' ? this.render2canvas() : s.thumb }),
       toPreview: () => { if (this.state.place) this.setState({ step: 'preview' }); },
-      placeQ: s.placeQ, onPlaceQ: (e) => this.setState({ placeQ: e.target.value }),
+      placeQ: s.placeQ, onPlaceQ: (e) => { this.setState({ placeQ: e.target.value }); this.searchPlaces(e.target.value); },
       placeList: list.map((p) => ({ ...p, pick: () => this.setState({ place: p, placeQ: '' }) })),
       placeEmpty: list.length === 0,
       hasPlace: !!pl, noPlace: !pl,
@@ -739,35 +748,26 @@ class Component extends DCLogic {
       clearPlace: () => this.setState({ place: null }),
       locating: s.locating, hasNearby: !!s.nearby && !s.locating,
       nearbyLabel: s.locating ? '현재 위치 확인 중…' : s.nearby ? '근처 장소 다시 찾기' : '현재 위치로 근처 장소 찾기',
-      findNearby: () => {
-        // prototype: pretend the device is in Seongsu-dong, Seoul
-        this.setState({ locating: true });
-        setTimeout(() => this.setState({ locating: false, nearby: [[1, '120m'], [0, '6.1km']] }), 700);
-      },
-      nearby: (s.nearby || []).map(([idx, dist]) => ({ ...this.places[idx], dist: dist, pick: () => this.setState({ place: this.places[idx], placeQ: '' }) })),
+      findNearby: () => this.findNearby(),
+      nearby: (s.nearby || []).map((p) => ({ ...p, pick: () => this.setState({ place: p, placeQ: '' }) })),
       caption: s.caption, captionCount: s.caption.length,
       onCaption: (e) => this.setState({ caption: e.target.value.slice(0, 200) }),
       captionShown: s.caption.trim() || '(글 없이 사진만 올려요)',
       visOpts: Object.keys(visL).map((k) => ({ label: visL[k], checked: s.vis === k ? 'true' : 'false', pick: () => this.setState({ vis: k }) })),
       visLabel: visL[s.vis],
       infoDisabled: !pl,
-      color: this.colors[s.color], handle: '아이디',
+      color: this.colors[s.color], handle: archApi.handle().replace(/^@/, ''),
       today: d.getFullYear() + '/' + pad(d.getMonth() + 1) + '/' + pad(d.getDate()),
       uploading: s.uploading, uploadLabel: s.uploading ? '올리는 중…' : '올리기',
       upload: () => {
         const st = this.state;
         if (!st.place || st.uploading) return;
-        this.setState({ uploading: true });
-        const post = {
-          place: st.place.region + ' · ' + st.place.name, coords: st.place.coords, caption: st.caption.trim(),
-          ratio: this.ratios[st.ratio][0], r: this.ratios[st.ratio][1], color: this.colors[st.color], vis: st.vis,
-          photo: st.thumb, at: Date.now()
-        };
-        try { sessionStorage.setItem('arch.newPost', JSON.stringify(post)); } catch (e) {
-          try { sessionStorage.setItem('arch.newPost', JSON.stringify({ ...post, photo: '' })); } catch (e2) {}
-        }
-        if (this.feedLink) this.feedLink.click();
-        this.setState(this.fresh());
+        if (!archApi.user) { this.setState({ error: '로그인하면 기록을 올릴 수 있어요.' }); return; }
+        this.setState({ uploading: true, error: '' });
+        (st.loc ? Promise.resolve(st.loc) : archApi.locate())
+          .then((coords) => archApi.toJpeg(st.thumb || st.photo).then((blob) => archApi.publishRecord({ blob, caption: st.caption.trim(), visibility: st.vis, place: st.place.raw, coords })))
+          .then(() => { if (this.feedLink) this.feedLink.click(); this.setState(this.fresh()); })
+          .catch((e) => this.setState({ uploading: false, error: '올리지 못했어요: ' + e.message }));
       },
       feedLinkRef: (el) => { this.feedLink = el; }
     };
