@@ -5,6 +5,8 @@
 <title>arch; 프로필 · 모바일</title>
 <meta name="viewport" content="width=390">
 <script src="./shell.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="./arch-api.js"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -1054,6 +1056,7 @@ a.ic-btn[aria-label="설정"]{margin-left:8px}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"other":{"editor":"boolean","default":false},"otherPrivate":{"editor":"boolean","default":false},"myRecordCount":{"editor":"range","default":9,"min":0,"max":30,"step":1},"demoCollections":{"editor":"boolean","default":true},"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
+  __archSub() { if (!this.__unsub && window.archApi) this.__unsub = archApi.onChange(() => this.forceUpdate()); }
   constructor(props) {
     super(props);
     this.colors = ['#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42'];
@@ -1963,6 +1966,7 @@ class Component extends DCLogic {
     };
   }
   renderVals() {
+    this.__archSub();
     this.notifColors = ['#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42'];
     const nv = this.notifVals();
     return { ...this.renderValsBase(), ...this.noticeVals(), ...nv, ...this.dockVals(), ...this.topVals(), ...this.reportVals() };

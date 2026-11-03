@@ -5,6 +5,8 @@
 <title>arch; 첫 화면 티켓 · 데스크톱</title>
 <meta name="viewport" content="width=1280">
 <script src="./shell.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="./arch-api.js"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -263,7 +265,7 @@ button svg,a svg,button svg *,a svg *{stroke-linecap:round!important;stroke-line
 <span aria-hidden="true" style="display: block; height: 1px; background: currentColor; opacity: .35;"></span>
 <a onClick="{{leave}}" role="menuitem" href="SettingsDesktop.dc.html" style="height: 48px; padding: 0 14px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 500; text-decoration: none; border-radius: 999px;">설정<span aria-hidden="true">→</span></a>
 <span aria-hidden="true" style="display: block; height: 1px; background: currentColor; opacity: .35;"></span>
-<a onClick="{{leave}}" role="menuitem" href="TicketDesktop.dc.html" style="height: 48px; padding: 0 14px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 500; text-decoration: none; border-radius: 999px;">로그아웃<span aria-hidden="true">→</span></a>
+<a onClick="{{logout}}" role="menuitem" href="TicketDesktop.dc.html" style="height: 48px; padding: 0 14px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 500; text-decoration: none; border-radius: 999px;">로그아웃<span aria-hidden="true">→</span></a>
 </div>
 </sc-if>
 </div>
@@ -443,6 +445,7 @@ button svg,a svg,button svg *,a svg *{stroke-linecap:round!important;stroke-line
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"ground":{"editor":"color","default":"#111111","options":["#111111","#2B3F7A","#5A5A55"]},"ink":{"editor":"color","default":"#141414","options":["#141414","#2B44A0"]},"spinSeconds":{"editor":"range","default":48,"min":20,"max":90,"step":2,"unit":"s"},"signedIn":{"editor":"boolean","default":false},"$preview":{"width":1280,"height":960}}'>
 class Component extends DCLogic {
+  __archSub() { if (!this.__unsub && window.archApi) this.__unsub = archApi.onChange(() => this.forceUpdate()); }
   constructor(props) {
     super(props);
     this.colors = ['#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42'];
@@ -477,8 +480,8 @@ class Component extends DCLogic {
   pick(id) {
     if (this.state.picked || this.state.mode !== 'picked') return;
     if (id === 'record') { this.setState({ mobileOnly: true }); return; }
-    if (!this.props.signedIn && id === 'mine') { this.openAuth('login'); this.setState({ auth: { ...this.state.auth, note: '로그인하고 이용해 주세요.' } }); return; }
-    try { if (this.props.signedIn) sessionStorage.removeItem('arch.guest'); else sessionStorage.setItem('arch.guest', '1'); } catch (e) {}
+    if (!archSignedIn() && id === 'mine') { this.openAuth('login'); this.setState({ auth: { ...this.state.auth, note: '로그인하고 이용해 주세요.' } }); return; }
+    try { if (archSignedIn()) sessionStorage.removeItem('arch.guest'); else sessionStorage.setItem('arch.guest', '1'); } catch (e) {}
     this.setState({ picked: id });
     this.timers.push(setTimeout(() => this.setState({ tearing: true }), 520));
     this.timers.push(setTimeout(() => {
@@ -512,10 +515,10 @@ class Component extends DCLogic {
     const picked = a.interests || [];
     const resetOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((a.resetEmail || '').trim());
     const idOk = /^[a-z0-9._]{2,20}$/i.test(a.sid.replace(/^@/, ''));
-    const taken = ['minseo.walk', 'doyoon_sea', 'harin.k', 'jiwoo_', 'yuna_', 'seojun.nite'];
+    const taken = [];
     const dup = idOk && taken.includes(a.sid.replace(/^@/, '').toLowerCase());
     const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(a.email.trim());
-    const takenEmails = ['me@archyourview.kr', 'minseo@example.com', 'doyoon@example.com', 'harin@example.com', 'jiwoo@example.com', 'yuna@example.com'];
+    const takenEmails = [];
     const emailDup = emailOk && takenEmails.includes(a.email.trim().toLowerCase());
     let hint = '';
     if (a.sid && !idOk) hint = '아이디는 영문·숫자·._ 2–20자로 만들어 주세요.';
@@ -554,14 +557,13 @@ class Component extends DCLogic {
       closeAuth: () => this.setState({ auth: null }),
       onAuthId: val('id'), onAuthPw: val('pw'), onAuthAuto: chk('auto'),
       onAuthEmail: val('email'), onAuthSid: val('sid'), onAuthSpw: val('spw'), onAuthSpw2: val('spw2'),
-      submitLogin: (e) => { e.preventDefault(); const b = this.state.auth; if (b.id.trim() && b.pw.length >= 6) this.enterFeed(); },
-      submitSignup: (e) => { e.preventDefault(); if (!this.authVals().auth.signupDisabled) this.setAuth({ tab: 'setup', setupName: '', interests: [] }); },
+      submitLogin: (e) => { e.preventDefault(); const b = this.state.auth; if (!(b.id.trim() && b.pw.length >= 6)) return; const fail = (err) => this.setState({ auth: { ...this.state.auth, note: (err && err.message) || '다시 시도해 주세요.' } }); archApi.signIn(b.id, b.pw, b.auto).then(() => this.enterFeed(), fail); },
+      submitSignup: (e) => { e.preventDefault(); if (this.authVals().auth.signupDisabled) return; const b = this.state.auth; const fail = (err) => this.setState({ auth: { ...this.state.auth, note: (err && err.message) || '다시 시도해 주세요.' } }); archApi.signUp(b.email, b.spw).then((d) => { if (d.session) this.setAuth({ tab: 'setup', setupName: '', interests: [] }); else this.setState({ auth: { ...this.state.auth, tab: 'login', note: '인증 메일을 확인한 뒤 로그인하면 프로필 설정이 시작돼요.' } }); }, fail); },
       submitSetup: (e) => {
         e.preventDefault();
         const b = this.state.auth;
         if (!(b.setupName || '').trim()) return;
-        try { localStorage.setItem('arch.profile', JSON.stringify({ name: b.setupName.trim(), id: b.sid.replace(/^@/, '').toLowerCase(), interests: b.interests || [] })); } catch (err) {}
-        this.enterFeed();
+        archApi.saveSetup({ name: b.setupName.trim(), username: b.sid.replace(/^@/, '').toLowerCase(), interests: b.interests || [] }).then(() => this.enterFeed(), (err) => this.setState({ auth: { ...this.state.auth, note: err.message } }));
       },
       skipSetup: () => {
         const b = this.state.auth;
@@ -570,14 +572,14 @@ class Component extends DCLogic {
       },
       onSetupName: (e) => this.setAuth({ setupName: e.target.value.slice(0, 12) }),
       onResetEmail: (e) => this.setAuth({ resetEmail: e.target.value }),
-      submitReset: (e) => { e.preventDefault(); if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((this.state.auth.resetEmail || '').trim())) this.setAuth({ resetSent: true }); },
+      submitReset: (e) => { e.preventDefault(); const em = (this.state.auth.resetEmail || '').trim(); if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) return; const fail = (err) => this.setState({ auth: { ...this.state.auth, note: (err && err.message) || '다시 시도해 주세요.' } }); archApi.resetPassword(em).then(() => this.setAuth({ resetSent: true }), fail); },
       backToLogin: () => this.setAuth({ tab: 'login', resetSent: false }),
       findPw: () => this.setAuth({ tab: 'reset', resetEmail: '', resetSent: false }),
-      kakao: () => this.setState({ auth: { ...this.state.auth, note: '카카오 로그인은 곧 연결될 예정이에요.' } })
+      kakao: () => archApi.kakao().catch((err) => this.setState({ auth: { ...this.state.auth, note: err.message } }))
     };
   }
   unreadTicker() {
-    if (!this.props.signedIn) return '로그인하면 새 알림을 여기서 볼 수 있어요     •     ';
+    if (!archSignedIn()) return '로그인하면 새 알림을 여기서 볼 수 있어요     •     ';
     let read = [];
     try { read = JSON.parse(localStorage.getItem('arch.notifRead') || '[]') || []; } catch (e) {}
     const items = [
@@ -624,11 +626,12 @@ class Component extends DCLogic {
     try {
       if (sessionStorage.getItem('arch.openAuth') === '1') {
         sessionStorage.removeItem('arch.openAuth');
-        if (!this.props.signedIn) this.state.auth = { tab: 'login', id: '', pw: '', auto: true, email: '', sid: '', spw: '', spw2: '', note: '로그인하면 기록하고 저장할 수 있어요.' };
+        if (!archSignedIn()) this.state.auth = { tab: 'login', id: '', pw: '', auto: true, email: '', sid: '', spw: '', spw2: '', note: '로그인하면 기록하고 저장할 수 있어요.' };
       }
     } catch (e) {}
   }
   renderVals() {
+    this.__archSub();
     this.guestCheck();
     const ink = this.props.ink ?? '#141414';
     const defs = [
@@ -683,15 +686,16 @@ class Component extends DCLogic {
       acctOpen: !!s.acctOpen,
       acctExpanded: s.acctOpen ? 'true' : 'false',
       acctChevron: s.acctOpen ? 0 : 180,
-      goAbout: () => { try { sessionStorage.setItem('arch.aboutFrom', this.props.signedIn ? 'in' : 'out'); } catch (e) {} },
+      goAbout: () => { try { sessionStorage.setItem('arch.aboutFrom', archSignedIn() ? 'in' : 'out'); } catch (e) {} },
       leave: () => this.resume(),
+      logout: (e) => { e.preventDefault(); archApi.signOut().then(() => location.reload()); },
       toggleAcct: () => this.setState({ acctOpen: !this.state.acctOpen }),
       onRootDown: (e) => {
       if (this.state.acctOpen && !(e.target && e.target.closest && e.target.closest('[data-acct]'))) this.setState({ acctOpen: false });
       },
-      signedIn: !!this.props.signedIn,
-      signedOut: !this.props.signedIn,
-      loginText: this.props.signedIn ? '@아이디' : '로그인/회원가입',
+      signedIn: !!archSignedIn(),
+      signedOut: !archSignedIn(),
+      loginText: archSignedIn() ? archApi.handle() : '로그인/회원가입',
       profileLinkRef: (el) => { this.profileLink = el; },
       curationLinkRef: (el) => { this.curationLink = el; },
       mobileOnly: !!this.state.mobileOnly,

@@ -5,6 +5,8 @@
 <title>arch; 비공개 계정 프로필 · 데스크톱</title>
 <meta name="viewport" content="width=1280">
 <script src="./shell.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="./arch-api.js"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -18,7 +20,9 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":960}}'>
 class Component extends DCLogic {
+  __archSub() { if (!this.__unsub && window.archApi) this.__unsub = archApi.onChange(() => this.forceUpdate()); }
   renderVals() {
+    this.__archSub();
     return { yes: true };
   }
 }

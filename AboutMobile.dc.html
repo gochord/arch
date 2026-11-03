@@ -5,6 +5,8 @@
 <title>arch; 어바웃 · 모바일</title>
 <meta name="viewport" content="width=390">
 <script src="./shell.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="./arch-api.js"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -174,7 +176,9 @@ button,a{-webkit-tap-highlight-color:transparent}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
+  __archSub() { if (!this.__unsub && window.archApi) this.__unsub = archApi.onChange(() => this.forceUpdate()); }
   renderVals() {
+    this.__archSub();
     // back to whichever home ticket (signed in or out) opened this page
     let signedIn = false;
     try { signedIn = sessionStorage.getItem('arch.aboutFrom') === 'in'; } catch (e) {}
