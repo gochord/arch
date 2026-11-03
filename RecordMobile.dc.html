@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <title>arch; 기록하기 · 모바일</title>
 <meta name="viewport" content="width=390">
-<script src="./shell.js?v=7"></script>
+<script src="./shell.js?v=8"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="./arch-api.js?v=4"></script>
+<script src="./arch-api.js?v=8"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -289,7 +289,7 @@ a.ic-btn[aria-label="설정"]{margin-left:8px}
 </sc-if>
 </div>
 <div>
-<span style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; font-weight: 700;">글<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-weight: 400; font-size: 11px; color: rgba(247,249,233,.72); font-variant-numeric: tabular-nums;">{{captionCount}}/200</span></span>
+<span style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; font-weight: 700;">글<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-weight: 400; font-size: 11px; color: rgba(247,249,233,.72); font-variant-numeric: tabular-nums;">{{captionCount}}/60</span></span>
 <textarea class="rc-field" aria-label="기록 글" placeholder="이 장소에서 느낀 것을 짧게 남겨 보세요." value="{{caption}}" onChange="{{onCaption}}"></textarea>
 </div>
 <div>
@@ -534,20 +534,13 @@ class Component extends DCLogic {
     } catch (e) {}
   }
   followsMe(h) {
-    return h === 'jiwoo_' || (h === 'seojun.nite' && this.notifStore('arch.notifReq') === 'accepted');
+    return !!(this.followers && this.followers.has(h));
   }
   setViewUser(h) {
     try { sessionStorage.setItem('arch.viewUser', h); } catch (e) {}
   }
   notifData() {
-    return [
-      { id: 'a1', group: '오늘', type: 'like', who: '도윤', handle: 'doyoon_sea', time: '5분 전', rec: 1, place: '부산 · 영도', color: '#C8FF42' },
-      { id: 'a2', group: '오늘', type: 'comment', who: '민서', handle: 'minseo.walk', time: '32분 전', rec: 0, place: '서울 · 북촌', text: '빛이 정말 예쁘게 들어오네요. 저도 가 볼래요!', color: '#C8FF42' },
-      { id: 'a3', group: '오늘', type: 'request', who: '서준', handle: 'seojun.nite', time: '1시간 전', color: '#C8FF42' },
-      { id: 'a4', group: '오늘', type: 'follow', who: '지우', handle: 'jiwoo_', time: '3시간 전', color: '#C8FF42' },
-      { id: 'a5', group: '이번 주', type: 'like', who: '유나', handle: 'yuna_', others: 2, time: '2일 전', rec: 4, place: '강릉 · 주문진', color: '#C8FF42' },
-      { id: 'a6', group: '이번 주', type: 'comment', who: '하린', handle: 'harin.k', time: '4일 전', rec: 3, place: '전주 · 남부시장', text: '여기 아침 공기가 진짜 좋죠.', color: '#C8FF42' }
-    ];
+    return (window.archApi && archApi.notifs) || [];
   }
   notifStore(key, val) {
     try {
@@ -563,31 +556,32 @@ class Component extends DCLogic {
       this.notifReq = this.notifStore('arch.notifReq') || '';
       
     }
-    const read = this.notifRead;
+    const read = ((window.archApi && archApi.notifs) || []).filter((n) => n.read).map((n) => n.id).concat(this.notifRead);
     const data = this.notifData();
     const recColor = (k) => this.notifColors[(k * 5 + 1) % 8];
     const unreadN = data.filter((n) => !read.includes(n.id)).length;
     const mark = (id) => {
       if (this.notifRead.includes(id)) return;
       this.notifRead = this.notifRead.concat([id]);
+      if (window.archApi) archApi.markNotifs([id]);
       this.notifStore('arch.notifRead', this.notifRead);
       this.setState({ notifTick: (this.state.notifTick || 0) + 1 });
     };
-    const profileHref = (h) => (h === 'harin.k' ? 'OtherProfilePrivateMobile.dc.html' : 'OtherProfileMobile.dc.html');
+    const profileHref = (h, uid) => 'OtherProfileMobile.dc.html?u=' + encodeURIComponent(uid || '');
     const rows = data.map((n, k) => {
       const unread = !read.includes(n.id);
       const isRec = n.type === 'like' || n.type === 'comment';
       const msg = n.type === 'like' ? (n.others ? '님 외 ' + n.others + '명이 내 기록을 좋아해요.' : '님이 내 기록을 좋아해요.')
         : n.type === 'comment' ? '님이 내 기록에 댓글을 남겼어요.'
         : n.type === 'follow' ? '님이 나를 팔로우하기 시작했어요.'
-        : '님이 팔로우를 요청했어요.';
+        : n.type === 'support' ? ' 문의에 답변이 도착했어요.' : '님이 팔로우를 요청했어요.';
       const req = n.type === 'request' ? this.notifReq : '';
       return {
         ...n, msg: msg, cls: unread ? 'nt-row unread' : 'nt-row', unread: unread, initial: n.who[0],
         first: k === 0 || data[k - 1].group !== n.group,
         sub: n.type === 'comment' ? '“' + n.text + '”' : isRec ? '⌖ ' + n.place : '@' + n.handle,
         hasThumb: isRec, thumb: isRec ? recColor(n.rec) : '',
-        href: isRec ? 'ProfileMobile.dc.html' : profileHref(n.handle),
+        href: isRec ? 'ProfileMobile.dc.html' : profileHref(n.handle, n.userId),
         aria: n.who + msg + ' ' + n.time,
         go: (e) => {
           mark(n.id);
@@ -600,11 +594,11 @@ class Component extends DCLogic {
         },
         isFollow: n.type === 'follow', isReq: n.type === 'request' && !req, reqDone: n.type === 'request' && !!req,
         reqText: req === 'accepted' ? '요청을 수락했어요' : '요청을 거절했어요',
-        backLabel: this.relOf('jiwoo_') === true ? '팔로잉' : '맞팔로우',
-        backBg: this.relOf('jiwoo_') === true ? 'rgba(247,249,233,.18)' : '#141414', backFg: this.relOf('jiwoo_') === true ? '#F7F9E9' : '#C8FF42',
-        backPressed: this.relOf('jiwoo_') === true ? 'true' : 'false',
-        toggleBack: () => { this.setRel('jiwoo_', this.relOf('jiwoo_') !== true); mark(n.id); },
-        accept: () => { this.notifReq = 'accepted'; this.notifStore('arch.notifReq', 'accepted'); this.setRel('seojun.nite', this.relOf('seojun.nite')); mark(n.id); },
+        backLabel: this.relOf(n.handle) === true ? '팔로잉' : '맞팔로우',
+        backBg: this.relOf(n.handle) === true ? 'rgba(247,249,233,.18)' : '#141414', backFg: this.relOf(n.handle) === true ? '#F7F9E9' : '#C8FF42',
+        backPressed: this.relOf(n.handle) === true ? 'true' : 'false',
+        toggleBack: () => { const on = this.relOf(n.handle) === true; this.setRel(n.handle, !on); mark(n.id); if (window.archApi && n.userId) archApi.toggleFollow(n.userId, on).catch(() => this.setRel(n.handle, on)); },
+        accept: () => { this.notifReq = 'accepted'; this.notifStore('arch.notifReq', 'accepted'); this.setRel(n.handle, this.relOf(n.handle)); mark(n.id); },
         decline: () => { this.notifReq = 'declined'; this.notifStore('arch.notifReq', 'declined'); mark(n.id); }
       };
     });
@@ -618,6 +612,7 @@ class Component extends DCLogic {
       closeNotif: () => this.setState({ notifOpen: false }),
       readAll: () => {
         this.notifRead = data.map((n) => n.id);
+        if (window.archApi) archApi.markNotifs(data.map((n) => n.id));
         this.notifStore('arch.notifRead', this.notifRead);
         this.setState({ notifTick: (this.state.notifTick || 0) + 1 });
       },
@@ -751,7 +746,7 @@ class Component extends DCLogic {
       findNearby: () => this.findNearby(),
       nearby: (s.nearby || []).map((p) => ({ ...p, pick: () => this.setState({ place: p, placeQ: '' }) })),
       caption: s.caption, captionCount: s.caption.length,
-      onCaption: (e) => this.setState({ caption: e.target.value.slice(0, 200) }),
+      onCaption: (e) => this.setState({ caption: e.target.value.slice(0, 60) }),
       captionShown: s.caption.trim() || '(글 없이 사진만 올려요)',
       visOpts: Object.keys(visL).map((k) => ({ label: visL[k], checked: s.vis === k ? 'true' : 'false', pick: () => this.setState({ vis: k }) })),
       visLabel: visL[s.vis],

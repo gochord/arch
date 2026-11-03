@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <title>arch; 피드 · 데스크톱</title>
 <meta name="viewport" content="width=1280">
-<script src="./shell.js?v=7"></script>
+<script src="./shell.js?v=8"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="./arch-api.js?v=4"></script>
+<script src="./arch-api.js?v=8"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -770,6 +770,11 @@ class Component extends DCLogic {
       this.live = rows.map((r) => ({ id: r.id, userId: r.userId, name: r.mine ? '나' : r.name, handle: r.handle, time: r.time, ago: (Date.now() - new Date(r.createdAt)) / 60000, caption: r.caption, place: r.place, coords: r.address, following: r.following, likes: r.likes - (r.liked ? 1 : 0), photo: r.photo, mine: r.mine }));
       const liked = {}; rows.forEach((r, i) => { if (r.liked) liked[i] = true; });
       this.setState({ liked, follow: {}, comments: {} });
+      Promise.all([archApi.saves('post'), archApi.saves('place')]).then(([sp, pl]) => {
+        const ids = new Set(sp.map((x) => x.post_id)), saved = {};
+        (this.live || []).forEach((p, i) => { if (ids.has(p.id)) saved[i] = true; });
+        this.setState({ saved, savedPlaces: pl.map((x) => x.place_id) });
+      });
     }).catch((e) => console.error('[feed]', e));
     this.__unsub = archApi.onChange(load);
     load();
@@ -783,13 +788,7 @@ class Component extends DCLogic {
   constructor(props) {
     super(props);
     this.colors = ['#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42'];
-    this.samples = [
-      { name: '민서', handle: 'minseo.walk', time: '방금 전', caption: '바람이 불 때마다 나뭇잎 사이로 빛이 흔들렸다.', place: '서울 · 북촌', coords: '37° 34′ N, 126° 59′ E', following: true, likes: 18 },
-      { name: '도윤', handle: 'doyoon_sea', time: '4분 전', caption: '오늘은 바다가 유난히 가까이 느껴지는 오후.', place: '부산 · 영도', coords: '35° 05′ N, 129° 04′ E', following: false, likes: 31 },
-      { name: '하린', handle: 'harin.k', time: '11분 전', caption: '길을 잘못 들어서 만난 조용한 담장. 오래 기억하고 싶다.', place: '경주 · 황남동', coords: '35° 50′ N, 129° 13′ E', following: true, likes: 12 },
-      { name: '지우', handle: 'jiwoo_', time: '19분 전', caption: '시장 문이 열리기 전, 가장 고요한 골목의 온도.', place: '전주 · 남부시장', coords: '35° 49′ N, 127° 08′ E', following: false, likes: 24 },
-      { name: '유나', handle: 'yuna_', time: '27분 전', caption: '창가에 앉아 아무것도 하지 않았던 한 시간.', place: '강릉 · 주문진', coords: '37° 54′ N, 128° 49′ E', following: true, likes: 9 }
-    ];
+    this.samples = [];
     this.placeInfo = {
       '서울 · 북촌': { category: '여행 > 관광,명소 > 한옥마을', address: '서울 종로구 계동' },
       '부산 · 영도': { category: '여행 > 관광,명소 > 섬', address: '부산 영도구' },
@@ -811,7 +810,7 @@ class Component extends DCLogic {
       showTop: false,
       open: null, draft: '', comments: {}, reported: {},
       searchOpen: false, sq: '', stab: 'all', recent: this.loadRecent(),
-      placeOpen: null, savedPlaces: ['서울 · 북촌', '부산 · 영도', '강릉 · 주문진']
+      placeOpen: null, savedPlaces: []
     };
     this.onResize = () => this.setState({ vw: window.innerWidth });
   }
@@ -845,7 +844,9 @@ class Component extends DCLogic {
         saveLabel: saved ? name + ' 저장 취소' : name + ' 저장',
         toggleSave: () => {
           const cur = this.state.savedPlaces;
-          this.setState({ savedPlaces: cur.includes(full) ? cur.filter((x) => x !== full) : cur.concat([full]) });
+          const on = cur.includes(full);
+          this.setState({ savedPlaces: on ? cur.filter((x) => x !== full) : cur.concat([full]) });
+          (on ? archApi.unsave('place', full) : archApi.save('place', full, { title: full, place: full, address: info.address })).catch(() => this.setState({ savedPlaces: cur }));
         },
         count: recs.length, noRecs: recs.length === 0, recs: recs,
         noPhotos: recs.length === 0,
@@ -858,7 +859,7 @@ class Component extends DCLogic {
       const v = JSON.parse(localStorage.getItem('arch.recent') || 'null');
       if (Array.isArray(v)) return v.slice(0, 10);
     } catch (e) {}
-    return ['영도', '골목', '@minseo.walk'];
+    return [];
   }
   saveRecent(list) {
     this.setState({ recent: list });
@@ -876,20 +877,13 @@ class Component extends DCLogic {
     const ql = q.toLowerCase();
     const qh = ql.replace(/^@/, '');
     const SUF = 'Desktop';
-    const people = [
-      { name: '민서', handle: 'minseo.walk', priv: false },
-      { name: '도윤', handle: 'doyoon_sea', priv: false },
-      { name: '하린', handle: 'harin.k', priv: true },
-      { name: '지우', handle: 'jiwoo_', priv: false },
-      { name: '유나', handle: 'yuna_', priv: false },
-      { name: '서준', handle: 'seojun.nite', priv: false }
-    ];
-    const colls = [
-      { title: '바다 가는 길', desc: '파도 소리가 들리던 곳들.', handle: 'doyoon_sea', count: 2, color: '#C8FF42' },
-      { title: '영도의 오후', desc: '', handle: 'doyoon_sea', count: 1, color: '#C8FF42' },
-      { title: '다시 갈 곳', desc: '', handle: 'doyoon_sea', count: 3, color: '#C8FF42' }
-    ];
-    const profileHref = (h) => (h === 'harin.k' ? 'OtherProfilePrivate' : 'OtherProfile') + SUF + '.dc.html';
+    if (q && this.__sq !== q) {
+      this.__sq = q;
+      archApi.search(q).then((r) => { if (this.__sq !== q) return; this.searchPeople = r.people.map((u) => ({ id: u.id, name: u.nickname || '여행자', handle: u.username || '', priv: !!u.is_private })); this.forceUpdate(); });
+    }
+    const people = this.searchPeople || [];
+    const colls = [];
+    const profileHref = (h, uid) => 'OtherProfileDesktop.dc.html?u=' + encodeURIComponent(uid || '');
     const has = (txt) => txt.toLowerCase().includes(ql);
     const postHits = posts.map((p, i) => ({ p, i })).filter(({ p }) => has(p.caption + ' ' + p.place + ' ' + p.name + ' @' + p.handle));
     const placeMap = {};
@@ -939,7 +933,7 @@ class Component extends DCLogic {
         return {
           name: u.name, handle: u.handle, initial: u.name[0], lock: u.priv ? ' 🔒' : '',
           color: this.colors[(people.indexOf(u) * 5 + 2) % this.colors.length],
-          meta: n ? '기록 ' + n + '개' : '', href: profileHref(u.handle), aria: u.name + ' 프로필로 이동',
+          meta: n ? '기록 ' + n + '개' : '', href: profileHref(u.handle, u.id), aria: u.name + ' 프로필로 이동',
           go: () => { this.addRecent('@' + u.handle); this.setFrom('feed'); this.setViewUser(u.handle); }
         };
       }),
@@ -964,13 +958,7 @@ class Component extends DCLogic {
     } catch (e) { return null; }
   }
   makePosts(n) {
-    // real records first, then the canvas's sample records (no photo) below them
-    if (window.archApi && archApi.sb && !this.__sampling) {
-      this.__sampling = true;
-      const extra = this.makePosts(n).filter((p) => !p.mine);
-      this.__sampling = false;
-      return (this.live || []).concat(extra);
-    }
+    if (window.archApi && archApi.sb) return this.live || [];
     const out = [];
     const base = this.samples.length;
     for (let i = 0; i < n; i++) {
@@ -1041,7 +1029,7 @@ class Component extends DCLogic {
       reportWeight: reported ? 700 : 400,
       reportFill: reported ? '#141414' : 'none',
       reportText: reported ? '신고됨' : '신고',
-      toggleReport: () => { if (!reported) this.setState({ rp: { reason: '', note: '', done: () => this.setState({ reported: { ...this.state.reported, [i]: true } }) } }); },
+      toggleReport: () => { if (!reported) this.setState({ rp: { reason: '', note: '', done: (reason, note) => { this.setState({ reported: { ...this.state.reported, [i]: true } }); if (p.id) archApi.report(p, reason, note).catch((err) => this.feedToastShow('신고하지 못했어요: ' + err.message)); } } }); },
       followLabel: following ? '팔로잉' : '팔로우',
       followPressed: following ? 'true' : 'false',
       followBg: following ? 'rgba(20,20,20,.13)' : '#141414',
@@ -1083,6 +1071,7 @@ class Component extends DCLogic {
     next[i] = !next[i];
     this.setState({ [key]: next, [flag]: next[i] ? i : null });
     const p = this.live && this.live[i];
+    if (p && key === 'saved') (next[i] ? archApi.save('post', p.id) : archApi.unsave('post', p.id)).catch(() => { const back = { ...this.state.saved }; back[i] = !next[i]; this.setState({ saved: back }); });
     if (p && key === 'liked') archApi.toggleLike(p.id, !next[i]).catch(() => { const back = { ...this.state.liked }; back[i] = !next[i]; this.setState({ liked: back }); });
   }
   setFrom(v) {
@@ -1125,20 +1114,13 @@ class Component extends DCLogic {
     } catch (e) {}
   }
   followsMe(h) {
-    return h === 'jiwoo_' || (h === 'seojun.nite' && this.notifStore('arch.notifReq') === 'accepted');
+    return !!(this.followers && this.followers.has(h));
   }
   setViewUser(h) {
     try { sessionStorage.setItem('arch.viewUser', h); } catch (e) {}
   }
   notifData() {
-    return [
-      { id: 'a1', group: '오늘', type: 'like', who: '도윤', handle: 'doyoon_sea', time: '5분 전', rec: 1, place: '부산 · 영도', color: '#C8FF42' },
-      { id: 'a2', group: '오늘', type: 'comment', who: '민서', handle: 'minseo.walk', time: '32분 전', rec: 0, place: '서울 · 북촌', text: '빛이 정말 예쁘게 들어오네요. 저도 가 볼래요!', color: '#C8FF42' },
-      { id: 'a3', group: '오늘', type: 'request', who: '서준', handle: 'seojun.nite', time: '1시간 전', color: '#C8FF42' },
-      { id: 'a4', group: '오늘', type: 'follow', who: '지우', handle: 'jiwoo_', time: '3시간 전', color: '#C8FF42' },
-      { id: 'a5', group: '이번 주', type: 'like', who: '유나', handle: 'yuna_', others: 2, time: '2일 전', rec: 4, place: '강릉 · 주문진', color: '#C8FF42' },
-      { id: 'a6', group: '이번 주', type: 'comment', who: '하린', handle: 'harin.k', time: '4일 전', rec: 3, place: '전주 · 남부시장', text: '여기 아침 공기가 진짜 좋죠.', color: '#C8FF42' }
-    ];
+    return (window.archApi && archApi.notifs) || [];
   }
   notifStore(key, val) {
     try {
@@ -1154,31 +1136,32 @@ class Component extends DCLogic {
       this.notifReq = this.notifStore('arch.notifReq') || '';
       
     }
-    const read = this.notifRead;
+    const read = ((window.archApi && archApi.notifs) || []).filter((n) => n.read).map((n) => n.id).concat(this.notifRead);
     const data = this.notifData();
     const recColor = (k) => this.notifColors[(k * 5 + 1) % 8];
     const unreadN = data.filter((n) => !read.includes(n.id)).length;
     const mark = (id) => {
       if (this.notifRead.includes(id)) return;
       this.notifRead = this.notifRead.concat([id]);
+      if (window.archApi) archApi.markNotifs([id]);
       this.notifStore('arch.notifRead', this.notifRead);
       this.setState({ notifTick: (this.state.notifTick || 0) + 1 });
     };
-    const profileHref = (h) => (h === 'harin.k' ? 'OtherProfilePrivateDesktop.dc.html' : 'OtherProfileDesktop.dc.html?u=' + encodeURIComponent((typeof p !== 'undefined' && p && p.userId) || ''));
+    const profileHref = (h, uid) => 'OtherProfileDesktop.dc.html?u=' + encodeURIComponent(uid || '');
     const rows = data.map((n, k) => {
       const unread = !read.includes(n.id);
       const isRec = n.type === 'like' || n.type === 'comment';
       const msg = n.type === 'like' ? (n.others ? '님 외 ' + n.others + '명이 내 기록을 좋아해요.' : '님이 내 기록을 좋아해요.')
         : n.type === 'comment' ? '님이 내 기록에 댓글을 남겼어요.'
         : n.type === 'follow' ? '님이 나를 팔로우하기 시작했어요.'
-        : '님이 팔로우를 요청했어요.';
+        : n.type === 'support' ? ' 문의에 답변이 도착했어요.' : '님이 팔로우를 요청했어요.';
       const req = n.type === 'request' ? this.notifReq : '';
       return {
         ...n, msg: msg, cls: unread ? 'nt-row unread' : 'nt-row', unread: unread, initial: n.who[0],
         first: k === 0 || data[k - 1].group !== n.group,
         sub: n.type === 'comment' ? '“' + n.text + '”' : isRec ? '⌖ ' + n.place : '@' + n.handle,
         hasThumb: isRec, thumb: isRec ? recColor(n.rec) : '',
-        href: isRec ? 'ProfileDesktop.dc.html' : profileHref(n.handle),
+        href: isRec ? 'ProfileDesktop.dc.html' : profileHref(n.handle, n.userId),
         aria: n.who + msg + ' ' + n.time,
         go: (e) => {
           mark(n.id);
@@ -1191,11 +1174,11 @@ class Component extends DCLogic {
         },
         isFollow: n.type === 'follow', isReq: n.type === 'request' && !req, reqDone: n.type === 'request' && !!req,
         reqText: req === 'accepted' ? '요청을 수락했어요' : '요청을 거절했어요',
-        backLabel: this.relOf('jiwoo_') === true ? '팔로잉' : '맞팔로우',
-        backBg: this.relOf('jiwoo_') === true ? 'rgba(247,249,233,.18)' : '#141414', backFg: this.relOf('jiwoo_') === true ? '#F7F9E9' : '#C8FF42',
-        backPressed: this.relOf('jiwoo_') === true ? 'true' : 'false',
-        toggleBack: () => { this.setRel('jiwoo_', this.relOf('jiwoo_') !== true); mark(n.id); },
-        accept: () => { this.notifReq = 'accepted'; this.notifStore('arch.notifReq', 'accepted'); this.setRel('seojun.nite', this.relOf('seojun.nite')); mark(n.id); },
+        backLabel: this.relOf(n.handle) === true ? '팔로잉' : '맞팔로우',
+        backBg: this.relOf(n.handle) === true ? 'rgba(247,249,233,.18)' : '#141414', backFg: this.relOf(n.handle) === true ? '#F7F9E9' : '#C8FF42',
+        backPressed: this.relOf(n.handle) === true ? 'true' : 'false',
+        toggleBack: () => { const on = this.relOf(n.handle) === true; this.setRel(n.handle, !on); mark(n.id); if (window.archApi && n.userId) archApi.toggleFollow(n.userId, on).catch(() => this.setRel(n.handle, on)); },
+        accept: () => { this.notifReq = 'accepted'; this.notifStore('arch.notifReq', 'accepted'); this.setRel(n.handle, this.relOf(n.handle)); mark(n.id); },
         decline: () => { this.notifReq = 'declined'; this.notifStore('arch.notifReq', 'declined'); mark(n.id); }
       };
     });
@@ -1209,6 +1192,7 @@ class Component extends DCLogic {
       closeNotif: () => this.setState({ notifOpen: false }),
       readAll: () => {
         this.notifRead = data.map((n) => n.id);
+        if (window.archApi) archApi.markNotifs(data.map((n) => n.id));
         this.notifStore('arch.notifRead', this.notifRead);
         this.setState({ notifTick: (this.state.notifTick || 0) + 1 });
       },
@@ -1264,10 +1248,10 @@ class Component extends DCLogic {
     const picked = a.interests || [];
     const resetOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((a.resetEmail || '').trim());
     const idOk = /^[a-z0-9._]{2,20}$/i.test(a.sid.replace(/^@/, ''));
-    const taken = ['minseo.walk', 'doyoon_sea', 'harin.k', 'jiwoo_', 'yuna_', 'seojun.nite'];
+    const taken = [];
     const dup = idOk && taken.includes(a.sid.replace(/^@/, '').toLowerCase());
     const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(a.email.trim());
-    const takenEmails = ['me@archyourview.kr', 'minseo@example.com', 'doyoon@example.com', 'harin@example.com', 'jiwoo@example.com', 'yuna@example.com'];
+    const takenEmails = [];
     const emailDup = emailOk && takenEmails.includes(a.email.trim().toLowerCase());
     let hint = '';
     if (a.sid && !idOk) hint = '아이디는 영문·숫자·._ 2–20자로 만들어 주세요.';
@@ -1306,14 +1290,13 @@ class Component extends DCLogic {
       closeAuth: () => this.setState({ auth: null }),
       onAuthId: val('id'), onAuthPw: val('pw'), onAuthAuto: chk('auto'),
       onAuthEmail: val('email'), onAuthSid: val('sid'), onAuthSpw: val('spw'), onAuthSpw2: val('spw2'),
-      submitLogin: (e) => { e.preventDefault(); const b = this.state.auth; if (b.id.trim() && b.pw.length >= 6) this.authDone(); },
-      submitSignup: (e) => { e.preventDefault(); if (!this.authVals().auth.signupDisabled) this.setAuth({ tab: 'setup', setupName: '', interests: [] }); },
+      submitLogin: (e) => { e.preventDefault(); const b = this.state.auth; if (!(b.id.trim() && b.pw.length >= 6)) return; const fail = (err) => this.setState({ auth: { ...this.state.auth, note: (err && err.message) || '다시 시도해 주세요.' } }); archApi.signIn(b.id, b.pw, b.auto).then(() => this.authDone(), fail); },
+      submitSignup: (e) => { e.preventDefault(); if (this.authVals().auth.signupDisabled) return; const b = this.state.auth; const fail = (err) => this.setState({ auth: { ...this.state.auth, note: (err && err.message) || '다시 시도해 주세요.' } }); archApi.signUp(b.email, b.spw).then((d) => { if (d.session) this.setAuth({ tab: 'setup', setupName: '', interests: [] }); else this.setState({ auth: { ...this.state.auth, tab: 'login', note: '인증 메일을 확인한 뒤 로그인하면 프로필 설정이 시작돼요.' } }); }, fail); },
       submitSetup: (e) => {
         e.preventDefault();
         const b = this.state.auth;
         if (!(b.setupName || '').trim()) return;
-        try { localStorage.setItem('arch.profile', JSON.stringify({ name: b.setupName.trim(), id: b.sid.replace(/^@/, '').toLowerCase(), interests: b.interests || [] })); } catch (err) {}
-        this.authDone();
+        archApi.saveSetup({ name: b.setupName.trim(), username: b.sid.replace(/^@/, '').toLowerCase(), interests: b.interests || [] }).then(() => this.authDone(), (err) => this.setState({ auth: { ...this.state.auth, note: err.message } }));
       },
       skipSetup: () => {
         const b = this.state.auth;
@@ -1322,12 +1305,12 @@ class Component extends DCLogic {
       },
       onSetupName: (e) => this.setAuth({ setupName: e.target.value.slice(0, 12) }),
       onResetEmail: (e) => this.setAuth({ resetEmail: e.target.value }),
-      submitReset: (e) => { e.preventDefault(); if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((this.state.auth.resetEmail || '').trim())) this.setAuth({ resetSent: true }); },
+      submitReset: (e) => { e.preventDefault(); const em = (this.state.auth.resetEmail || '').trim(); if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) return; const fail = (err) => this.setState({ auth: { ...this.state.auth, note: (err && err.message) || '다시 시도해 주세요.' } }); archApi.resetPassword(em).then(() => this.setAuth({ resetSent: true }), fail); },
       backToLogin: () => this.setAuth({ tab: 'login', resetSent: false }),
       findPw: () => this.setAuth({ tab: 'reset', resetEmail: '', resetSent: false }),
       openTerms: () => this.setAuth({ note: '이용약관은 설정 › 문의하기에서 볼 수 있어요.' }),
       openPrivacy: () => this.setAuth({ note: '개인정보 처리방침은 설정 › 문의하기에서 볼 수 있어요.' }),
-      kakao: () => this.setState({ auth: { ...this.state.auth, note: '카카오 로그인은 곧 연결될 예정이에요.' } })
+      kakao: () => archApi.kakao().catch((err) => this.setState({ auth: { ...this.state.auth, note: err.message } }))
     };
   }
   authDone() {
@@ -1349,7 +1332,7 @@ class Component extends DCLogic {
         const cur = this.state.rp;
         if (!cur || !cur.reason) return;
         const next = { ...cur, sent: true };
-        if (cur.done) cur.done();
+        if (cur.done) cur.done(cur.reason, cur.note);
         this.setState({ rp: next });
       },
       rpClose: () => this.setState({ rp: null })

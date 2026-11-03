@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <title>arch; 프로필 · 데스크톱</title>
 <meta name="viewport" content="width=1280">
-<script src="./shell.js?v=7"></script>
+<script src="./shell.js?v=8"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="./arch-api.js?v=4"></script>
+<script src="./arch-api.js?v=8"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -1078,6 +1078,8 @@ class Component extends DCLogic {
     this.__loadedFor = uid + ':' + !!archApi.user;
     Promise.all([other ? archApi.profileById(uid) : Promise.resolve(archApi.profile), archApi.userPosts(uid), archApi.people(uid), archApi.collections(uid), other ? archApi.isFollowing(uid) : false]).then(([pr, posts, people, colls, fol]) => {
       if (!pr) return;
+      if (archApi.user) archApi.blocks().then((b) => { this.liveBlocks = b; this.forceUpdate(); });
+      if (archApi.user) archApi.people(archApi.user.id).then((pp) => { this.myFollowing = new Set(pp.following.map((u) => u.id)); this.followers = new Set(pp.followers.map((u) => u.handle)); this.forceUpdate(); });
       if (other && !!pr.is_private !== !!this.props.otherPrivate) { location.replace((pr.is_private ? 'OtherProfilePrivateDesktop' : 'OtherProfileDesktop') + '.dc.html' + location.search); return; }
       const pad = (x) => String(x).padStart(2, '0');
       const fmt = (iso) => { const d = new Date(iso); return d.getFullYear() + '/' + pad(d.getMonth() + 1) + '/' + pad(d.getDate()); };
@@ -1085,9 +1087,17 @@ class Component extends DCLogic {
       this.posts = posts.map((r) => ({ id: r.id, name: pr.nickname || '', handle: pr.username || '', caption: r.caption || '', place: r.place_name || '', photo: r.photo || '', date: fmt(r.created_at), at: r.created_at }));
       this.livePeople = people;
       const idx = new Map(this.posts.map((p, i) => [p.id, i]));
-      const collections = colls.map((c) => ({ id: c.id, title: c.title || '', desc: c.description || '', records: (c.collection_items || []).filter((it) => idx.has(it.post_id)).map((it) => 'm' + idx.get(it.post_id)), color: '#C8FF42', vis: c.visibility || 'public', cover: c.cover_url || null, updated: new Date(c.created_at).getTime() }));
+      const collections = colls.filter((c) => !archApi.isSaveBox(c)).map((c) => ({ id: c.id, title: c.title || '', desc: c.description || '', records: (c.collection_items || []).filter((it) => idx.has(it.post_id)).map((it) => 'm' + idx.get(it.post_id)), color: '#C8FF42', vis: c.visibility || 'public', cover: c.cover_url || null, updated: new Date(c.created_at).getTime() }));
       const profile = { ...this.state.profile, name: pr.nickname || '', id: pr.username || '', status: pr.status_message || '', interests: pr.interests || [], isPrivate: !!pr.is_private, photo: pr.avatar_url || null };
       this.setState({ profile, collections, savedPosts: [], savedPlaces: [], followOther: other ? fol : false });
+      if (!other) Promise.all([archApi.saves('post'), archApi.saves('place')]).then(async ([sp, pl]) => {
+        const ids = sp.map((x) => x.post_id).filter(Boolean);
+        const { data } = ids.length ? await archApi.sb.from('posts').select('id,user_id,caption,place_name,created_at').in('id', ids) : { data: [] };
+        const base = this.posts.length;
+        (data || []).forEach((r) => this.posts.push({ id: r.id, saved: true, name: '', handle: '', caption: r.caption || '', place: r.place_name || '', date: fmt(r.created_at), at: r.created_at }));
+        this.places = pl.map((x) => ({ key: x.place_id, name: x.place_name || x.title || x.place_id, region: '', coords: x.place_address || '', records: 0, category: '', address: x.place_address || '' }));
+        this.setState({ savedPosts: (data || []).map((_, j) => base + j), savedPlaces: this.places.map((_, j) => j) });
+      });
     }).catch((e) => console.error('[profile]', e));
   }
   constructor(props) {
@@ -1096,16 +1106,16 @@ class Component extends DCLogic {
     this.colorNames = ['하늘', '머스터드', '블루', '핑크', '올리브', '오렌지', '퍼플', '코발트'];
     this.interests = ['차', '맛집', '카페', '음악', '산책', '사진', '책', '건축', '바다'];
     const profile = props.other && props.otherPrivate ? {
-      name: '하린', id: 'harin.k', status: '오래 기억하고 싶은 담장들.',
-      interests: ['건축', '산책'], color: '#C8FF42',
+      name: '', id: '', status: '',
+      interests: [], color: '#C8FF42',
       photo: null, px: 0, py: 0, zoom: 1, isPrivate: true, customs: []
     } : props.other ? {
-      name: '도윤', id: 'doyoon_sea', status: '파도 소리가 들리는 곳을 모읍니다.',
-      interests: ['바다', '사진', '산책'], color: '#C8FF42',
+      name: '', id: '', status: '',
+      interests: [], color: '#C8FF42',
       photo: null, px: 0, py: 0, zoom: 1, isPrivate: false, customs: []
     } : {
-      name: '', id: '', status: '지나온 장소에서 느낀 것을 모읍니다.',
-      interests: ['카페', '산책', '사진'],
+      name: '', id: '', status: '',
+      interests: [],
       color: this.colors[Math.floor(Math.random() * this.colors.length)],
       photo: null, px: 0, py: 0, zoom: 1, isPrivate: false, customs: []
     };
@@ -1123,40 +1133,21 @@ class Component extends DCLogic {
     if (props.other) {
       let vu = null;
       try { vu = sessionStorage.getItem('arch.viewUser'); } catch (e) {}
-      const pp = vu && this.otherProfiles()[vu];
+      const pp = null;
       if (pp && !!pp.isPrivate === !!props.otherPrivate) Object.assign(profile, pp, { id: vu });
     }
-    this.places = [
-      { name: '북촌', region: '서울', coords: '37° 34′ N, 126° 59′ E', records: 12, category: '여행 > 관광,명소 > 한옥마을', address: '서울 종로구 계동' },
-      { name: '영도', region: '부산', coords: '35° 05′ N, 129° 04′ E', records: 8, category: '여행 > 관광,명소 > 섬', address: '부산 영도구' },
-      { name: '황남동', region: '경주', coords: '35° 50′ N, 129° 13′ E', records: 5, category: '여행 > 관광,명소 > 문화유적', address: '경북 경주시 황남동' },
-      { name: '남부시장', region: '전주', coords: '35° 49′ N, 127° 08′ E', records: 9, category: '쇼핑 > 전통시장', address: '전북 전주시 완산구 전동' },
-      { name: '주문진', region: '강릉', coords: '37° 54′ N, 128° 49′ E', records: 6, category: '여행 > 관광,명소 > 항구', address: '강원 강릉시 주문진읍' }
-    ];
-    this.people = [
-      { name: '민서', handle: 'minseo.walk', priv: false },
-      { name: '도윤', handle: 'doyoon_sea', priv: false },
-      { name: '하린', handle: 'harin.k', priv: true },
-      { name: '지우', handle: 'jiwoo_', priv: false },
-      { name: '유나', handle: 'yuna_', priv: false },
-      { name: '서준', handle: 'seojun.nite', priv: false }
-    ];
-    this.posts = [
-      { name: '민서', handle: 'minseo.walk', caption: '바람이 불 때마다 나뭇잎 사이로 빛이 흔들렸다.', place: '서울 · 북촌' },
-      { name: '도윤', handle: 'doyoon_sea', caption: '오늘은 바다가 유난히 가까이 느껴지는 오후.', place: '부산 · 영도' },
-      { name: '하린', handle: 'harin.k', caption: '길을 잘못 들어서 만난 조용한 담장. 오래 기억하고 싶다.', place: '경주 · 황남동' },
-      { name: '지우', handle: 'jiwoo_', caption: '시장 문이 열리기 전, 가장 고요한 골목의 온도.', place: '전주 · 남부시장' },
-      { name: '유나', handle: 'yuna_', caption: '창가에 앉아 아무것도 하지 않았던 한 시간.', place: '강릉 · 주문진' }
-    ];
+    this.places = [];
+    this.people = [];
+    this.posts = [];
     this.state = {
       profile: profile, draft: null,
-      collections: props.other ? this.seedOther() : this.seedCollections(props.demoCollections !== false),
+      collections: [],
       svOpen: null, svDraft: '', svLiked: {}, svSaved: {}, svReported: {}, svComments: {}, svFollow: {}, svJust: null, followOther: props.other ? this.relOf(profile.id) : false,
       peopleOpen: null, peopleQuery: '', peopleFollow: {}, toast: null,
       openColl: null, collForm: null, picker: null, allOpen: false, allQuery: '', allSort: 'recent',
       recOpen: null, recDraft: '', recLiked: {}, recSaved: {}, recComments: {}, recJust: null,
       placeOpen: null,
-      recTab: 'mine', savedSub: 'posts', savedPosts: [0, 2, 3], savedPlaces: [0, 1, 4]
+      recTab: 'mine', savedSub: 'posts', savedPosts: [], savedPlaces: []
     };
     this.drag = null;
   }
@@ -1192,7 +1183,7 @@ class Component extends DCLogic {
         place: b.place, caption: (this.state.recEdits || {})[k] ?? b.caption,
         color: '#C8FF42',
         date: d.getFullYear() + '/' + pad(d.getMonth() + 1) + '/' + pad(d.getDate()),
-        likes: 3 + (k * 7) % 19,
+        likes: b.likes || 0,
         meta: d.getFullYear() + '/' + pad(d.getMonth() + 1) + '/' + pad(d.getDate()),
         aria: b.place + '에서 남긴 기록',
         open: (() => { const kk = k; return () => (this.props.other ? this.setState({ svOpen: { kind: 'other', k: kk }, svDraft: '' }) : this.setState({ recOpen: kk, recDraft: '' })); })()
@@ -1208,7 +1199,7 @@ class Component extends DCLogic {
         color: '#C8FF42', aria: b.name + '의 기록, ' + b.place,
         unsaveLabel: b.place + ' 기록 저장 취소',
         open: () => this.setState({ svOpen: { kind: 'saved', i: i }, svDraft: '' }),
-        unsave: () => this.setState({ savedPosts: this.state.savedPosts.filter((x) => x !== i) })
+        unsave: () => { this.setState({ savedPosts: this.state.savedPosts.filter((x) => x !== i) }); if (b.id) archApi.unsave('post', b.id).catch(() => {}); }
       };
     });
     const placeTiles = s.savedPlaces.map((i) => {
@@ -1219,7 +1210,7 @@ class Component extends DCLogic {
         unsaveLabel: pl.name + ' 장소 저장 취소',
         openLabel: pl.region + ' ' + pl.name + ' 장소 자세히 보기',
         open: () => this.setState({ placeOpen: i }),
-        unsave: () => this.setState({ savedPlaces: this.state.savedPlaces.filter((x) => x !== i) })
+        unsave: () => { this.setState({ savedPlaces: this.state.savedPlaces.filter((x) => x !== i) }); if (pl.key) archApi.unsave('place', pl.key).catch(() => {}); }
       };
     });
     const savedTotal = savedPosts.length + placeTiles.length;
@@ -1267,7 +1258,7 @@ class Component extends DCLogic {
     const saved = !!s.recSaved[k];
     const comments = s.recComments[k] || [];
     const fit = this.recFit(k);
-    const likes = 3 + (k * 7) % 19 + (liked ? 1 : 0);
+    const likes = (b.likes || 0) + (liked ? 1 : 0);
     out.rv = {
       menuExp: s.recMenu ? 'true' : 'false', showMenuList: s.recMenu === 'menu', confirmDel: s.recMenu === 'del',
       toggleMenu: () => this.setState({ recMenu: this.state.recMenu ? null : 'menu' }),
@@ -1275,7 +1266,8 @@ class Component extends DCLogic {
       cancelDelete: () => this.setState({ recMenu: null }),
       doDelete: () => {
         this.setState({ recMenu: null, recOpen: null, recEditing: false, recDeleted: { ...(this.state.recDeleted || {}), [k]: true } });
-        this.showToast('기록을 삭제했어요');
+        if (b.id) archApi.deletePost(b.id).then(() => this.showToast('기록을 삭제했어요'), (err) => { this.setState({ recDeleted: { ...this.state.recDeleted, [k]: false } }); this.showToast('삭제하지 못했어요: ' + err.message); });
+        else this.showToast('기록을 삭제했어요');
       },
       share: () => { this.setState({ recMenu: null }); this.shareLink('record/' + k); },
       dialogLabel: '내 기록, ' + b.place,
@@ -1334,7 +1326,7 @@ class Component extends DCLogic {
       time: days + '일 전', meta: days + '일 전 · ' + post.place,
       profileLabel: name + ' 프로필 보기',
       share: () => this.shareLink('record/' + key),
-      profileHref: handle === 'harin.k' ? 'OtherProfilePrivateDesktop.dc.html' : 'OtherProfileDesktop.dc.html',
+      profileHref: 'OtherProfileDesktop.dc.html?u=' + encodeURIComponent(this.uid || ''),
       goAuthor: () => { this.setViewUser(handle); this.setFrom(this.navFrom()); },
       followLabel: following ? '팔로잉' : '팔로우', followPressed: following ? 'true' : 'false',
       followBg: following ? 'rgba(20,20,20,.13)' : '#141414', followFg: following ? '#141414' : '#C8FF42',
@@ -1394,9 +1386,15 @@ class Component extends DCLogic {
     this.showToast((label || '링크') + '를 복사했어요');
   }
   blockedList() {
+    if (this.liveBlocks) return this.liveBlocks;
     try { return JSON.parse(localStorage.getItem('arch.blocked') || '[]') || []; } catch (e) { return []; }
   }
   setBlocked(list) {
+    if (window.archApi && archApi.user && this.uid && this.props.other) {
+      const was = (this.liveBlocks || []).some((x) => x.handle === this.state.profile.id), now = list.some((x) => x.handle === this.state.profile.id);
+      if (was !== now) (now ? archApi.block(this.uid) : archApi.unblock(this.uid)).catch((err) => this.showToast(err.message));
+    }
+    this.liveBlocks = list;
     try { localStorage.setItem('arch.blocked', JSON.stringify(list)); } catch (e) {}
     this.setState({ blockTick: (this.state.blockTick || 0) + 1 });
   }
@@ -1438,24 +1436,26 @@ class Component extends DCLogic {
       pick: () => this.setState({ peopleOpen: id })
     }));
     out.peopleRows = list.map((u, i) => {
-      const st = s.peopleFollow[u.handle] !== undefined ? s.peopleFollow[u.handle] : this.relOf(u.handle, u.handle === 'minseo.walk');
+      const st = s.peopleFollow[u.handle] !== undefined ? s.peopleFollow[u.handle] : (this.myFollowing ? this.myFollowing.has(u.id) : false);
       const label = st === true ? '팔로잉' : st === 'requested' ? '요청됨' : (u.priv ? '팔로우 요청' : this.followsMe(u.handle) ? '맞팔로우' : '팔로우');
       const on = st === true || st === 'requested';
       return {
         name: u.name, handle: u.handle, initial: u.name[0], lockTxt: u.priv ? ' · 비공개' : '',
         color: this.colors[(this.people.indexOf(u) * 3 + 1) % this.colors.length],
-        href: u.priv ? 'OtherProfilePrivateDesktop.dc.html' : 'OtherProfileDesktop.dc.html', aria: u.name + ' 프로필로 이동', go: () => { this.setViewUser(u.handle); this.setFrom(this.navFrom()); },
+        href: 'OtherProfileDesktop.dc.html?u=' + encodeURIComponent(u.id || ''), aria: u.name + ' 프로필로 이동', go: () => { this.setViewUser(u.handle); this.setFrom(this.navFrom()); },
         label: label, pressed: on ? 'true' : 'false',
         bg: on ? 'rgba(247,249,233,.08)' : 'rgba(247,249,233,.14)', fg: on ? '#F7F9E9' : '#C8FF42',
         toggle: () => {
           const next = on ? false : (u.priv ? 'requested' : true);
           this.setState({ peopleFollow: { ...this.state.peopleFollow, [u.handle]: next } });
           this.setRel(u.handle, next);
+          if (u.id && archApi.user) archApi.toggleFollow(u.id, on).catch(() => {});
           if (next === 'requested') this.showToast('@' + u.handle + ' 님에게 팔로우 요청을 보냈어요');
         },
         canRemove: !this.props.other && pk === 'followers',
         remove: () => {
           this.setState({ removedFollowers: { ...(this.state.removedFollowers || {}), [u.handle]: true } });
+          if (u.id && archApi.user) archApi.sb.from('follows').delete().eq('follower_id', u.id).eq('following_id', archApi.user.id).then(() => {});
           this.showToast('@' + u.handle + ' 님을 팔로워에서 삭제했어요');
         }
       };
@@ -1465,7 +1465,7 @@ class Component extends DCLogic {
     return out;
   }
   myRecordTotal() {
-    if (this.uid) return this.posts.length;
+    return this.posts.filter((p) => !p.saved).length;
     return Math.max(0, Math.min(30, this.props.myRecordCount ?? 9));
   }
   collItem(key, handle) {
@@ -1552,6 +1552,10 @@ class Component extends DCLogic {
   }
   updateColl(id, patch) {
     this.setState({ collections: this.state.collections.map((c) => (c.id === id ? { ...c, ...patch, updated: this.tick() } : c)) });
+    if (!archApi.user || this.props.other) return;
+    const fail = (err) => this.showToast('컬렉션을 저장하지 못했어요: ' + err.message);
+    if (patch.records) archApi.setCollectionPosts(id, patch.records.filter((k) => k[0] === 'm').map((k) => this.posts[+k.slice(1)] && this.posts[+k.slice(1)].id).filter(Boolean)).catch(fail);
+    if (patch.title !== undefined || patch.desc !== undefined || patch.vis !== undefined) archApi.updateCollection(id, { title: patch.title, desc: patch.desc, vis: patch.vis }).catch(fail);
   }
   collVals(p) {
     const s = this.state;
@@ -1619,12 +1623,10 @@ class Component extends DCLogic {
         const title = f.title.trim();
         if (!title) return;
         if (f.mode === 'create') {
-          const id = 'c' + Date.now();
-          const color = '#C8FF42';
-          this.setState({
-            collections: this.state.collections.concat([{ id: id, title: title, desc: f.desc.trim(), vis: f.vis, cover: null, color: color, records: [], updated: this.tick() }]),
+          archApi.createCollection({ title: title, desc: f.desc.trim(), vis: f.vis }).then((id) => this.setState({
+            collections: this.state.collections.concat([{ id: id, title: title, desc: f.desc.trim(), vis: f.vis, cover: null, color: '#C8FF42', records: [], updated: this.tick() }]),
             collForm: null, openColl: id
-          });
+          }), (err) => this.showToast('컬렉션을 만들지 못했어요: ' + err.message));
         } else {
           this.updateColl(f.id, { title: title, desc: f.desc.trim(), vis: f.vis });
           this.setState({ collForm: null });
@@ -1633,6 +1635,7 @@ class Component extends DCLogic {
       out.deleteColl = () => {
         const f = this.state.collForm;
         this.setState({ collections: this.state.collections.filter((c) => c.id !== f.id), collForm: null, openColl: null, picker: null });
+        archApi.deleteCollection(f.id).catch((err) => this.showToast('삭제하지 못했어요: ' + err.message));
       };
     }
     const curItems = cur ? this.collItems(cur, hid) : [];
@@ -1725,8 +1728,9 @@ class Component extends DCLogic {
     this.setDraft({ customs: customs, interests: all.filter((y) => picked.includes(y)), customText: '' });
   }
   idTaken(id) {
-    const taken = ['minseo.walk', 'doyoon_sea', 'harin.k', 'jiwoo_', 'yuna_', 'seojun.nite'];
-    return this.idValid(id) && id !== this.state.profile.id && taken.includes(id);
+    if (!this.idValid(id) || id === this.state.profile.id) return false;
+    if (this.__idChecked !== id) { this.__idChecked = id; this.__idTaken = false; archApi.usernameTaken(id).then((t) => { if (this.__idChecked === id) { this.__idTaken = t; this.forceUpdate(); } }); }
+    return !!this.__idTaken;
   }
   idValid(id) {
     return /^[a-z][a-z0-9._]{2,19}$/.test(id);
@@ -1768,7 +1772,7 @@ class Component extends DCLogic {
     } catch (e) {}
   }
   followsMe(h) {
-    return h === 'jiwoo_' || (h === 'seojun.nite' && this.notifStore('arch.notifReq') === 'accepted');
+    return !!(this.followers && this.followers.has(h));
   }
   setViewUser(h) {
     try { sessionStorage.setItem('arch.viewUser', h); } catch (e) {}
@@ -1779,25 +1783,10 @@ class Component extends DCLogic {
     return true;
   }
   otherProfiles() {
-    const base = { photo: null, px: 0, py: 0, zoom: 1, customs: [] };
-    return {
-      'minseo.walk': { ...base, name: '민서', status: '바람과 빛을 따라 걷습니다.', interests: ['산책', '사진'], color: '#C8FF42', isPrivate: false },
-      'doyoon_sea': { ...base, name: '도윤', status: '파도 소리가 들리는 곳을 모읍니다.', interests: ['바다', '사진', '산책'], color: '#C8FF42', isPrivate: false },
-      'harin.k': { ...base, name: '하린', status: '오래 기억하고 싶은 담장들.', interests: ['건축', '산책'], color: '#C8FF42', isPrivate: true },
-      'jiwoo_': { ...base, name: '지우', status: '시장과 골목의 아침을 좋아해요.', interests: ['맛집', '산책'], color: '#C8FF42', isPrivate: false },
-      'yuna_': { ...base, name: '유나', status: '창가 자리를 수집합니다.', interests: ['카페', '책'], color: '#C8FF42', isPrivate: false },
-      'seojun.nite': { ...base, name: '서준', status: '밤 산책 기록.', interests: ['음악', '산책'], color: '#C8FF42', isPrivate: false }
-    };
+    return {};
   }
   notifData() {
-    return [
-      { id: 'a1', group: '오늘', type: 'like', who: '도윤', handle: 'doyoon_sea', time: '5분 전', rec: 1, place: '부산 · 영도', color: '#C8FF42' },
-      { id: 'a2', group: '오늘', type: 'comment', who: '민서', handle: 'minseo.walk', time: '32분 전', rec: 0, place: '서울 · 북촌', text: '빛이 정말 예쁘게 들어오네요. 저도 가 볼래요!', color: '#C8FF42' },
-      { id: 'a3', group: '오늘', type: 'request', who: '서준', handle: 'seojun.nite', time: '1시간 전', color: '#C8FF42' },
-      { id: 'a4', group: '오늘', type: 'follow', who: '지우', handle: 'jiwoo_', time: '3시간 전', color: '#C8FF42' },
-      { id: 'a5', group: '이번 주', type: 'like', who: '유나', handle: 'yuna_', others: 2, time: '2일 전', rec: 4, place: '강릉 · 주문진', color: '#C8FF42' },
-      { id: 'a6', group: '이번 주', type: 'comment', who: '하린', handle: 'harin.k', time: '4일 전', rec: 3, place: '전주 · 남부시장', text: '여기 아침 공기가 진짜 좋죠.', color: '#C8FF42' }
-    ];
+    return (window.archApi && archApi.notifs) || [];
   }
   notifStore(key, val) {
     try {
@@ -1822,31 +1811,32 @@ class Component extends DCLogic {
         if (k !== null && !this.props.other) { sessionStorage.removeItem('arch.openRec'); this.state.recOpen = +k; this.state.recDraft = ''; }
       } catch (e) {}
     }
-    const read = this.notifRead;
+    const read = ((window.archApi && archApi.notifs) || []).filter((n) => n.read).map((n) => n.id).concat(this.notifRead);
     const data = this.notifData();
     const recColor = (k) => this.notifColors[(k * 5 + 1) % 8];
     const unreadN = data.filter((n) => !read.includes(n.id)).length;
     const mark = (id) => {
       if (this.notifRead.includes(id)) return;
       this.notifRead = this.notifRead.concat([id]);
+      if (window.archApi) archApi.markNotifs([id]);
       this.notifStore('arch.notifRead', this.notifRead);
       this.setState({ notifTick: (this.state.notifTick || 0) + 1 });
     };
-    const profileHref = (h) => (h === 'harin.k' ? 'OtherProfilePrivateDesktop.dc.html' : 'OtherProfileDesktop.dc.html');
+    const profileHref = (h, uid) => 'OtherProfileDesktop.dc.html?u=' + encodeURIComponent(uid || '');
     const rows = data.map((n, k) => {
       const unread = !read.includes(n.id);
       const isRec = n.type === 'like' || n.type === 'comment';
       const msg = n.type === 'like' ? (n.others ? '님 외 ' + n.others + '명이 내 기록을 좋아해요.' : '님이 내 기록을 좋아해요.')
         : n.type === 'comment' ? '님이 내 기록에 댓글을 남겼어요.'
         : n.type === 'follow' ? '님이 나를 팔로우하기 시작했어요.'
-        : '님이 팔로우를 요청했어요.';
+        : n.type === 'support' ? ' 문의에 답변이 도착했어요.' : '님이 팔로우를 요청했어요.';
       const req = n.type === 'request' ? this.notifReq : '';
       return {
         ...n, msg: msg, cls: unread ? 'nt-row unread' : 'nt-row', unread: unread, initial: n.who[0],
         first: k === 0 || data[k - 1].group !== n.group,
         sub: n.type === 'comment' ? '“' + n.text + '”' : isRec ? '⌖ ' + n.place : '@' + n.handle,
         hasThumb: isRec, thumb: isRec ? recColor(n.rec) : '',
-        href: isRec ? 'ProfileDesktop.dc.html' : profileHref(n.handle),
+        href: isRec ? 'ProfileDesktop.dc.html' : profileHref(n.handle, n.userId),
         aria: n.who + msg + ' ' + n.time,
         go: (e) => {
           mark(n.id);
@@ -1859,11 +1849,11 @@ class Component extends DCLogic {
         },
         isFollow: n.type === 'follow', isReq: n.type === 'request' && !req, reqDone: n.type === 'request' && !!req,
         reqText: req === 'accepted' ? '요청을 수락했어요' : '요청을 거절했어요',
-        backLabel: this.relOf('jiwoo_') === true ? '팔로잉' : '맞팔로우',
-        backBg: this.relOf('jiwoo_') === true ? 'rgba(247,249,233,.18)' : '#141414', backFg: this.relOf('jiwoo_') === true ? '#F7F9E9' : '#C8FF42',
-        backPressed: this.relOf('jiwoo_') === true ? 'true' : 'false',
-        toggleBack: () => { this.setRel('jiwoo_', this.relOf('jiwoo_') !== true); mark(n.id); },
-        accept: () => { this.notifReq = 'accepted'; this.notifStore('arch.notifReq', 'accepted'); this.setRel('seojun.nite', this.relOf('seojun.nite')); mark(n.id); },
+        backLabel: this.relOf(n.handle) === true ? '팔로잉' : '맞팔로우',
+        backBg: this.relOf(n.handle) === true ? 'rgba(247,249,233,.18)' : '#141414', backFg: this.relOf(n.handle) === true ? '#F7F9E9' : '#C8FF42',
+        backPressed: this.relOf(n.handle) === true ? 'true' : 'false',
+        toggleBack: () => { const on = this.relOf(n.handle) === true; this.setRel(n.handle, !on); mark(n.id); if (window.archApi && n.userId) archApi.toggleFollow(n.userId, on).catch(() => this.setRel(n.handle, on)); },
+        accept: () => { this.notifReq = 'accepted'; this.notifStore('arch.notifReq', 'accepted'); this.setRel(n.handle, this.relOf(n.handle)); mark(n.id); },
         decline: () => { this.notifReq = 'declined'; this.notifStore('arch.notifReq', 'declined'); mark(n.id); }
       };
     });
@@ -1877,6 +1867,7 @@ class Component extends DCLogic {
       closeNotif: () => this.setState({ notifOpen: false }),
       readAll: () => {
         this.notifRead = data.map((n) => n.id);
+        if (window.archApi) archApi.markNotifs(data.map((n) => n.id));
         this.notifStore('arch.notifRead', this.notifRead);
         this.setState({ notifTick: (this.state.notifTick || 0) + 1 });
       },
@@ -1973,7 +1964,7 @@ class Component extends DCLogic {
       ...this.svVals({ dName: p.name || '이름', dId: p.id || '아이디' }),
       isMe: !this.props.other,
       isOther: !!this.props.other,
-      reqBanner: !!this.props.other && p.id === 'seojun.nite' && !this.notifStore('arch.notifReq'),
+      reqBanner: false,
       acceptReq: () => { this.notifReq = 'accepted'; this.notifStore('arch.notifReq', 'accepted'); this.showToast('@' + p.id + ' 님의 팔로우 요청을 수락했어요'); },
       declineReq: () => { this.notifReq = 'declined'; this.notifStore('arch.notifReq', 'declined'); this.showToast('@' + p.id + ' 님의 팔로우 요청을 거절했어요'); },
       ...this.peopleVals(p, locked),
@@ -2021,7 +2012,7 @@ class Component extends DCLogic {
       onFile: (e) => {
         const f = e.target.files && e.target.files[0];
         if (!f) return;
-        this.setDraft({ photo: URL.createObjectURL(f), px: 0, py: 0, zoom: 1 });
+        this.setDraft({ photo: URL.createObjectURL(f), px: 0, py: 0, zoom: 1, photoFile: f });
         e.target.value = '';
       },
       removePhoto: () => this.setDraft({ photo: null, px: 0, py: 0, zoom: 1 }),
@@ -2077,6 +2068,8 @@ class Component extends DCLogic {
         if (!this.idValid(dr.id) || this.idTaken(dr.id) || !dr.name.trim()) return;
         const { customText, ...rest } = dr;
         this.setState({ profile: { ...rest, name: dr.name.trim(), status: dr.status.trim() }, draft: null });
+        if (archApi.user && dr.photoFile) archApi.toJpeg(dr.photoFile, 800).then((bl) => archApi.uploadAvatar(bl)).catch((err) => this.showToast('사진을 올리지 못했어요: ' + err.message));
+        if (archApi.user && !dr.photo && this.state.profile.photo === null) archApi.updateProfile({ avatar_url: null }).catch(() => {});
         if (archApi.user) archApi.updateProfile({ nickname: dr.name.trim(), username: String(dr.id || '').replace(/^@/, '').toLowerCase(), status_message: dr.status.trim(), interests: dr.interests || [], is_private: !!dr.isPrivate }).catch((err) => this.showToast('저장하지 못했어요: ' + err.message));
       }
     };

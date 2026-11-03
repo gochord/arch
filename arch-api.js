@@ -317,3 +317,175 @@
     return error ? [] : data;
   };
 })(window.archApi);
+
+/* notifications, saves, collections, blocks, reports, search, export */
+(function (api) {
+  const sb = api.sb;
+  const need = () => { if (!api.user) throw new Error('로그인이 필요해요.'); return api.user.id; };
+
+  // notifications (written by database triggers on likes, comments, follows, support replies)
+  api.notifs = [];
+  api.loadNotifs = async () => {
+    if (!api.user) { api.notifs = []; return api.notifs; }
+    const { data } = await sb.from('user_notifications').select('id,type,body,related_post_id,read_at,created_at,actor_id').eq('user_id', api.user.id).order('created_at', { ascending: false }).limit(40);
+    const rows = data || [];
+    const ids = [...new Set(rows.map((r) => r.actor_id).filter(Boolean))];
+    const pids = [...new Set(rows.map((r) => r.related_post_id).filter(Boolean))];
+    const [{ data: ps }, { data: posts }] = await Promise.all([
+      ids.length ? sb.from('profiles').select('id,nickname,username').in('id', ids) : { data: [] },
+      pids.length ? sb.from('posts').select('id,place_name').in('id', pids) : { data: [] }
+    ]);
+    const by = new Map((ps || []).map((p) => [p.id, p])), pl = new Map((posts || []).map((p) => [p.id, p.place_name]));
+    const day = 86400000;
+    api.notifs = rows.map((r) => {
+      const p = by.get(r.actor_id) || {};
+      const age = Date.now() - new Date(r.created_at);
+      return { id: r.id, type: r.type, who: p.nickname || (r.type === 'support' ? 'arch;' : '여행자'), handle: p.username || '', userId: r.actor_id, postId: r.related_post_id,
+        place: pl.get(r.related_post_id) || '', text: r.type === 'comment' || r.type === 'support' ? r.body : '', time: api.relTime(r.created_at),
+        group: age < day ? '오늘' : age < 7 * day ? '이번 주' : '이전', read: !!r.read_at, color: '#C8FF42', rec: 0 };
+    });
+    api.emit();
+    return api.notifs;
+  };
+  api.markNotifs = async (ids) => {
+    if (!api.user || !ids.length) return;
+    await sb.from('user_notifications').update({ read_at: new Date().toISOString() }).in('id', ids).eq('user_id', api.user.id);
+    api.notifs.forEach((n) => { if (ids.includes(n.id)) n.read = true; });
+  };
+
+  // saves live in private collections tagged in their description, so no new table is needed
+  const BOX = { post: '저장한 기록', place: '저장한 장소', curation: '저장한 큐레이션' };
+  const tag = (kind) => '__arch_saves:' + kind;
+  api.isSaveBox = (c) => typeof c.description === 'string' && c.description.startsWith('__arch_saves:');
+  const box = async (kind, create) => {
+    const uid = need();
+    const { data } = await sb.from('collections').select('id').eq('user_id', uid).eq('description', tag(kind)).limit(1);
+    if (data && data[0]) return data[0].id;
+    if (!create) return null;
+    const ins = await sb.from('collections').insert({ user_id: uid, title: BOX[kind], description: tag(kind), visibility: 'private' }).select('id').single();
+    if (ins.error) throw ins.error;
+    return ins.data.id;
+  };
+  api.saves = async (kind) => {
+    if (!api.user) return [];
+    const id = await box(kind, false);
+    if (!id) return [];
+    const { data } = await sb.from('collection_items').select('id,post_id,place_id,title,note,place_name,place_address,latitude,longitude,created_at').eq('collection_id', id).order('created_at', { ascending: false });
+    return data || [];
+  };
+  api.save = async (kind, key, info = {}) => {
+    const id = await box(kind, true);
+    const row = kind === 'post'
+      ? { collection_id: id, item_type: 'post', post_id: key }
+      : { collection_id: id, item_type: 'place', place_id: String(key), title: info.title || null, place_name: info.place || null, place_address: info.address || null, latitude: info.lat ?? null, longitude: info.lng ?? null };
+    const { error } = await sb.from('collection_items').insert(row);
+    if (error && error.code !== '23505') throw error;
+  };
+  api.unsave = async (kind, key) => {
+    const id = await box(kind, false);
+    if (!id) return;
+    const q = sb.from('collection_items').delete().eq('collection_id', id);
+    const { error } = await (kind === 'post' ? q.eq('post_id', key) : q.eq('place_id', String(key)));
+    if (error) throw error;
+  };
+
+  // collections the user makes by hand
+  api.createCollection = async ({ title, desc, vis }) => {
+    const { data, error } = await sb.from('collections').insert({ user_id: need(), title: title.trim().slice(0, 40), description: (desc || '').slice(0, 180) || null, visibility: vis || 'public' }).select('id').single();
+    if (error) throw error;
+    return data.id;
+  };
+  api.updateCollection = async (id, { title, desc, vis }) => {
+    const patch = { updated_at: new Date().toISOString() };
+    if (title !== undefined) patch.title = title.trim().slice(0, 40);
+    if (desc !== undefined) patch.description = (desc || '').slice(0, 180) || null;
+    if (vis !== undefined) patch.visibility = vis;
+    const { error } = await sb.from('collections').update(patch).eq('id', id).eq('user_id', need());
+    if (error) throw error;
+  };
+  api.deleteCollection = async (id) => {
+    const { error } = await sb.from('collections').delete().eq('id', id).eq('user_id', need());
+    if (error) throw error;
+  };
+  api.setCollectionPosts = async (id, postIds) => {
+    need();
+    const { data } = await sb.from('collection_items').select('id,post_id').eq('collection_id', id).eq('item_type', 'post');
+    const have = new Map((data || []).map((r) => [r.post_id, r.id]));
+    const drop = [...have].filter(([pid]) => !postIds.includes(pid)).map(([, rid]) => rid);
+    const add = postIds.filter((pid) => !have.has(pid)).map((pid, i) => ({ collection_id: id, item_type: 'post', post_id: pid, position: i }));
+    if (drop.length) { const r = await sb.from('collection_items').delete().in('id', drop); if (r.error) throw r.error; }
+    if (add.length) { const r = await sb.from('collection_items').insert(add); if (r.error) throw r.error; }
+  };
+
+  // posts
+  api.updatePost = async (id, caption) => {
+    const { error } = await sb.from('posts').update({ caption: caption.slice(0, 60) }).eq('id', id).eq('user_id', need());
+    if (error) throw error;
+  };
+
+  // blocks
+  api.blocks = async () => {
+    if (!api.user) return [];
+    const { data } = await sb.from('user_blocks').select('blocked_id,created_at').eq('blocker_id', api.user.id);
+    const ids = (data || []).map((r) => r.blocked_id);
+    const { data: ps } = ids.length ? await sb.from('profiles').select('id,nickname,username').in('id', ids) : { data: [] };
+    return (ps || []).map((p) => ({ id: p.id, name: p.nickname || '여행자', handle: p.username || '' }));
+  };
+  api.block = async (userId) => {
+    const { error } = await sb.from('user_blocks').insert({ blocker_id: need(), blocked_id: userId });
+    if (error && error.code !== '23505') throw error;
+    await sb.from('follows').delete().eq('follower_id', api.user.id).eq('following_id', userId);
+  };
+  api.unblock = async (userId) => {
+    const { error } = await sb.from('user_blocks').delete().eq('blocker_id', need()).eq('blocked_id', userId);
+    if (error) throw error;
+  };
+
+  // reports
+  api.report = async (post, reason, details) => {
+    const { error } = await sb.from('reports').insert({ reporter_id: need(), target_post_id: post.id, reason, details: details || null, target_snapshot: { caption: post.caption || '', place: post.place || '', author: post.handle || '' } });
+    if (error) throw error;
+  };
+  api.myReports = async () => {
+    if (!api.user) return [];
+    const { data } = await sb.from('reports').select('id,reason,status,created_at,target_snapshot').eq('reporter_id', api.user.id).order('created_at', { ascending: false });
+    return data || [];
+  };
+
+  // search
+  api.search = async (q) => {
+    const t = q.trim().replace(/[%,()]/g, ' ');
+    if (!t) return { posts: [], people: [] };
+    const like = '%' + t + '%';
+    const [posts, people] = await Promise.all([
+      sb.from('posts').select('id,user_id,caption,place_name,created_at').eq('is_hidden', false).or(`caption.ilike.${like},place_name.ilike.${like},place_address.ilike.${like}`).order('created_at', { ascending: false }).limit(30),
+      sb.from('profiles').select('id,nickname,username,is_private').or(`nickname.ilike.${like},username.ilike.${like}`).limit(20)
+    ]);
+    return { posts: posts.data || [], people: people.data || [] };
+  };
+  api.usernameTaken = async (name) => {
+    const n = String(name || '').replace(/^@/, '').toLowerCase();
+    if (!n) return false;
+    const { data } = await sb.from('profiles').select('id').eq('username', n).maybeSingle();
+    return !!data && data.id !== api.user?.id;
+  };
+
+  // export: the signed-in user's own records and collections
+  api.exportData = async ({ posts = true, colls = true, fmt = 'json' } = {}) => {
+    const uid = need();
+    const out = {};
+    if (posts) out.records = (await sb.from('posts').select('id,caption,place_name,place_address,latitude,longitude,visibility,created_at').eq('user_id', uid).order('created_at')).data || [];
+    if (colls) out.collections = ((await sb.from('collections').select('id,title,description,visibility,created_at,collection_items(item_type,post_id,place_name,place_address)').eq('user_id', uid)).data || []).filter((c) => !api.isSaveBox(c));
+    let text, type;
+    if (fmt === 'csv') {
+      const esc = (v) => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+      const lines = [['종류', '제목/글', '장소', '주소', '공개 범위', '날짜'].map(esc).join(',')];
+      (out.records || []).forEach((r) => lines.push(['기록', r.caption, r.place_name, r.place_address, r.visibility, r.created_at].map(esc).join(',')));
+      (out.collections || []).forEach((c) => lines.push(['컬렉션', c.title, '', '', c.visibility, c.created_at].map(esc).join(',')));
+      text = '﻿' + lines.join('\n'); type = 'text/csv';
+    } else { text = JSON.stringify(out, null, 2); type = 'application/json'; }
+    return URL.createObjectURL(new Blob([text], { type }));
+  };
+
+  api.onChange(() => { if (api.user && !api.__notifFor) { api.__notifFor = api.user.id; api.loadNotifs(); } if (!api.user) api.__notifFor = null; });
+})(window.archApi);

@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <title>arch; 첫 화면 티켓 · 데스크톱</title>
 <meta name="viewport" content="width=1280">
-<script src="./shell.js?v=7"></script>
+<script src="./shell.js?v=8"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="./arch-api.js?v=4"></script>
+<script src="./arch-api.js?v=8"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -580,16 +580,8 @@ class Component extends DCLogic {
   }
   unreadTicker() {
     if (!archSignedIn()) return '로그인하면 새 알림을 여기서 볼 수 있어요     •     ';
-    let read = [];
-    try { read = JSON.parse(localStorage.getItem('arch.notifRead') || '[]') || []; } catch (e) {}
-    const items = [
-      ['a1', '도윤님이 내 기록을 좋아해요 · 부산 · 영도'],
-      ['a2', '민서님이 댓글을 남겼어요 “빛이 정말 예쁘게 들어오네요.”'],
-      ['a3', '서준님이 팔로우를 요청했어요'],
-      ['a4', '지우님이 나를 팔로우하기 시작했어요'],
-      ['a5', '유나님 외 2명이 내 기록을 좋아해요 · 강릉 · 주문진'],
-      ['a6', '하린님이 댓글을 남겼어요 “여기 아침 공기가 진짜 좋죠.”']
-    ].filter(([id]) => !read.includes(id));
+    const msg = { like: '님이 내 기록을 좋아해요', comment: '님이 댓글을 남겼어요', follow: '님이 나를 팔로우하기 시작했어요', support: ' 문의에 답변이 도착했어요' };
+    const items = archApi.notifs.filter((n) => !n.read).map((n) => [n.id, n.who + (msg[n.type] || '') + (n.text ? ' “' + n.text + '”' : n.place ? ' · ' + n.place : '')]);
     if (!items.length) return '새 알림이 없어요     •     ';
     return items.map(([, t]) => t).join('     •     ') + '     •     ';
   }
