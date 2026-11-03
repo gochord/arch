@@ -126,13 +126,30 @@
     addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
   }
 
+
+  /* ---------- guest browsing bar on the feed ---------- */
+  function setupGuestBar() {
+    const head = $('#recommend .feed-header');
+    if (!head) return;
+    const bar = document.createElement('div');
+    bar.className = 'guest-bar';
+    bar.setAttribute('role', 'note');
+    bar.innerHTML = '<span>로그인하지 않고 둘러보는 중이에요.</span><button type="button">로그인/회원가입</button>';
+    bar.querySelector('button').onclick = () => $('#accountBtn')?.click();
+    head.appendChild(bar);
+    const sync = () => { bar.hidden = signedIn(); };
+    sync();
+    return sync;
+  }
+
   function init() {
     buildTicket();
     setupNavPill();
     setupWheel();
     // keep the ticket's account button in step with sign-in state
+    const syncGuest = setupGuestBar();
     const acc = $('#accountBtn');
-    if (acc) new MutationObserver(syncAccount).observe(acc, { childList: true, characterData: true, subtree: true });
+    if (acc) new MutationObserver(() => { syncAccount(); syncGuest?.(); }).observe(acc, { childList: true, characterData: true, subtree: true });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
