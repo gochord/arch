@@ -1,0 +1,1472 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>arch; 피드 · 데스크톱</title>
+<meta name="viewport" content="width=1280">
+<script src="./shell.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@font-face{font-family:'Pretendard Variable';font-weight:45 920;font-style:normal;font-display:swap;src:url('assets/blob/f9299b363a48d37a9d320e5eaf3254f6.woff2') format('woff2-variations'),url('assets/blob/f9299b363a48d37a9d320e5eaf3254f6.woff2') format('woff2')}
+body{margin:0;background:#000000}
+a{color:inherit;text-decoration:none}a:hover{opacity:.75}
+button{font:inherit;cursor:pointer}
+.notch{-webkit-mask:radial-gradient(circle 12px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 12px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 12px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 12px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat;mask:radial-gradient(circle 12px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 12px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 12px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 12px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat}
+.logo-mask{-webkit-mask:url('assets/blob/3cbd3d619de1f4350868f689fb0f0636.png') center/contain no-repeat;mask:url('assets/blob/3cbd3d619de1f4350868f689fb0f0636.png') center/contain no-repeat}
+.navlink{border:0;background:none;color:rgba(247,249,233,.72);font-size:14px;font-weight:500;padding:10px 0;border-bottom:1.5px solid transparent}
+.navlink:hover{color:#F7F9E9}
+.view-btn{border:0;background:none;color:inherit;font:inherit;padding:0;display:inline-flex;align-items:center;cursor:pointer;letter-spacing:inherit}
+.view-btn:focus-visible{outline:2px solid #F7F9E9;outline-offset:4px}
+.view-btn svg{transition:transform .2s ease}
+.view-opt{width:100%;height:48px;border:0;border-bottom:1px solid transparent;background:none;color:#141414;font:inherit;font-size:15px;font-weight:600;display:flex;justify-content:space-between;align-items:center;padding:0 16px;cursor:pointer;text-align:left}
+.view-opt:last-child{border-bottom:0}
+.view-opt:hover{background:rgba(20,20,20,.06)}
+.view-opt:focus-visible{outline:2px solid #141414;outline-offset:-3px}
+.view-menu{animation:viewIn .18s ease both}
+@keyframes viewIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.notch-sm{-webkit-mask:radial-gradient(circle 10px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 10px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 10px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 10px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat;mask:radial-gradient(circle 10px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 10px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 10px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 10px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat}
+.pl-x{width:48px;height:48px;border-radius:50%;border:1px solid transparent;background:rgba(20,20,20,.13);color:#141414;display:grid;place-items:center;cursor:pointer;padding:0}
+.pl-x:hover{background:rgba(20,20,20,.06)}
+.pl-save{width:40px;height:40px;border:0;background:none;color:#141414;display:grid;place-items:center;cursor:pointer;padding:0}
+.pl-map{height:40px;border:1.5px solid transparent;background:rgba(20,20,20,.13);color:#141414;font:inherit;font-size:13px;font-weight:700;padding:0 14px;display:inline-flex;align-items:center;gap:6px;text-decoration:none;white-space:nowrap}
+.pl-map:hover{background:#141414;color:#F7F9E9;opacity:1}
+.pl-x:focus-visible,.pl-save:focus-visible,.pl-map:focus-visible,.pl-tile:focus-visible{outline:2px solid #141414;outline-offset:2px}
+.pl-tile{border:0;padding:0;font:inherit;text-align:left;cursor:pointer;color:#141414;transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.pl-tile:hover{transform:translateY(-3px)}
+.pl-tile-open{position:absolute;inset:0;z-index:1;border:0;padding:0;background:transparent;cursor:pointer}
+.pl-open-cover{position:absolute;inset:0;z-index:1;border:0;padding:0;background:transparent;cursor:pointer}
+.pl-open-cover:focus-visible{outline:2px solid #141414;outline-offset:-4px}
+.pcard-hover{transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.pcard-hover:has(.pl-open-cover:hover){transform:translateY(-3px)}
+.sr-row{width:100%;display:flex;align-items:center;gap:12px;padding:12px 4px;border:0;border-bottom:1px solid transparent;background:none;color:#F7F9E9;font:inherit;text-align:left;text-decoration:none;cursor:pointer;box-sizing:border-box}
+.sr-row:hover{background:rgba(247,249,233,.06);opacity:1}
+.sr-row:focus-visible,.sr-x:focus-visible,.sr-tab:focus-visible,.sr-more:focus-visible{outline:2px solid #F7F9E9;outline-offset:-2px}
+.sr-x{flex:none;width:36px;height:36px;border:0;background:none;color:rgba(247,249,233,.72);display:grid;place-items:center;cursor:pointer;padding:0}
+.sr-x:hover{color:#F7F9E9}
+.sr-tab{height:38px;border:0;font:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;padding:0 4px}
+.sr-more{border:0;background:none;color:rgba(247,249,233,.72);font:inherit;font-size:12px;font-weight:600;cursor:pointer;padding:6px 0}
+.sr-more:hover{color:#F7F9E9}
+.sr-in{animation:srIn .25s ease both}
+@keyframes srIn{from{opacity:0}to{opacity:1}}
+.sr-trigger{min-width:0;border:0;background:transparent;font:inherit;text-align:left;cursor:text;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.notch-xs{-webkit-mask:radial-gradient(circle 6px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 6px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 6px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 6px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat;mask:radial-gradient(circle 6px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 6px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 6px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 6px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat}
+.search input::placeholder{color:rgba(247,249,233,.72)}
+.search input:focus{outline:none}
+.search:focus-within{box-shadow:0 0 0 2px rgba(247,249,233,.5)}
+.tabcell:hover{background:rgba(247,249,233,.16)}
+.card{position:relative;z-index:1;transform:rotate(var(--rot,0deg));transition:transform .4s cubic-bezier(.2,.8,.2,1),filter .4s ease}
+.card:focus-within{transform:rotate(0deg)}
+.card:hover{transform:scale(1.12) rotate(0deg);z-index:5}
+.dimmable{transition:filter .4s ease}
+.modal-back{cursor:pointer}
+.modal-in{animation:modalIn .35s cubic-bezier(.2,.8,.2,1) both}
+@keyframes modalIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+.comment-input::placeholder{color:rgba(20,20,20,.62)}
+.comment-input:focus{outline:2px solid #141414;outline-offset:1px}
+.ghost:hover{background:rgba(0,0,0,.06)}
+.m-scroll{scrollbar-width:none}.m-scroll::-webkit-scrollbar{display:none}
+@media (prefers-reduced-motion: reduce){.modal-in{animation:none}}
+.to-top{opacity:0;transform:translate(-50%,16px);pointer-events:none;transition:opacity .3s ease,transform .3s cubic-bezier(.2,.8,.2,1)}
+.to-top.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.to-top.show:hover{transform:translate(-50%,-3px)}
+.to-top:focus-visible{outline:2px solid #F7F9E9;outline-offset:3px}
+.f-scroll{scrollbar-width:thin;scrollbar-color:rgba(247,249,233,.35) transparent}
+.f-scroll::-webkit-scrollbar{width:8px}.f-scroll::-webkit-scrollbar-thumb{background:rgba(247,249,233,.35);border-radius:999px}
+.cell{min-width:0;min-height:calc((((100cqw - (var(--n) - 1) * 52px) / var(--n)) * .9 - 36px) * 1.3333 + 330px)}
+.wall[data-cols="1"] .cell{min-height:0}
+.wall:has(.card:hover) .card:not(:hover),main:has(.card:hover) .dimmable{filter:blur(3px) brightness(.35)}
+@media (prefers-reduced-motion: reduce){.card,.dimmable{transition:none}}
+.ghost:hover{background:rgba(0,0,0,.06)}
+.check-in{stroke-dasharray:60;stroke-dashoffset:60;animation:draw .28s cubic-bezier(.7,0,.3,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.pop{animation:pop .3s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{0%{transform:scale(.7)}100%{transform:scale(1)}}
+.nt-row{position:relative;display:flex;align-items:flex-start;gap:12px;padding:14px 16px;margin:4px 0;border-radius:20px}
+.nt-row:hover{background:rgba(247,249,233,.05)}
+.nt-row.unread{background:rgba(247,249,233,.07)}
+.nt-link{position:absolute;inset:0;z-index:1;border-radius:20px}
+.nt-link:focus-visible{outline:2px solid #F7F9E9;outline-offset:-2px}
+.nt-act{position:relative;z-index:2;height:32px;border-radius:999px;font:inherit;font-size:12px;font-weight:700;padding:0 14px;cursor:pointer}
+.nt-act:focus-visible,.nt-top:focus-visible{outline:2px solid #F7F9E9;outline-offset:2px}
+.nt-top{border:0;background:none;color:#F7F9E9;font:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:8px 4px}
+.nt-top:disabled{opacity:.4;cursor:default}
+.nt-in{animation:ntIn .2s ease both}
+@keyframes ntIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+
+button{transition:scale .15s ease,background-color .2s ease,opacity .2s ease}
+button:not(:disabled):active{scale:.97}
+button,a{-webkit-tap-highlight-color:transparent}
+
+/* ticket notch motif softened to the rounded system (home ticket + menu wheel keep theirs) */
+.notch,.notch-sm,.notch-xs{-webkit-mask:none!important;mask:none!important;overflow:hidden}
+.notch{border-radius:28px}.notch-sm{border-radius:20px}.notch-xs{border-radius:14px}
+.view-menu{border-radius:20px!important;padding:6px;box-sizing:border-box;-webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%)}
+.view-opt{border-bottom:0!important;border-radius:14px;padding:0 14px!important}
+
+/* tickets: soft rounded body with a semicircle bite on each side, like a coupon */
+.notch,.notch-sm,.notch-xs,.dk-notch{-webkit-mask:radial-gradient(circle var(--bite) at 0 var(--at,50%),#0000 97%,#000 100%) left/51% 100% no-repeat,radial-gradient(circle var(--bite) at 100% var(--at,50%),#0000 97%,#000 100%) right/51% 100% no-repeat!important;mask:radial-gradient(circle var(--bite) at 0 var(--at,50%),#0000 97%,#000 100%) left/51% 100% no-repeat,radial-gradient(circle var(--bite) at 100% var(--at,50%),#0000 97%,#000 100%) right/51% 100% no-repeat!important;overflow:hidden}
+.notch{--bite:12px;border-radius:28px}.notch-sm{--bite:9px;border-radius:20px}.notch-xs{--bite:5px;border-radius:12px}.dk-notch{--bite:8px;border-radius:16px}
+
+/* feed ticket: the side bites sit on the dashed tear line */
+article.notch{-webkit-mask:none!important;mask:none!important}
+.tear{position:relative}
+.tear::before,.tear::after{content:"";position:absolute;top:-9px;width:18px;height:18px;border-radius:50%;background:#000000}
+.tear::before{left:-21px}.tear::after{right:-21px}
+
+/* ticket cards: bites sit on the dashed tear line instead of mid-height */
+:where(.notch,.notch-sm,.notch-xs){position:relative}
+.notch:has(.tear2),.notch-sm:has(.tear2),.notch-xs:has(.tear2),.dk-notch:has(.tear2){-webkit-mask:none!important;mask:none!important}
+.tear2::before,.tear2::after{content:"";position:absolute;width:var(--bite-d,18px);height:var(--bite-d,18px);margin-top:calc(var(--bite-d,18px) / -2 - 1px);border-radius:50%;background:var(--bite-bg,#000000)}
+.tear2::before{left:calc(var(--bite-d,18px) / -2)}.tear2::after{right:calc(var(--bite-d,18px) / -2)}
+.notch-sm{--bite-d:16px}.dk-notch{--bite-d:14px}
+
+/* point colour: neon marks where you are */
+.rc-step.on{background:#C8FF42!important;color:#141414!important}
+.g-row[aria-current="page"]{color:#C8FF42}
+a[aria-label="설정"][aria-current="page"]{background:#C8FF42!important;color:#141414!important}
+
+/* icon buttons: one 44px round hit area, 24px icons, soft line ends */
+button svg,a svg,button svg *,a svg *{stroke-linecap:round!important;stroke-linejoin:round!important}
+.ic-btn{width:44px!important;height:44px!important;min-width:44px;border-radius:50%!important;padding:0!important;display:grid!important;place-items:center!important;box-sizing:border-box}
+.ic-btn>svg,.ic-tog>svg{width:24px!important;height:24px!important;flex:none}
+/* pressed save / like: neon icon on a dark round chip, readable on any background */
+.ic-tog>svg{box-sizing:content-box;padding:7px;margin:-7px;border-radius:50%;transition:background-color .2s ease}
+.ic-tog[aria-pressed="true"]>svg{background:#141414}
+.ic-tog[aria-pressed="true"]>svg path{fill:#C8FF42!important;stroke:#C8FF42!important}
+
+/* popups, sheets and menus: one translucent glass panel like the notification panel */
+.gl .pl-map{height:40px;border:1.5px solid transparent;background:rgba(247,249,233,.13);color:#F7F9E9;font:inherit;font-size:13px;font-weight:700;padding:0 14px;display:inline-flex;align-items:center;gap:6px;text-decoration:none;white-space:nowrap}
+.gl .pl-map:hover{background:#F7F9E9;color:#141414;opacity:1}
+.gl .pl-x:focus-visible,.gl .pl-save:focus-visible,.gl .pl-map:focus-visible,.gl .pl-tile:focus-visible{outline:2px solid #F7F9E9;outline-offset:2px}
+.gl .pl-save{width:40px;height:40px;border:0;background:none;color:#F7F9E9;display:grid;place-items:center;cursor:pointer;padding:0}
+.gl .pl-tile{border:0;padding:0;font:inherit;text-align:left;cursor:pointer;color:#F7F9E9;transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.gl .pl-x{width:48px;height:48px;border-radius:50%;border:1px solid transparent;background:rgba(247,249,233,.13);color:#F7F9E9;display:grid;place-items:center;cursor:pointer;padding:0}
+.gl .pl-x:hover{background:rgba(247,249,233,.06)}
+.gl .view-opt{width:100%;height:48px;border:0;border-bottom:1px solid transparent;background:none;color:#F7F9E9;font:inherit;font-size:15px;font-weight:600;display:flex;justify-content:space-between;align-items:center;padding:0 16px;cursor:pointer;text-align:left}
+.gl .view-opt:hover{background:rgba(247,249,233,.06)}
+.gl .view-opt:focus-visible{outline:2px solid #F7F9E9;outline-offset:-3px}
+.gl .auth-card,.auth-card.gl{-webkit-mask:none!important;mask:none!important;border-radius:28px}
+.gl.view-menu .view-opt[aria-checked="true"],.gl .view-opt[aria-current="true"]{color:#C8FF42}
+.gl .tear2::before,.gl .tear2::after{display:none}
+
+/* top nav: neon pill on the current tab, sliding over from the previous one */
+.navlink{position:relative;isolation:isolate;padding:8px 16px!important;border-radius:999px;border-bottom:0!important;transition:color .3s ease,background-color .2s ease}
+.navlink:hover{background:rgba(247,249,233,.08)}
+.navlink[aria-current="page"]{color:#141414!important;background:none!important}
+.navlink[aria-current="page"]::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:999px;background:#C8FF42;transform-origin:left center;animation:navPill .55s cubic-bezier(.22,1,.36,1) both}
+@keyframes navPill{from{transform:translateX(var(--pill-from,0px)) scaleX(var(--pill-sx,1))}}
+
+/* search button: neon while pressed */
+.sr-go{transition:background-color .2s ease,scale .15s ease}
+.sr-go:active{background:#C8FF42!important}
+
+/* atmosphere: faint light behind the glass and a film grain over the ground */
+:root{--grain:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+.amb{background-image:var(--grain),radial-gradient(60% 45% at 100% 0%,rgba(200,255,66,.10),transparent 70%),radial-gradient(55% 40% at 0% 100%,rgba(247,249,233,.06),transparent 70%)!important;background-repeat:repeat,no-repeat,no-repeat!important;background-size:160px 160px,100% 100%,100% 100%!important}
+.amb.amb-home{background-image:var(--grain),radial-gradient(42% 32% at 50% 56%,rgba(200,255,66,.22),transparent 72%),radial-gradient(30% 24% at 22% 18%,rgba(247,249,233,.10),transparent 70%)!important}
+.gl,.gr,.dk-disc{background-image:var(--grain)!important;background-size:160px 160px!important}
+/* a soft neon bloom behind the login card and the open menu wheel */
+.auth-card{box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 140px 20px rgba(200,255,66,.16)!important}
+.dk-disc.on{box-shadow:0 -10px 40px rgba(0,0,0,.45),0 0 120px 30px rgba(200,255,66,.18)}
+/* curation ring: focus on the lifted cover, the rest falls out of focus */
+.cr-face{transition:filter .35s ease}
+.cr-stage:has(.cr-pop) .cr-face{filter:blur(4px) brightness(.5)}
+.cr-stage:has(.cr-pop) .cr-back{filter:blur(4px) brightness(.3)}
+
+/* header logo: the two-tone wordmark (cream letters, neon TM) */
+.logo-img{-webkit-mask:none!important;mask:none!important;background:url('assets/blob/5c28f671acf3728f9a2cebb11036a206.png') left center/contain no-repeat!important}
+
+/* solid = printed paper: every ticket and card shares one fine paper grain and one soft shadow */
+:root{--paper:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .11 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+:where(.paper,.pcard,.st-cell){position:relative}
+.paper::after,.notch::after,.notch-sm::after,.notch-xs::after,.notch4::after,.pcard::after,.st-cell::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:var(--paper);background-size:140px 140px;z-index:1}
+.pcard{background-image:none!important;box-shadow:0 12px 28px rgba(0,0,0,.35)!important}
+.st-cell{box-shadow:0 12px 28px rgba(0,0,0,.35)}
+
+/* login / sign-up popup (same as the home ticket) */
+.auth-card{-webkit-mask:radial-gradient(circle 14px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 14px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 14px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 14px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat;mask:radial-gradient(circle 14px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 14px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 14px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 14px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat}
+.auth-in{animation:authIn .35s cubic-bezier(.2,.8,.2,1) both}
+.auth-field{width:100%;box-sizing:border-box;height:48px;border:1px solid transparent;background:rgba(20,20,20,.13);padding:0 14px;font:inherit;font-size:14px;color:#141414;border-radius:16px}
+.auth-field::placeholder{color:rgba(20,20,20,.55)}
+.auth-field:focus{outline:2px solid #141414;outline-offset:-1px}
+.auth-btn:disabled{opacity:.35;cursor:not-allowed}
+.auth-tab:focus-visible,.auth-btn:focus-visible,.auth-x:focus-visible{outline:2px solid #141414;outline-offset:2px}
+.gl .auth-tab:focus-visible,.gl .auth-btn:focus-visible,.gl .auth-x:focus-visible{outline:2px solid #F7F9E9;outline-offset:2px}
+.gl .auth-field{width:100%;box-sizing:border-box;height:48px;border:1px solid transparent;background:rgba(247,249,233,.13);padding:0 14px;font:inherit;font-size:14px;color:#F7F9E9;border-radius:16px}
+.gl .auth-field::placeholder{color:rgba(247,249,233,.55)}
+.gl .auth-field:focus{outline:2px solid #F7F9E9;outline-offset:-1px}
+.gl .auth-card,.auth-card.gl{-webkit-mask:none!important;mask:none!important;border-radius:28px}
+.auth-card{box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 140px 20px rgba(200,255,66,.16)!important}
+.auth-seg{position:relative;isolation:isolate}
+.auth-seg::before{content:"";position:absolute;z-index:-1;top:4px;bottom:4px;left:4px;width:calc(50% - 6px);border-radius:999px;background:#F7F9E9;transform:translateX(calc(var(--seg,0) * (100% + 4px)));transition:transform .45s cubic-bezier(.22,1,.36,1)}
+.auth-seg .auth-tab{background:transparent!important;transition:color .3s ease}
+@keyframes authIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* ticket cards inside glass panels keep their side notches, tinted like the panel behind them */
+.gl{--bite-bg:#262624}
+.gl .tear2::before,.gl .tear2::after{display:block;background:var(--bite-bg) var(--grain,none);background-size:160px 160px}
+
+/* segmented selectors: one highlight that springs over to the picked option (iOS-like) */
+.seg{position:relative;isolation:isolate;--n:2;--i:0;--P:4px;--G:4px;display:grid!important;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);grid-template-columns:none!important;padding:var(--P)!important;gap:var(--G)!important;border-radius:999px!important;background:rgba(247,249,233,.10)!important;overflow:visible!important;border:0!important}
+.seg::before{content:"";position:absolute;z-index:-1;top:var(--P);bottom:var(--P);left:var(--P);width:calc((100% - 2 * var(--P) - (var(--n) - 1) * var(--G)) / var(--n));border-radius:999px;background:var(--seg-c,#F7F9E9);box-shadow:0 4px 14px rgba(0,0,0,.25);transform:translateX(calc(var(--i) * (100% + var(--G))));transition:transform .4s cubic-bezier(.3,1.15,.5,1);transition:transform .45s linear(0, 0.1 5%, 0.42 13%, 0.76 23%, 0.95 33%, 1.03 43%, 1.035 50%, 1.012 64%, 1.002 78%, 1)}
+.seg :is(button,a):is([aria-selected],[aria-pressed],[aria-checked]){background:transparent!important;border:0!important;border-radius:999px!important;transition:color .25s ease .05s}
+.seg:not(.seg-tint) :is(button,a):is([aria-selected="true"],[aria-pressed="true"],[aria-checked="true"]){color:#141414!important}
+.seg-fit{display:grid!important;width:max-content;max-width:100%}
+.seg-fit :is(button,a){padding:9px 18px!important;justify-content:center}
+.seg-tint{--P:0px;--G:8px;--seg-c:rgba(247,249,233,.16);background:none!important}
+.seg-tint::before{box-shadow:none}
+.rt-solo.seg{background:none!important;padding:0!important}.rt-solo.seg::before{display:none}.rt-solo.seg .ptab.ptab.ptab{color:#F7F9E9!important;padding-left:0!important}
+.seg:has(:is(button,a):nth-of-type(2):last-of-type){--n:2}
+.seg:has(:is(button,a):nth-of-type(3):last-of-type){--n:3}
+.seg:has(:is(button,a):nth-of-type(4):last-of-type){--n:4}
+.seg:has(:is(button,a):nth-of-type(5):last-of-type){--n:5}
+.seg:has(:is(button,a):nth-of-type(2):is([aria-selected="true"],[aria-pressed="true"],[aria-checked="true"])){--i:1}
+.seg:has(:is(button,a):nth-of-type(3):is([aria-selected="true"],[aria-pressed="true"],[aria-checked="true"])){--i:2}
+.seg:has(:is(button,a):nth-of-type(4):is([aria-selected="true"],[aria-pressed="true"],[aria-checked="true"])){--i:3}
+.seg:has(:is(button,a):nth-of-type(5):is([aria-selected="true"],[aria-pressed="true"],[aria-checked="true"])){--i:4}
+
+/* the other sliders share the same spring */
+.auth-seg::before,.g-slide::before{transition:transform .4s cubic-bezier(.3,1.15,.5,1);transition:transform .45s linear(0, 0.1 5%, 0.42 13%, 0.76 23%, 0.95 33%, 1.03 43%, 1.035 50%, 1.012 64%, 1.002 78%, 1)}
+.navlink[aria-current="page"]::before{animation-duration:.5s;animation-timing-function:cubic-bezier(.3,1.15,.5,1);animation-timing-function:linear(0, 0.1 5%, 0.42 13%, 0.76 23%, 0.95 33%, 1.03 43%, 1.035 50%, 1.012 64%, 1.002 78%, 1)}
+
+/* tear lines: short round-capped dashes with a little more air between them */
+:root{--dash:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='9' height='2' viewBox='0 0 9 2'><line x1='1' y1='1' x2='3' y2='1' stroke='black' stroke-width='2' stroke-linecap='round'/></svg>") left center/auto 100% repeat-x}
+.dk-t .tear2{border-top:0!important;background:var(--tear,rgba(247,249,233,.45))!important}
+
+.vtear{position:relative;border-left:0!important}
+.vtear::before{content:"";position:absolute;left:-1px;top:0;bottom:0;width:2px;background:#141414;-webkit-mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='2' height='9' viewBox='0 0 2 9'><line x1='1' y1='1' x2='1' y2='3' stroke='black' stroke-width='2' stroke-linecap='round'/></svg>") center top/100% auto repeat-y;mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='2' height='9' viewBox='0 0 2 9'><line x1='1' y1='1' x2='1' y2='3' stroke='black' stroke-width='2' stroke-linecap='round'/></svg>") center top/100% auto repeat-y;pointer-events:none}
+.tear2::before,.tear2::after{margin-top:calc(var(--bite-d,18px) / -2 + 1px)}
+
+/* header bell sits a hair higher so it lines up with the settings gear */
+/* bookmark drawn at the heart's visual height */
+
+/* bookmark: same weight as the heart; when saved the icon itself fills in, no chip behind it */
+.sv-btn>svg{background:none!important}
+.sv-btn[aria-pressed="true"]>svg path{fill:currentColor!important;stroke:currentColor!important}
+
+/* report popup (glass) */
+.rp-opt{height:48px;border:0;border-radius:16px;background:rgba(247,249,233,.08);color:#F7F9E9;display:flex;align-items:center;gap:10px;padding:0 14px;font:inherit;font-size:14px;font-weight:600;text-align:left;cursor:pointer;transition:background-color .2s ease}
+.rp-opt[aria-checked="true"]{background:rgba(247,249,233,.18)}
+.rp-dot{width:18px;height:18px;flex:none;border-radius:50%;box-shadow:inset 0 0 0 1.5px #F7F9E9;display:grid;place-items:center}
+.rp-dot::after{content:"";width:9px;height:9px;border-radius:50%;background:transparent;transition:background-color .2s ease}
+.rp-opt[aria-checked="true"] .rp-dot::after{background:#C8FF42}
+.rp-note{display:block;width:100%;box-sizing:border-box;margin-top:10px;border:0;border-radius:16px;background:rgba(247,249,233,.13);color:#F7F9E9;padding:14px 16px;font:inherit;font-size:14px;line-height:1.5;resize:none}
+.rp-note::placeholder{color:rgba(247,249,233,.55)}
+.rp-note:focus{outline:2px solid #F7F9E9;outline-offset:-1px}
+.rp-cancel,.rp-submit{height:52px;border:0;border-radius:999px;font:inherit;font-size:15px;font-weight:700;cursor:pointer}
+.rp-cancel{background:rgba(247,249,233,.13);color:#F7F9E9}
+.rp-submit{background:#F7F9E9;color:#141414}
+.rp-submit:disabled{opacity:.35;cursor:not-allowed}
+
+/* liked / saved: the icon itself fills in, no chip behind it (heart matches the bookmark) */
+.ic-tog.ic-tog[aria-pressed="true"]>svg{background:none!important}
+.ic-tog.ic-tog[aria-pressed="true"]>svg path{fill:currentColor!important;stroke:currentColor!important}
+
+/* bell and gear never touch when both are lit */
+a.ic-btn[aria-label="설정"]{margin-left:8px}
+</style>
+</helmet>
+<div class="amb" style="width: 1280px; height: 960px; position: relative; overflow: hidden; background: #000000; color: #F7F9E9; font-family: 'Pretendard Variable', Pretendard, sans-serif;">
+<div class="f-scroll" ref="{{scrollRef}}" onScroll="{{onScroll}}" style="position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden;">
+
+<header style="position: sticky; top: 0; z-index: 20; background: rgba(0,0,0,.55); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); border-bottom: 1px solid transparent;">
+<div style="max-width: 1120px; margin: 0 auto; box-sizing: border-box; padding: 0 40px; height: 72px; display: flex; align-items: center; gap: 40px;">
+<a href="TicketDesktopIn.dc.html" aria-label="arch; 홈으로" style="display: block; width: 84px; height: 32px;"><span class="logo-mask logo-img" style="display: block; width: 100%; height: 100%; background: #F7F9E9;"></span></a>
+<nav aria-label="주 메뉴" onClick="{{navClick}}" style="display: flex; align-items: center; gap: 6px; flex: 1; --pill-from: {{pillFrom}}; --pill-sx: {{pillSx}};">
+<button type="button" class="navlink" onClick="{{openNotice}}" aria-haspopup="dialog">공지</button>
+<button type="button" class="navlink" aria-current="page">피드</button>
+<button type="button" class="navlink" onClick="{{openMobileOnly}}" aria-haspopup="dialog">기록하기</button>
+<a href="CurationDesktop.dc.html" class="navlink">큐레이션</a>
+<a href="StoreDesktop.dc.html" class="navlink">스토어</a>
+<a href="ProfileDesktop.dc.html" onClick="{{guardNav}}" class="navlink">프로필</a>
+</nav>
+<div style="display: flex; align-items: center; gap: 5px;">
+<button type="button" onClick="{{toggleNotif}}" class="ic-btn" aria-label="{{notifLabel}}" aria-haspopup="dialog" aria-expanded="{{notifExpanded}}" style="position: relative; width: 44px; height: 44px; border: 0; border-radius: 50%; background: {{notifBellBg}}; color: {{notifBellFg}}; display: grid; place-items: center;"><sc-if value="{{notifUnread}}" hint-placeholder-val="{{true}}"><span aria-hidden="true" style="position: absolute; top: 9px; right: 10px; width: 8px; height: 8px; border-radius: 50%; background: #C8FF42; box-shadow: 0 0 0 2px #141414;"></span></sc-if><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 15.2v-4.6a5.8 5.8 0 0 1 11.6 0v4.6l1.6 2.1H4.6z"></path><path d="M10 20h4"></path></svg></button>
+<a class="ic-btn" href="SettingsDesktop.dc.html" onClick="{{guardNav}}" aria-label="설정" style="width: 44px; height: 44px; border-radius: 50%; color: #F7F9E9; display: grid; place-items: center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg></a>
+<a href="ProfileDesktop.dc.html" onClick="{{guardNav}}" aria-label="내 프로필" style="box-sizing: border-box; margin-left: 11px; flex: none; width: 36px; height: 36px; border-radius: 50%; border: 1px solid transparent; color: #F7F9E9; font-size: 13px; font-weight: 700; display: grid; place-items: center; background: rgba(247,249,233,.16);">나</a>
+</div>
+</div>
+</header>
+
+<main style="max-width: 1120px; margin: 0 auto; box-sizing: border-box; padding: 56px 40px 120px;">
+<sc-if value="{{isGuest}}" hint-placeholder-val="{{false}}">
+<div role="note" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 28px; padding: 12px 14px 12px 16px; border: 1px solid transparent; border-radius: 20px; background: rgba(247,249,233,.06); font-size: 13px;">
+<span>로그인하지 않고 둘러보는 중이에요.</span>
+<a href="{{loginHref}}" onClick="{{goLogin}}" style="flex: none; height: 32px; padding: 0 14px; border-radius: 999px; background: #F7F9E9; color: #141414; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center;">로그인/회원가입</a>
+</div>
+</sc-if>
+
+
+<section class="dimmable" aria-labelledby="feedTitle" style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 28px; padding-bottom: 28px; border-bottom: 1px solid transparent;">
+<div>
+
+<div style="position: relative;">
+<h1 id="feedTitle" style="margin: 10px 0 0; font-size: 64px; font-weight: 800; letter-spacing: -.04em; line-height: 1;"><button type="button" class="view-btn" onClick="{{toggleView}}" aria-haspopup="menu" aria-expanded="{{viewExpanded}}" aria-label="피드 보기: {{viewLabel}}" style="gap: 10px;">{{viewLabel}}<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" aria-hidden="true" style="transform: rotate({{viewChevron}}deg);"><path d="M5 9l7 7 7-7"></path></svg></button></h1>
+<sc-if value="{{viewOpen}}" hint-placeholder-val="{{false}}">
+<div onClick="{{closeView}}" aria-hidden="true" style="position: fixed; inset: 0; z-index: 24;"></div>
+<div role="menu" aria-label="피드 보기" class="gl view-menu notch-xs" style="border-radius: 28px; position: absolute; left: 0; top: calc(100% + 10px); width: 220px; z-index: 25; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); color: #F7F9E9; box-shadow: 0 14px 30px rgba(0,0,0,.45);">
+<sc-for list="{{viewOpts}}" as="o" hint-placeholder-count="3">
+<button type="button" role="menuitemradio" class="view-opt" aria-checked="{{o.checked}}" onClick="{{o.pick}}">{{o.label}}<sc-if value="{{o.active}}" hint-placeholder-val="{{false}}"><svg width="16" height="14" viewBox="0 0 44 40" aria-hidden="true"><path d="M6 21 L16 31 L39 6" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linejoin="miter"></path></svg></sc-if></button>
+</sc-for>
+</div>
+</sc-if>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px; width: min(440px, 100%);">
+<div class="search" role="search" style="display: grid; grid-template-columns: minmax(0, 1fr) 48px; border: 1px solid transparent; height: 46px; background: rgba(247,249,233,.16); border-radius: 999px; overflow: hidden;">
+<button type="button" class="sr-trigger" onClick="{{openSearch}}" aria-haspopup="dialog" aria-label="검색 열기" style="color: {{searchColor}}; font-size: 15px; padding: 0 16px;">{{searchLabel}}</button>
+<sc-if value="{{hasQuery}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{clearQuery}}" aria-label="검색 지우고 전체 피드 보기" style="border: 0; background: transparent; color: #F7F9E9; display: grid; place-items: center; cursor: pointer;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></sc-if>
+<sc-if value="{{noQuery}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{openSearch}}" class="sr-go" aria-label="검색" style="border-radius: 999px; border: 0; background: #F7F9E9; color: #141414; display: grid; place-items: center; cursor: pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg></button></sc-if>
+</div>
+</div>
+</section>
+
+<div class="dimmable" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0 36px; font-size: 12px; color: rgba(247,249,233,.72);">
+<span>{{summary}}</span>
+<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-variant-numeric: tabular-nums;">{{today}}</span>
+</div>
+
+<sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+<div style="padding: 80px 0; text-align: center; font-size: 15px; color: rgba(247,249,233,.72);">{{emptyText}}</div>
+</sc-if>
+
+<div class="wall" data-cols="{{colCount}}" style="--n: {{colCount}}; container-type: inline-size; display: grid; grid-template-columns: repeat({{colCount}}, minmax(0, 1fr)); gap: 64px 52px;">
+<sc-for list="{{posts}}" as="p" hint-placeholder-count="6">
+<div class="cell" style="display: flex; flex-direction: column; justify-content: {{p.vAlign}}; align-items: {{p.hAlign}};">
+<article class="card notch" aria-label="{{p.aria}}" style="--rot: {{p.rot}}deg; width: 90%; background: {{p.color}}; color: #141414; display: flex; flex-direction: column;">
+<div style="display: flex; align-items: center; gap: 10px; padding: 18px 18px 14px;">
+<a href="{{p.profileHref}}" onClick="{{p.goAuthor}}" aria-label="{{p.profileLabel}}" style="display: flex; align-items: center; gap: 10px; border: 0; background: none; padding: 0; color: inherit; flex: 1; min-width: 0; text-align: left;">
+<span style="width: 36px; height: 36px; flex: none; border-radius: 50%; border: 1px solid transparent; display: grid; place-items: center; font-size: 14px; font-weight: 700; background: rgba(20,20,20,.13);">{{p.initial}}</span>
+<span style="display: flex; flex-direction: column; min-width: 0;">
+<strong style="font-size: 14px; font-weight: 700;">{{p.name}}</strong>
+<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; margin-top: 2px; font-variant-numeric: tabular-nums;">{{p.time}}</span>
+</span>
+</a>
+<sc-if value="{{p.notMine}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{p.toggleFollow}}" aria-pressed="{{p.followPressed}}" style="height: 32px; padding: 0 12px; border: 1px solid transparent; background: {{p.followBg}}; color: {{p.followFg}}; font-size: 12px; font-weight: 600; border-radius: 999px;">{{p.followLabel}}</button></sc-if>
+</div>
+<button type="button" class="open" onClick="{{p.openPost}}" aria-label="{{p.openLabel}}" style="display: block; width: 100%; border: 0; background: none; padding: 0; text-align: left; color: inherit; cursor: zoom-in;">
+<span style="border-radius: 16px; overflow: hidden; position: relative; overflow: hidden; margin: 0 18px; aspect-ratio: {{p.ratio}}; background: rgba(20,20,20,.14); display: flex; align-items: flex-end; justify-content: space-between; padding: 10px 12px; box-sizing: border-box; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; letter-spacing: .1em; font-variant-numeric: tabular-nums;"><sc-if value="{{p.hasPhoto}}" hint-placeholder-val="{{false}}"><img src="{{p.photo}}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;"></sc-if>
+</span>
+<span aria-hidden="true" class="tear" style="display: block; margin: 18px 12px 0; border-top: 0; height: 2px; background: url('data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%229%22 height=%222%22 viewBox=%220 0 9 2%22&gt;&lt;line x1=%221%22 y1=%221%22 x2=%223%22 y2=%221%22 stroke=%22rgba(20,20,20,.8)%22 stroke-width=%222%22 stroke-linecap=%22round%22/&gt;&lt;/svg&gt;') left center/auto 100% repeat-x;"></span>
+<span style="display: block; padding: 14px 18px 0;">
+<span style="display: block; font-size: 11px; font-weight: 500; letter-spacing: .08em;">RECORD</span>
+<span style="display: block; margin: 6px 0 0; font-size: 18px; line-height: 1.55; font-weight: 500; letter-spacing: -.01em; min-height: 53px;">{{p.caption}}</span>
+</span>
+</button>
+<div style="margin: 14px 18px 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; border-top: 1px solid transparent; border-bottom: 1px solid transparent;">
+<button type="button" onClick="{{p.openPlace}}" aria-label="{{p.placeLabel}}" class="ghost" style="border: 0; border-right: 1px solid transparent; background: none; cursor: pointer; color: inherit; padding: 9px 0; text-align: left; display: flex; flex-direction: column; gap: 2px;">
+<span style="font-size: 11px; font-weight: 500; letter-spacing: .08em;">PLACE</span>
+<span style="font-size: 13px; font-weight: 600;">⌖ {{p.place}}</span>
+</button>
+<div style="display: flex;">
+<button type="button" onClick="{{p.toggleLike}}" aria-pressed="{{p.likePressed}}" aria-label="{{p.likeLabel}}" class="ghost ic-tog" style="width: 64px; border: 0; border-right: 1px solid transparent; background: none; color: inherit; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 12px; font-variant-numeric: tabular-nums;">
+<svg class="{{p.likeAnim}}" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19.6s-7.6-4.5-7.6-10A4.3 4.3 0 0 1 12 7a4.3 4.3 0 0 1 7.6 2.6c0 5.5-7.6 10-7.6 10z" fill="{{p.heartFill}}" stroke="#141414" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{p.likes}}
+</button>
+<button type="button" onClick="{{p.toggleSave}}" aria-pressed="{{p.savePressed}}" aria-label="{{p.saveLabel}}" class="ghost ic-tog sv-btn" style="width: 48px; border: 0; background: none; color: inherit; display: grid; place-items: center;">
+<svg class="{{p.saveAnim}}" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 4.5h11v15.2L12 15.6l-5.5 4.1z" fill="{{p.saveFill}}" stroke="#141414" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</button>
+</div>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 18px 18px; font-size: 11px; font-weight: 500;">
+<span>@{{p.handle}}</span>
+<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-variant-numeric: tabular-nums;">{{p.date}}</span>
+</div>
+</article>
+</div>
+</sc-for>
+</div>
+</main>
+</div>
+
+<sc-if value="{{searchOpen}}" hint-placeholder-val="{{false}}">
+<div role="dialog" aria-modal="true" aria-label="검색" class="sr-in" style="position: absolute; top: 73px; left: 0; right: 0; bottom: 0; z-index: 30; background: rgba(0,0,0,.55); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(10px); display: flex; flex-direction: column; box-shadow: 0 30px 80px rgba(0,0,0,.45);">
+<div style="flex: none; padding: 36px 40px 0;">
+<div style="width: 680px; max-width: 100%; margin: 0 auto; display: flex; align-items: center; gap: 10px;">
+<form class="search" role="search" onSubmit="{{sr.submit}}" style="flex: 1; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) 48px; border: 1px solid transparent; height: 46px; background: rgba(247,249,233,.16); border-radius: 999px; overflow: hidden;">
+<input type="search" ref="{{sr.inputRef}}" aria-label="검색어" placeholder="기록, 장소, 사람, 컬렉션 검색" value="{{sr.q}}" onChange="{{sr.onQ}}" maxlength="50" style="min-width: 0; border: 0; background: transparent; color: #F7F9E9; font: inherit; font-size: 15px; padding: 0 14px;">
+<button type="submit" class="sr-go" aria-label="검색" style="border-radius: 999px; border: 0; background: #F7F9E9; color: #141414; display: grid; place-items: center; cursor: pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg></button>
+</form>
+<button type="button" onClick="{{closeSearch}}" style="flex: none; border: 0; background: none; color: #F7F9E9; font: inherit; font-size: 14px; font-weight: 600; padding: 10px 2px; cursor: pointer;">닫기</button>
+</div>
+</div>
+<div class="m-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding-bottom: 40px;">
+<div style="width: 760px; max-width: 100%; margin: 0 auto; box-sizing: border-box; padding: 0 40px;">
+
+<sc-if value="{{sr.idle}}" hint-placeholder-val="{{true}}">
+<section aria-label="최근 검색어" style="margin-top: 22px;">
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 8px; border-bottom: 1px solid transparent;"><h3 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .12em;">최근 검색어</h3>
+<sc-if value="{{sr.hasRecent}}" hint-placeholder-val="{{true}}"><button type="button" class="sr-more" onClick="{{sr.clearRecent}}">전체 삭제</button></sc-if></div>
+<sc-if value="{{sr.noRecent}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 32px 0; text-align: center; font-size: 14px; color: rgba(247,249,233,.72);">최근 검색어가 없어요.</p></sc-if>
+<sc-for list="{{sr.recent}}" as="t" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; border-bottom: 1px solid transparent;">
+<button type="button" class="sr-row" onClick="{{t.use}}" style="border-bottom: 0; flex: 1;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" style="flex: none; opacity: .7;"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7.5V12l3 2"></path></svg><span style="font-size: 15px;">{{t.term}}</span></button>
+<button type="button" class="sr-x" onClick="{{t.remove}}" aria-label="{{t.removeLabel}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+</sc-for>
+</section>
+</sc-if>
+
+<sc-if value="{{sr.active}}" hint-placeholder-val="{{false}}">
+<div role="tablist" aria-label="검색 결과 종류" class="m-scroll seg" style="border-radius: 999px; padding: 4px; gap: 4px; margin-top: 18px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border: 1px solid transparent; background: rgba(247,249,233,.16);">
+<sc-for list="{{sr.tabs}}" as="t" hint-placeholder-count="5">
+<button type="button" role="tab" class="sr-tab" aria-selected="{{t.selected}}" onClick="{{t.pick}}" style="border-radius: 999px; background: {{t.bg}}; color: {{t.fg}}; border-right: {{t.divider};">{{t.label}}<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-weight: 500; font-size: 11px; margin-left: 3px; font-variant-numeric: tabular-nums;">{{t.n}}</span></button>
+</sc-for>
+</div>
+<sc-if value="{{sr.none}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 48px 0; text-align: center; font-size: 14px; color: rgba(247,249,233,.72);">‘{{sr.q}}’에 맞는 결과가 없어요.</p></sc-if>
+<sc-if value="{{sr.show_posts}}" hint-placeholder-val="{{false}}">
+<section aria-label="기록" style="margin-top: 22px;">
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 8px; border-bottom: 1px solid transparent;"><h3 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .12em;">기록 <span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-weight: 500; letter-spacing: 0; color: rgba(247,249,233,.72); font-variant-numeric: tabular-nums;">{{sr.n_posts}}</span></h3><sc-if value="{{sr.more_posts}}" hint-placeholder-val="{{false}}"><button type="button" class="sr-more" onClick="{{sr.go_posts}}">더 보기 →</button></sc-if></div>
+<sc-for list="{{sr.posts}}" as="r" hint-placeholder-count="3">
+<button type="button" class="sr-row" onClick="{{r.open}}" aria-label="{{r.aria}}"><span aria-hidden="true" class="notch-xs" style="flex: none; width: 46px; height: 46px; background: {{r.color}};"></span><span style="flex: 1; min-width: 0;"><span style="display: block; font-size: 13px; font-weight: 600;">⌖ {{r.place}}</span><span style="display: block; margin-top: 3px; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{r.caption}}</span><span style="display: block; margin-top: 3px; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; color: rgba(247,249,233,.72); font-variant-numeric: tabular-nums;">@{{r.handle}} · {{r.time}}</span></span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; opacity: .6;"><path d="M9 6l6 6-6 6"></path></svg></button>
+</sc-for>
+</section>
+</sc-if>
+<sc-if value="{{sr.show_places}}" hint-placeholder-val="{{false}}">
+<section aria-label="장소" style="margin-top: 22px;">
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 8px; border-bottom: 1px solid transparent;"><h3 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .12em;">장소 <span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-weight: 500; letter-spacing: 0; color: rgba(247,249,233,.72); font-variant-numeric: tabular-nums;">{{sr.n_places}}</span></h3><sc-if value="{{sr.more_places}}" hint-placeholder-val="{{false}}"><button type="button" class="sr-more" onClick="{{sr.go_places}}">더 보기 →</button></sc-if></div>
+<sc-for list="{{sr.places}}" as="r" hint-placeholder-count="2">
+<button type="button" class="sr-row" onClick="{{r.pick}}" aria-label="{{r.aria}}"><span aria-hidden="true" style="border-radius: 14px; flex: none; width: 46px; height: 46px; border: 1px solid transparent; display: grid; place-items: center; font-size: 18px; background: rgba(247,249,233,.16);">⌖</span><span style="flex: 1; min-width: 0;"><span style="display: block; font-size: 15px; font-weight: 600;">{{r.name}}</span><span style="display: block; margin-top: 3px; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; color: rgba(247,249,233,.72); font-variant-numeric: tabular-nums;">{{r.region}} · {{r.coords}}</span></span><span style="flex: none; font-size: 12px; color: rgba(247,249,233,.72);">기록 {{r.count}}개</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; opacity: .6;"><path d="M9 6l6 6-6 6"></path></svg></button>
+</sc-for>
+</section>
+</sc-if>
+<sc-if value="{{sr.show_users}}" hint-placeholder-val="{{false}}">
+<section aria-label="사용자" style="margin-top: 22px;">
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 8px; border-bottom: 1px solid transparent;"><h3 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .12em;">사용자 <span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-weight: 500; letter-spacing: 0; color: rgba(247,249,233,.72); font-variant-numeric: tabular-nums;">{{sr.n_users}}</span></h3><sc-if value="{{sr.more_users}}" hint-placeholder-val="{{false}}"><button type="button" class="sr-more" onClick="{{sr.go_users}}">더 보기 →</button></sc-if></div>
+<sc-for list="{{sr.users}}" as="r" hint-placeholder-count="2">
+<a class="sr-row" href="{{r.href}}" onClick="{{r.go}}" aria-label="{{r.aria}}"><span aria-hidden="true" style="flex: none; width: 46px; height: 46px; border-radius: 50%; background: {{r.color}}; color: #141414; display: grid; place-items: center; font-size: 18px; font-weight: 700;">{{r.initial}}</span><span style="flex: 1; min-width: 0;"><span style="display: block; font-size: 15px; font-weight: 600;">{{r.name}}{{r.lock}}</span><span style="display: block; margin-top: 3px; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; color: rgba(247,249,233,.72); font-variant-numeric: tabular-nums;">@{{r.handle}}</span></span><span style="flex: none; font-size: 12px; color: rgba(247,249,233,.72);">{{r.meta}}</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; opacity: .6;"><path d="M9 6l6 6-6 6"></path></svg></a>
+</sc-for>
+</section>
+</sc-if>
+<sc-if value="{{sr.show_colls}}" hint-placeholder-val="{{false}}">
+<section aria-label="컬렉션" style="margin-top: 22px;">
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 8px; border-bottom: 1px solid transparent;"><h3 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .12em;">컬렉션 <span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-weight: 500; letter-spacing: 0; color: rgba(247,249,233,.72); font-variant-numeric: tabular-nums;">{{sr.n_colls}}</span></h3><sc-if value="{{sr.more_colls}}" hint-placeholder-val="{{false}}"><button type="button" class="sr-more" onClick="{{sr.go_colls}}">더 보기 →</button></sc-if></div>
+<sc-for list="{{sr.colls}}" as="r" hint-placeholder-count="2">
+<a class="sr-row" href="{{r.href}}" onClick="{{r.go}}" aria-label="{{r.aria}}"><span aria-hidden="true" style="flex: none; position: relative; width: 46px; height: 46px;"><span class="notch-xs" style="position: absolute; inset: 4px; background: {{r.color}}; filter: brightness(.55); transform: rotate(-7deg);"></span><span class="notch-xs" style="position: absolute; inset: 4px; background: {{r.color}}; transform: rotate(3deg);"></span></span><span style="flex: 1; min-width: 0;"><span style="display: block; font-size: 15px; font-weight: 600;">{{r.title}} <span style="font-weight: 400; color: rgba(247,249,233,.72);">• {{r.count}}개</span></span><span style="display: block; margin-top: 3px; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; color: rgba(247,249,233,.72); font-variant-numeric: tabular-nums;">@{{r.handle}}의 컬렉션</span></span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; opacity: .6;"><path d="M9 6l6 6-6 6"></path></svg></a>
+</sc-for>
+</section>
+</sc-if>
+</sc-if>
+
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{placeOpen}}" hint-placeholder-val="{{false}}">
+<div class="modal-back" onClick="{{closePlace}}" style="position: absolute; inset: 0; z-index: 34; background: rgba(0,0,0,.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"></div>
+<div style="position: absolute; inset: 0; z-index: 35; display: grid; place-items: center; pointer-events: none; padding: 30px; box-sizing: border-box;">
+<div role="dialog" aria-modal="true" aria-labelledby="plTitle" class="gl modal-in" style="border-radius: 28px; pointer-events: auto; width: 880px; max-width: 100%; height: 860px; max-height: 100%; box-sizing: border-box; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); color: #F7F9E9; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,.45);">
+<div class="m-scroll" style="flex: 1; min-height: 0; overflow-y: auto;">
+<header style="position: relative; padding: 36px 40px 30px; border-bottom: 1px solid transparent;">
+<button type="button" class="pl-x ic-btn" onClick="{{closePlace}}" aria-label="닫기" style="position: absolute; top: 24px; right: 24px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+<span style="display: block; font-size: 12px; font-weight: 700; letter-spacing: .2em;">PLACE</span>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; margin-top: 10px; padding-right: 56px;">
+<h2 id="plTitle" style="margin: 0; font-size: 44px; font-weight: 800; letter-spacing: -.04em; line-height: 1.1;">{{pv.name}}</h2>
+<button type="button" class="pl-save ic-tog sv-btn" onClick="{{pv.toggleSave}}" aria-pressed="{{pv.savePressed}}" aria-label="{{pv.saveLabel}}"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 4.5h11v15.2L12 15.6l-5.5 4.1z" fill="{{pv.saveFill}}" stroke="#F7F9E9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+<a class="pl-map" href="{{pv.mapHref}}" target="_blank" rel="noopener noreferrer" style="border-radius: 999px;">카카오맵 <span aria-hidden="true">↗</span></a>
+</div>
+<p style="margin: 14px 0 0; font-size: 15px; font-weight: 500;">{{pv.category}}</p>
+<p style="margin: 14px 0 0; font-size: 14px; line-height: 1.7; opacity: .7;">{{pv.address}}<br><span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 12px; font-variant-numeric: tabular-nums;">{{pv.coords}}</span></p>
+</header>
+<section aria-labelledby="plPhotos" style="padding: 30px 40px;">
+<h3 id="plPhotos" style="margin: 0 0 16px; font-size: 18px; font-weight: 700;">이 장소의 사진</h3>
+<sc-if value="{{pv.noPhotos}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 18px 0 8px; font-size: 14px; opacity: .7;">아직 이 장소에 등록된 사진이 없어요.</p></sc-if>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px;">
+<sc-for list="{{pv.photos}}" as="ph" hint-placeholder-count="4">
+<button type="button" class="pl-tile" onClick="{{ph.open}}" aria-label="{{ph.aria}}" style="color: #141414; border-radius: 16px; overflow: hidden; display: block; aspect-ratio: 1 / 1; background: {{ph.color}}; position: relative;"><span aria-hidden="true" style="position: absolute; inset: 0; background: rgba(20,20,20,.14);"></span></button>
+</sc-for>
+</div>
+</section>
+<div aria-hidden="true" style="height: 12px; background: rgba(247,249,233,.08); border-top: 1px solid transparent; border-bottom: 1px solid transparent;"></div>
+<section aria-labelledby="plRecs" style="padding: 30px 40px 40px;">
+<h3 id="plRecs" style="margin: 0 0 16px; font-size: 18px; font-weight: 700;">전체 기록 · {{pv.count}}</h3>
+<sc-if value="{{pv.noRecs}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 40px 0; text-align: center; font-size: 14px; opacity: .7;">아직 이 장소에 남겨진 기록이 없어요.</p></sc-if>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;">
+<sc-for list="{{pv.recs}}" as="r" hint-placeholder-count="3">
+<button type="button" class="pl-tile notch-sm" onClick="{{r.open}}" aria-label="{{r.aria}}" style="color: #141414; background: {{r.color}}; display: flex; flex-direction: column; min-width: 0;">
+<span style="border-radius: 16px; overflow: hidden; display: block; margin: 10px 10px 0; aspect-ratio: 1 / 1; background: rgba(20,20,20,.14);"></span>
+<span class="tear2" aria-hidden="true" style="display: block; margin: 10px 6px 0; border-top: 0; height: 2px; background: url('data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%229%22 height=%222%22 viewBox=%220 0 9 2%22&gt;&lt;line x1=%221%22 y1=%221%22 x2=%223%22 y2=%221%22 stroke=%22rgba(20,20,20,.8)%22 stroke-width=%222%22 stroke-linecap=%22round%22/&gt;&lt;/svg&gt;') left center/auto 100% repeat-x;"></span>
+<span style="display: block; padding: 8px 10px 10px;">
+<span style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.9em; font-size: 13px; line-height: 1.45;">{{r.caption}}</span>
+<span style="display: flex; justify-content: space-between; margin-top: 6px; padding-top: 6px; border-top: 1px solid transparent; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; font-variant-numeric: tabular-nums;"><span>@{{r.handle}}</span><span>{{r.date}}</span></span>
+</span>
+</button>
+</sc-for>
+</div>
+</section>
+</div>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{modalOpen}}" hint-placeholder-val="{{false}}">
+<div class="modal-back" onClick="{{closeModal}}" style="position: absolute; inset: 0; z-index: 40; background: rgba(0,0,0,.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"></div>
+<div style="position: absolute; inset: 0; z-index: 41; display: grid; place-items: center; pointer-events: none;">
+<div role="dialog" aria-modal="true" aria-label="{{sel.dialogLabel}}" class="modal-in" style="border-radius: 28px; pointer-events: auto; width: {{sel.dialogW}}px; height: {{sel.photoH}}px; background: {{sel.color}}; color: #141414; display: flex; box-shadow: 0 30px 80px rgba(0,0,0,.45);">
+
+<div style="width: {{sel.photoW}}px; flex: none; display: flex;">
+<div style="border-radius: 28px 0 0 28px; overflow: hidden; position: relative; overflow: hidden; width: {{sel.photoW}}px; height: {{sel.photoH}}px; background: rgba(20,20,20,.16); display: flex; align-items: flex-end; justify-content: flex-end; padding: 14px 16px; box-sizing: border-box; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 12px; letter-spacing: .04em; font-variant-numeric: tabular-nums;"><sc-if value="{{sel.hasPhoto}}" hint-placeholder-val="{{false}}"><img src="{{sel.photo}}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;"></sc-if>
+<span>{{sel.coords}}</span>
+</div>
+</div>
+
+<div class="vtear" style="flex: 1; min-width: 0; display: flex; flex-direction: column; border-left: 1.5px dashed #141414;">
+
+<div style="display: flex; align-items: center; gap: 12px; padding: 18px 16px 16px 24px; border-bottom: 1px solid transparent;">
+<a href="{{sel.profileHref}}" onClick="{{sel.goAuthor}}" aria-label="{{sel.profileLabel}}" style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; color: inherit;">
+<span style="width: 44px; height: 44px; flex: none; border-radius: 50%; border: 1px solid transparent; display: grid; place-items: center; font-size: 15px; font-weight: 700; background: rgba(20,20,20,.13);">{{sel.initial}}</span>
+<span style="display: flex; flex-direction: column; min-width: 0;">
+<strong style="font-size: 15px; font-weight: 700;">{{sel.name}}</strong>
+<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums;">@{{sel.handle}} · {{sel.time}}</span>
+</span>
+</a>
+<sc-if value="{{sel.notMine}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{sel.toggleFollow}}" aria-pressed="{{sel.followPressed}}" style="height: 32px; padding: 0 12px; border: 1px solid transparent; background: {{sel.followBg}}; color: {{sel.followFg}}; font-size: 12px; font-weight: 600; border-radius: 999px;">{{sel.followLabel}}</button></sc-if>
+<button class="ic-btn" type="button" onClick="{{sel.share}}" aria-label="링크 복사" style="flex: none; width: 44px; height: 44px; border: 0; background: none; color: inherit; display: grid; place-items: center; cursor: pointer; border-radius: 50%;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3.5M7.5 8 12 3.5 16.5 8"></path><path d="M5 12.5V20h14v-7.5"></path></svg></button>
+<button class="ic-btn" type="button" onClick="{{closeModal}}" aria-label="닫기" style="width: 44px; height: 44px; border: 0; background: none; color: #141414; display: grid; place-items: center; border-radius: 50%;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"></path></svg></button>
+</div>
+
+<div style="padding: 18px 24px 0;">
+<span style="display: block; font-size: 11px; font-weight: 500; letter-spacing: .08em;">RECORD</span>
+<p style="margin: 8px 0 0; font-size: 20px; line-height: 1.5; font-weight: 500; letter-spacing: -.02em;">{{sel.caption}}</p>
+</div>
+
+<div style="margin: 16px 24px 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; border-top: 1px solid transparent; border-bottom: 1px solid transparent;">
+<div style="padding: 8px 12px 8px 0; border-right: 1px solid transparent; min-width: 0;"><span style="display: block; font-size: 11px; font-weight: 500; letter-spacing: .08em;">PLACE</span><span style="display: block; margin-top: 3px; font-size: 13px; font-weight: 600;">⌖ {{sel.place}}</span></div>
+<div style="padding: 8px 0 8px 12px;"><span style="display: block; font-size: 11px; font-weight: 500; letter-spacing: .08em;">DATE</span><span style="display: block; margin-top: 3px; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 13px; font-variant-numeric: tabular-nums;">{{sel.date}}</span></div>
+</div>
+
+<section aria-label="댓글" class="m-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 16px 24px;">
+<div style="display: flex; justify-content: space-between; align-items: baseline;">
+<span style="font-size: 11px; font-weight: 500; letter-spacing: .08em;">COMMENTS</span>
+<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; font-variant-numeric: tabular-nums;">{{sel.commentCount}}</span>
+</div>
+<sc-if value="{{sel.noComments}}" hint-placeholder-val="{{true}}">
+<p style="margin: 12px 0 0; font-size: 14px;">첫 댓글을 남겨보세요.</p>
+</sc-if>
+<sc-for list="{{sel.comments}}" as="c" hint-placeholder-count="0">
+<div style="display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; padding: 10px 0; border-bottom: 1px dashed rgba(20,20,20,.5); font-size: 14px; line-height: 1.5;">
+<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 12px; font-weight: 500; font-variant-numeric: tabular-nums;">@{{c.name}}</span><span style="display: flex; justify-content: space-between; gap: 10px;"><span>{{c.text}}</span><sc-if value="{{c.mine}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{c.del}}" aria-label="내 댓글 삭제" style="border: 0; background: none; color: inherit; font: inherit; font-size: 11px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; padding: 0; opacity: .7;">삭제</button></sc-if></span>
+</div>
+</sc-for>
+</section>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid transparent; border-bottom: 1px solid transparent;">
+<button type="button" class="ghost ic-tog" onClick="{{sel.toggleLike}}" aria-pressed="{{sel.likePressed}}" aria-label="{{sel.likeLabel}}" style="height: 64px; border: 0; border-right: 1px solid transparent; background: none; color: inherit; font: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer;"><svg class="{{sel.likeAnim}}" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19.6s-7.6-4.5-7.6-10A4.3 4.3 0 0 1 12 7a4.3 4.3 0 0 1 7.6 2.6c0 5.5-7.6 10-7.6 10z" fill="{{sel.heartFill}}" stroke="#141414" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-size: 12px; font-weight: {{sel.likeWeight}};"><span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-variant-numeric: tabular-nums;">{{sel.likes}}</span></span></button>
+<button type="button" class="ghost ic-tog sv-btn" onClick="{{sel.toggleSave}}" aria-pressed="{{sel.savePressed}}" style="height: 64px; border: 0; border-right: 1px solid transparent; background: none; color: inherit; font: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer;"><svg class="{{sel.saveAnim}}" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 4.5h11v15.2L12 15.6l-5.5 4.1z" fill="{{sel.saveFill}}" stroke="#141414" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-size: 12px; font-weight: {{sel.saveWeight}};">{{sel.saveText}}</span></button>
+<button type="button" class="ghost" onClick="{{sel.toggleReport}}" aria-pressed="{{sel.reportPressed}}" style="height: 64px; border: 0; background: none; color: inherit; font: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer;"><svg class="" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 16.2v-4.4a5.2 5.2 0 0 1 10.4 0v4.4z" fill="{{sel.reportFill}}" stroke="#141414" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><path d="M4.8 19.6h14.4M12 1.6v1.7M4.7 4l1.2 1.2M19.3 4l-1.2 1.2" fill="none" stroke="#141414" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-size: 12px; font-weight: {{sel.reportWeight}};">{{sel.reportText}}</span></button>
+</div>
+
+<form onSubmit="{{sel.submitComment}}" style="padding: 14px 24px 22px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px;">
+<input type="text" aria-label="댓글 입력" placeholder="댓글 남기기" maxlength="120" value="{{draft}}" onChange="{{onDraft}}" class="comment-input" style="border-radius: 999px; min-width: 0; height: 48px; border: 1px solid transparent; background: rgba(255,255,255,.25); color: #141414; font: inherit; font-size: 15px; padding: 0 14px;">
+<button type="submit" style="height: 48px; padding: 0 20px; border: 1px solid transparent; background: #141414; color: {{sel.color}}; font-size: 14px; font-weight: 600; border-radius: 999px;">등록</button>
+</form>
+
+</div>
+</div>
+</div>
+</sc-if>
+
+<button type="button" class="{{topClass}} ic-btn" onClick="{{toTop}}" aria-label="맨 위로" aria-hidden="{{topHidden}}" tabIndex="{{topTab}}" style="position: absolute; left: 50%; bottom: 32px; width: 52px; height: 52px; border-radius: 50%; border: 1px solid transparent; background: #F7F9E9; color: #141414; display: grid; place-items: center; z-index: 30; box-shadow: 0 8px 24px rgba(0,0,0,.45);">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M12 19V5M5.5 11.5 12 5l6.5 6.5"></path></svg>
+</button>
+
+<sc-if value="{{mobileOnly}}" hint-placeholder-val="{{false}}">
+<div onClick="{{closeMobileOnly}}" style="position: absolute; inset: 0; z-index: 80; background: rgba(0,0,0,.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);"></div>
+<div style="position: absolute; inset: 0; z-index: 81; display: grid; place-items: center; pointer-events: none;">
+<div role="alertdialog" aria-modal="true" aria-labelledby="moTitle" aria-describedby="moDesc" class="gr" style="pointer-events: auto; width: 380px; box-sizing: border-box; padding: 30px 28px 24px; border-radius: 28px; border: 1px solid transparent; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); box-shadow: 0 30px 80px rgba(0,0,0,.55); color: #F7F9E9; font-family: 'Pretendard Variable', Pretendard, sans-serif; text-align: center;">
+<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"></rect><path d="M10.5 18.5h3"></path></svg>
+<h2 id="moTitle" style="margin: 14px 0 0; font-size: 18px; font-weight: 700;">기록은 모바일에서만 가능해요.</h2>
+<p id="moDesc" style="margin: 8px 0 0; font-size: 13px; line-height: 1.6; color: rgba(247,249,233,.72);">휴대폰에서 arch;를 열고 지금 있는 곳을 바로 담아 보세요.</p>
+<button type="button" onClick="{{closeMobileOnly}}" style="margin-top: 22px; width: 100%; height: 48px; border: 0; border-radius: 999px; background: #F7F9E9; color: #141414; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer;">확인</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{noticeOpen}}" hint-placeholder-val="{{false}}">
+<div onClick="{{closeNotice}}" style="position: absolute; inset: 0; z-index: 78; background: rgba(0,0,0,.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);"></div>
+<div style="position: absolute; inset: 0; z-index: 79; display: grid; place-items: center; pointer-events: none; padding: 30px; box-sizing: border-box;">
+<div role="dialog" aria-modal="true" aria-labelledby="ntTitle" class="gr" style="pointer-events: auto; width: 560px; max-width: 100%; max-height: 100%; box-sizing: border-box; display: flex; flex-direction: column; border-radius: 28px; border: 1px solid transparent; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); box-shadow: 0 30px 80px rgba(0,0,0,.55); color: #F7F9E9; font-family: 'Pretendard Variable', Pretendard, sans-serif; overflow: hidden;">
+<div style="flex: none; display: flex; justify-content: space-between; align-items: center; padding: 22px 22px 16px 28px; border-bottom: 1px solid transparent;">
+<h2 id="ntTitle" style="margin: 0; font-size: 20px; font-weight: 700;">공지</h2>
+<button class="ic-btn" type="button" onClick="{{closeNotice}}" aria-label="닫기" style="width: 40px; height: 40px; border: 0; border-radius: 50%; background: none; color: #F7F9E9; display: grid; place-items: center; cursor: pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<div class="m-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 8px 14px 16px;">
+<sc-for list="{{notices}}" as="n" hint-placeholder-count="3">
+<div style="border-bottom: 1px solid transparent;">
+<button type="button" onClick="{{n.toggle}}" aria-expanded="{{n.expanded}}" style="width: 100%; border: 0; background: none; color: #F7F9E9; display: flex; align-items: center; gap: 12px; padding: 16px 14px; text-align: left; font: inherit; cursor: pointer; border-radius: 20px;">
+<span style="flex: 1; min-width: 0;"><span style="display: flex; align-items: center; gap: 8px;"><span style="font-size: 15px; font-weight: 700;">{{n.title}}</span><sc-if value="{{n.isNew}}" hint-placeholder-val="{{false}}"><span style="flex: none; padding: 2px 7px; border-radius: 999px; background: #F7F9E9; color: #141414; font-size: 11px; font-weight: 700; letter-spacing: .04em;">NEW</span></sc-if></span><span style="display: block; margin-top: 4px; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; color: rgba(247,249,233,.72); font-variant-numeric: tabular-nums;">{{n.date}}</span></span>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; opacity: .7; transform: rotate({{n.chevron}}deg); transition: transform .2s ease;"><path d="M6 9l6 6 6-6"></path></svg>
+</button>
+<sc-if value="{{n.showBody}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 0 14px 18px; font-size: 14px; line-height: 1.65; color: rgba(247,249,233,.72);">{{n.body}}</p></sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{notifOpen}}" hint-placeholder-val="{{false}}">
+<div onClick="{{closeNotif}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 58;"></div>
+<div role="dialog" aria-label="알림" class="nt-in gr" style="position: absolute; top: 76px; right: 120px; z-index: 59; width: 420px; max-height: 620px; display: flex; flex-direction: column; border-radius: 28px; border: 1px solid transparent; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); box-shadow: 0 30px 80px rgba(0,0,0,.55); color: #F7F9E9; font-family: 'Pretendard Variable', Pretendard, sans-serif; box-shadow: 0 20px 50px rgba(0,0,0,.55); overflow: hidden;">
+<div style="flex: none; display: flex; justify-content: space-between; align-items: center; padding: 16px 16px 10px 22px; border-bottom: 1px solid transparent;">
+<h2 style="margin: 0; font-size: 18px; font-weight: 700;">알림</h2>
+<button type="button" class="nt-top" onClick="{{readAll}}" disabled="{{noUnread}}">모두 읽음</button>
+</div>
+<div class="m-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 4px 6px 10px;">
+<sc-for list="{{notifs}}" as="n" hint-placeholder-count="5">
+<sc-if value="{{n.first}}" hint-placeholder-val="{{false}}"><h3 style="margin: 14px 16px 6px; font-size: 12px; font-weight: 700; letter-spacing: .06em; color: rgba(247,249,233,.72);">{{n.group}}</h3></sc-if>
+<div class="{{n.cls}}">
+<a class="nt-link" href="{{n.href}}" onClick="{{n.go}}" aria-label="{{n.aria}}"></a>
+<span aria-hidden="true" style="flex: none; width: 40px; height: 40px; border-radius: 50%; background: {{n.color}}; color: #141414; display: grid; place-items: center; font-size: 15px; font-weight: 700;">{{n.initial}}</span>
+<span style="flex: 1; min-width: 0;">
+<span style="display: block; font-size: 14px; line-height: 1.45;"><b style="font-weight: 700;">{{n.who}}</b>{{n.msg}}</span>
+<span style="display: block; margin-top: 3px; font-size: 12px; color: rgba(247,249,233,.72); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{n.sub}}</span>
+<span style="display: block; margin-top: 3px; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; color: rgba(247,249,233,.72); font-variant-numeric: tabular-nums;">{{n.time}}</span>
+<sc-if value="{{n.isReq}}" hint-placeholder-val="{{false}}"><span style="display: flex; gap: 6px; margin-top: 10px;"><button type="button" class="nt-act" onClick="{{n.accept}}" style="border: 0; background: #F7F9E9; color: #141414;">수락</button><button type="button" class="nt-act" onClick="{{n.decline}}" style="border: 1px solid transparent; background: rgba(247,249,233,.16); color: #F7F9E9;">거절</button></span></sc-if>
+<sc-if value="{{n.reqDone}}" hint-placeholder-val="{{false}}"><span style="display: block; margin-top: 8px; font-size: 12px; font-weight: 600;">{{n.reqText}}</span></sc-if>
+</span>
+<sc-if value="{{n.hasThumb}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" class="notch-xs" style="flex: none; width: 44px; height: 44px; background: {{n.thumb}};"></span></sc-if>
+<sc-if value="{{n.isFollow}}" hint-placeholder-val="{{false}}"><button type="button" class="nt-act" onClick="{{n.toggleBack}}" aria-pressed="{{n.backPressed}}" style="flex: none; align-self: center; border: 1px solid transparent; background: {{n.backBg}}; color: {{n.backFg}};">{{n.backLabel}}</button></sc-if>
+<sc-if value="{{n.unread}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="position: absolute; left: 5px; top: 50%; width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: #C8FF42;"></span></sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{guestPrompt}}" hint-placeholder-val="{{false}}">
+<div onClick="{{closeGuest}}" style="position: absolute; inset: 0; z-index: 85; background: rgba(0,0,0,.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);"></div>
+<div style="position: absolute; inset: 0; z-index: 86; display: grid; place-items: center; pointer-events: none; padding: 20px; box-sizing: border-box;">
+<div role="alertdialog" aria-modal="true" aria-labelledby="gpTitle" class="gr" style="pointer-events: auto; width: 360px; max-width: 100%; box-sizing: border-box; padding: 28px 26px 22px; border-radius: 28px; border: 1px solid transparent; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); box-shadow: 0 30px 80px rgba(0,0,0,.55); color: #F7F9E9; text-align: center; font-family: 'Pretendard Variable', Pretendard, sans-serif;">
+<h2 id="gpTitle" style="margin: 0; font-size: 18px; font-weight: 700;">로그인하고 함께해요</h2>
+<p style="margin: 8px 0 0; font-size: 13px; line-height: 1.6; color: rgba(247,249,233,.72);">좋아요, 저장, 댓글, 팔로우, 기록하기는<br>로그인한 뒤에 쓸 수 있어요.</p>
+<a href="{{loginHref}}" onClick="{{goLogin}}" style="margin-top: 20px; height: 48px; border-radius: 999px; background: #F7F9E9; color: #141414; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center;">로그인/회원가입</a>
+<button type="button" onClick="{{closeGuest}}" style="margin-top: 8px; width: 100%; height: 48px; border: 0; background: none; color: #F7F9E9; font: inherit; font-size: 14px; cursor: pointer;">계속 둘러보기</button>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{feedToastOn}}" hint-placeholder-val="{{false}}"><div role="status" class="gr" style="position: absolute; left: 50%; bottom: 100px; transform: translateX(-50%); z-index: 70; padding: 12px 20px; border-radius: 999px; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); color: #F7F9E9; font-size: 13px; font-weight: 600; white-space: nowrap; box-shadow: 0 10px 24px rgba(0,0,0,.4);">{{feedToast}}</div></sc-if>
+<sc-if value="{{authOpen}}" hint-placeholder-val="{{false}}">
+<div onClick="{{closeAuth}}" style="position: absolute; inset: 0; z-index: 90; background: rgba(0,0,0,.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"></div>
+<div style="position: absolute; inset: 0; z-index: 91; display: grid; place-items: center; pointer-events: none; user-select: text;">
+<div role="dialog" aria-modal="true" aria-labelledby="authTitle" class="gl auth-card auth-in" style="border-radius: 28px; pointer-events: auto; width: 420px; box-sizing: border-box; padding: 30px 34px 32px; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); color: #F7F9E9; font-family: 'Pretendard Variable', Pretendard, sans-serif; display: flex; flex-direction: column; box-shadow: 0 30px 80px rgba(0,0,0,.45);">
+<div style="display: flex; justify-content: space-between; align-items: center;">
+<span style="font-size: 11px; font-weight: 700; letter-spacing: .14em;">arch; ACCOUNT</span>
+<button type="button" class="auth-x ic-btn" onClick="{{closeAuth}}" aria-label="닫기" style="width: 36px; height: 36px; margin-right: -8px; border: 0; background: none; color: #F7F9E9; display: grid; place-items: center; padding: 0; border-radius: 50%;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<h2 id="authTitle" style="margin: 22px 0 6px; font-size: 32px; font-weight: 800; letter-spacing: -.04em; text-align: center;">{{auth.title}}</h2>
+<sc-if value="{{auth.showTabs}}" hint-placeholder-val="{{true}}">
+<div role="tablist" aria-label="계정" class="auth-seg" style="--seg: {{authSeg}}; border-radius: 999px; padding: 4px; gap: 4px; margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; border: 1px solid transparent; background: rgba(247,249,233,.13);">
+<sc-for list="{{authTabs}}" as="t" hint-placeholder-count="2">
+<button type="button" role="tab" class="auth-tab" aria-selected="{{t.selected}}" onClick="{{t.pick}}" style="border-radius: 999px; height: 40px; border: 0; background: {{t.bg}}; color: {{t.fg}}; font-size: 14px; font-weight: 600;">{{t.label}}</button>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{auth.isLogin}}" hint-placeholder-val="{{true}}">
+<form onSubmit="{{submitLogin}}" style="margin: 18px 0 0; display: flex; flex-direction: column; gap: 10px;">
+<input class="auth-field" type="text" autocomplete="username" aria-label="이메일 또는 아이디" placeholder="이메일 또는 @아이디" value="{{auth.id}}" onChange="{{onAuthId}}">
+<input class="auth-field" type="password" autocomplete="current-password" aria-label="비밀번호" placeholder="비밀번호 (6자 이상)" value="{{auth.pw}}" onChange="{{onAuthPw}}">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2px;">
+<label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer;"><input type="checkbox" checked="{{auth.auto}}" onChange="{{onAuthAuto}}" style="width: 18px; height: 18px; margin: 0; accent-color: #F7F9E9;">자동 로그인</label>
+<button type="button" onClick="{{findPw}}" style="border: 0; background: none; color: #F7F9E9; font-size: 12px; text-decoration: underline; padding: 6px 0;">비밀번호 찾기</button>
+</div>
+<button type="submit" class="auth-btn" disabled="{{auth.loginDisabled}}" style="border-radius: 999px; margin-top: 6px; height: 56px; border: 0; background: #F7F9E9; color: #141414; font-size: 15px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; padding: 0 18px;">로그인<span aria-hidden="true">→</span></button>
+</form>
+</sc-if>
+
+<sc-if value="{{auth.isSignup}}" hint-placeholder-val="{{false}}">
+<form onSubmit="{{submitSignup}}" style="margin: 18px 0 0; display: flex; flex-direction: column; gap: 10px;">
+<div>
+<input class="auth-field" type="email" autocomplete="email" aria-label="이메일" aria-invalid="{{auth.emailInvalid}}" aria-describedby="emailDup" placeholder="이메일" value="{{auth.email}}" onChange="{{onAuthEmail}}" style="border-color: {{auth.emailBorder}};">
+<sc-if value="{{auth.emailDup}}" hint-placeholder-val="{{false}}"><p id="emailDup" role="alert" style="margin: 6px 0 0; font-size: 12px; font-weight: 600; color: #F28B82;">이미 가입된 이메일이에요</p></sc-if>
+</div>
+<div>
+<input class="auth-field" type="text" autocomplete="username" aria-label="아이디" aria-invalid="{{auth.sidInvalid}}" aria-describedby="sidDup" placeholder="@아이디 (영문·숫자·._)" value="{{auth.sid}}" onChange="{{onAuthSid}}" style="border-color: {{auth.sidBorder}};">
+<sc-if value="{{auth.dup}}" hint-placeholder-val="{{false}}"><p id="sidDup" role="alert" style="margin: 6px 0 0; font-size: 12px; font-weight: 600; color: #F28B82;">이미 있는 아이디예요</p></sc-if>
+</div>
+<input class="auth-field" type="password" autocomplete="new-password" aria-label="비밀번호" placeholder="비밀번호 (6자 이상)" value="{{auth.spw}}" onChange="{{onAuthSpw}}">
+<input class="auth-field" type="password" autocomplete="new-password" aria-label="비밀번호 확인" placeholder="비밀번호 확인" value="{{auth.spw2}}" onChange="{{onAuthSpw2}}">
+<sc-if value="{{auth.hasHint}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; font-size: 12px; font-weight: 600;">{{auth.hint}}</p></sc-if>
+<button type="submit" class="auth-btn" disabled="{{auth.signupDisabled}}" style="border-radius: 999px; margin-top: 6px; height: 56px; border: 0; background: #F7F9E9; color: #141414; font-size: 15px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; padding: 0 18px;">가입하기<span aria-hidden="true">→</span></button>
+<p style="margin: 4px 0 0; font-size: 11px; line-height: 1.6; text-align: center;">가입하면 <button type="button" onClick="{{openTerms}}" style="border: 0; background: none; padding: 0; color: inherit; font: inherit; text-decoration: underline; cursor: pointer;">이용약관</button>과 <button type="button" onClick="{{openPrivacy}}" style="border: 0; background: none; padding: 0; color: inherit; font: inherit; text-decoration: underline; cursor: pointer;">개인정보 처리방침</button>에 동의하게 돼요.</p>
+</form>
+</sc-if>
+
+
+<sc-if value="{{auth.isReset}}" hint-placeholder-val="{{false}}">
+<sc-if value="{{auth.resetNotSent}}" hint-placeholder-val="{{true}}">
+<form onSubmit="{{submitReset}}" style="margin: 14px 0 0; display: flex; flex-direction: column; gap: 10px;">
+<p style="margin: 0; font-size: 13px; line-height: 1.6;">가입한 이메일을 적어 주시면 비밀번호를 다시 정할 수 있는 링크를 보내 드려요.</p>
+<input class="auth-field" type="email" autocomplete="email" aria-label="가입한 이메일" placeholder="가입한 이메일" value="{{auth.resetEmail}}" onChange="{{onResetEmail}}">
+<button type="submit" class="auth-btn" disabled="{{auth.resetDisabled}}" style="border-radius: 999px; margin-top: 4px; height: 56px; border: 0; background: #F7F9E9; color: #141414; font-size: 15px; font-weight: 700;">재설정 링크 보내기</button>
+</form>
+</sc-if>
+<sc-if value="{{auth.resetSent}}" hint-placeholder-val="{{false}}">
+<div role="status" style="border-radius: 16px; margin-top: 14px; padding: 16px; border: 1.5px solid transparent; font-size: 13px; line-height: 1.6; background: rgba(247,249,233,.13); box-shadow: 0 14px 34px rgba(0,0,0,.35);"><b>{{auth.resetEmail}}</b>로 재설정 링크를 보냈어요.<br>메일함을 확인해 주세요.</div>
+</sc-if>
+<button type="button" onClick="{{backToLogin}}" style="margin-top: 12px; border: 0; background: none; color: #F7F9E9; font: inherit; font-size: 13px; font-weight: 600; text-decoration: underline; padding: 6px 0; cursor: pointer;">← 로그인으로 돌아가기</button>
+</sc-if>
+
+<sc-if value="{{auth.isSetup}}" hint-placeholder-val="{{false}}">
+<form onSubmit="{{submitSetup}}" style="margin: 14px 0 0; display: flex; flex-direction: column; gap: 10px;">
+<p style="margin: 0; font-size: 13px; line-height: 1.6;">가입을 축하해요! 프로필 카드에 들어갈 정보를 정해 주세요.</p>
+<input class="auth-field" type="text" aria-label="이름" placeholder="이름 (프로필에 보여요)" maxlength="12" value="{{auth.setupName}}" onChange="{{onSetupName}}">
+<div style="border-radius: 16px; display: flex; align-items: center; gap: 8px; height: 46px; padding: 0 14px; border: 1px solid transparent; box-sizing: border-box; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 14px; background: rgba(247,249,233,.13); font-variant-numeric: tabular-nums;">@{{auth.setupId}}</div>
+<span style="font-size: 12px; font-weight: 700; margin-top: 4px;">관심사 (3개까지)</span>
+<div role="group" aria-label="관심사" style="display: flex; flex-wrap: wrap; gap: 6px;">
+<sc-for list="{{auth.setupInterests}}" as="it" hint-placeholder-count="6">
+<button type="button" aria-pressed="{{it.pressed}}" onClick="{{it.toggle}}" style="height: 32px; padding: 0 12px; border: 1px solid transparent; border-radius: 999px; background: {{it.bg}}; color: {{it.fg}}; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer;">{{it.label}}</button>
+</sc-for>
+</div>
+<button type="submit" class="auth-btn" disabled="{{auth.setupDisabled}}" style="border-radius: 999px; margin-top: 8px; height: 56px; border: 0; background: #F7F9E9; color: #141414; font-size: 15px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; padding: 0 18px;">아치 시작하기<span aria-hidden="true">→</span></button>
+<button type="button" onClick="{{skipSetup}}" style="align-self: center; border: 0; background: none; color: #F7F9E9; font: inherit; font-size: 12px; text-decoration: underline; padding: 6px 0; cursor: pointer;">나중에 할게요</button>
+</form>
+</sc-if>
+<sc-if value="{{auth.showSocial}}" hint-placeholder-val="{{true}}">
+<div aria-hidden="true" style="display: flex; align-items: center; gap: 10px; margin: 16px 0 12px; font-size: 11px; font-weight: 500; letter-spacing: .08em;"><span style="flex: 1; display: block; border-top: 0; height: 2px; background: #F7F9E9; -webkit-mask: var(--dash); mask: var(--dash); opacity: .6;"></span>또는<span style="flex: 1; display: block; border-top: 0; height: 2px; background: #F7F9E9; -webkit-mask: var(--dash); mask: var(--dash); opacity: .6;"></span></div>
+<button type="button" class="auth-btn" onClick="{{kakao}}" style="border-radius: 999px; height: 56px; border: 0; background: #FEE500; color: #191919; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4C7 4 3 7.1 3 11c0 2.5 1.7 4.7 4.2 6l-.9 3.4c-.1.3.3.5.5.3l4-2.7h1.2c5 0 9-3.1 9-7s-4-7-9-7z" fill="#191919"></path></svg>카카오로 계속하기</button>
+</sc-if>
+<sc-if value="{{auth.hasNote}}" hint-placeholder-val="{{false}}"><p role="status" style="margin: 10px 0 0; text-align: center; font-size: 12px; box-shadow: 0 14px 34px rgba(0,0,0,.35);">{{auth.note}}</p></sc-if>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{rpOpen}}" hint-placeholder-val="{{false}}">
+<div onClick="{{rpClose}}" style="position: absolute; inset: 0; z-index: 95; background: rgba(0,0,0,.5); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);"></div>
+<div style="position: absolute; inset: 0; z-index: 96; display: grid; place-items: center; pointer-events: none; padding: 16px; box-sizing: border-box;">
+<div role="dialog" aria-modal="true" aria-labelledby="rpTitle" class="gl gr modal-in" style="pointer-events: auto; width: 360px; max-width: 100%; box-sizing: border-box; padding: 24px 20px 20px; border-radius: 28px; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); box-shadow: 0 20px 50px rgba(0,0,0,.55); color: #F7F9E9;">
+<sc-if value="{{rpForm}}" hint-placeholder-val="{{true}}">
+<h2 id="rpTitle" style="margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -.02em;">이 기록을 신고할까요?</h2>
+<p style="margin: 8px 0 16px; font-size: 13px; line-height: 1.6; color: rgba(247,249,233,.72);">신고 사유를 골라 주세요. 신고한 사실은 상대에게 알려지지 않아요.</p>
+<div role="radiogroup" aria-label="신고 사유" style="display: flex; flex-direction: column; gap: 6px;">
+<sc-for list="{{rpReasons}}" as="r" hint-placeholder-count="6"><button type="button" class="rp-opt" role="radio" aria-checked="{{r.checked}}" onClick="{{r.pick}}"><span class="rp-dot" aria-hidden="true"></span>{{r.label}}</button></sc-for>
+</div>
+<textarea class="rp-note" rows="2" maxlength="200" aria-label="자세한 내용" placeholder="자세한 내용 (선택)" value="{{rpNote}}" onChange="{{rpOnNote}}"></textarea>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px;">
+<button type="button" class="rp-cancel" onClick="{{rpClose}}">닫기</button>
+<button type="button" class="rp-submit ed-act" disabled="{{rpDisabled}}" onClick="{{rpSubmit}}">신고하기</button>
+</div>
+</sc-if>
+<sc-if value="{{rpDone}}" hint-placeholder-val="{{false}}">
+<h2 id="rpTitle" style="margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -.02em;">신고가 접수됐어요</h2>
+<p style="margin: 8px 0 20px; font-size: 13px; line-height: 1.6; color: rgba(247,249,233,.72);">검토한 뒤 운영 정책에 따라 처리할게요.<br>처리 결과는 설정 › 신고 내역에서 볼 수 있어요.</p>
+<button type="button" class="rp-submit ed-act" onClick="{{rpClose}}" style="width: 100%;">확인</button>
+</sc-if>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"postCount":{"editor":"range","default":12,"min":1,"max":40,"step":1},"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.colors = ['#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42'];
+    this.samples = [
+      { name: '민서', handle: 'minseo.walk', time: '방금 전', caption: '바람이 불 때마다 나뭇잎 사이로 빛이 흔들렸다.', place: '서울 · 북촌', coords: '37° 34′ N, 126° 59′ E', following: true, likes: 18 },
+      { name: '도윤', handle: 'doyoon_sea', time: '4분 전', caption: '오늘은 바다가 유난히 가까이 느껴지는 오후.', place: '부산 · 영도', coords: '35° 05′ N, 129° 04′ E', following: false, likes: 31 },
+      { name: '하린', handle: 'harin.k', time: '11분 전', caption: '길을 잘못 들어서 만난 조용한 담장. 오래 기억하고 싶다.', place: '경주 · 황남동', coords: '35° 50′ N, 129° 13′ E', following: true, likes: 12 },
+      { name: '지우', handle: 'jiwoo_', time: '19분 전', caption: '시장 문이 열리기 전, 가장 고요한 골목의 온도.', place: '전주 · 남부시장', coords: '35° 49′ N, 127° 08′ E', following: false, likes: 24 },
+      { name: '유나', handle: 'yuna_', time: '27분 전', caption: '창가에 앉아 아무것도 하지 않았던 한 시간.', place: '강릉 · 주문진', coords: '37° 54′ N, 128° 49′ E', following: true, likes: 9 }
+    ];
+    this.placeInfo = {
+      '서울 · 북촌': { category: '여행 > 관광,명소 > 한옥마을', address: '서울 종로구 계동' },
+      '부산 · 영도': { category: '여행 > 관광,명소 > 섬', address: '부산 영도구' },
+      '경주 · 황남동': { category: '여행 > 관광,명소 > 문화유적', address: '경북 경주시 황남동' },
+      '전주 · 남부시장': { category: '쇼핑 > 전통시장', address: '전북 전주시 완산구 전동' },
+      '강릉 · 주문진': { category: '여행 > 관광,명소 > 항구', address: '강원 강릉시 주문진읍' },
+      '서울 · 성수동': { category: '여행 > 카페거리', address: '서울 성동구 성수동' },
+      '부산 · 해운대': { category: '여행 > 관광,명소 > 해수욕장', address: '부산 해운대구 우동' },
+      '제주 · 협재': { category: '여행 > 관광,명소 > 해변', address: '제주 제주시 한림읍 협재리' }
+    };
+    this.ratios = ['4 / 5', '1 / 1', '3 / 4', '4 / 3', '5 / 4'];
+    this.vAligns = ['flex-start', 'flex-end', 'center', 'flex-end', 'flex-start', 'center', 'flex-end'];
+    this.hAligns = ['flex-start', 'center', 'flex-end', 'flex-end', 'flex-start', 'center'];
+    this.angles = [-1.8, 1.2, -0.8, 2, -1.4, 0.9, -2, 1.6];
+    this.state = {
+      tab: 'all', query: '', viewOpen: false,
+      liked: {}, saved: {}, follow: {}, justLiked: null, justSaved: null,
+      vw: typeof window !== 'undefined' ? window.innerWidth : 1280,
+      showTop: false,
+      open: null, draft: '', comments: {}, reported: {},
+      searchOpen: false, sq: '', stab: 'all', recent: this.loadRecent(),
+      placeOpen: null, savedPlaces: ['서울 · 북촌', '부산 · 영도', '강릉 · 주문진']
+    };
+    this.onResize = () => this.setState({ vw: window.innerWidth });
+  }
+  componentDidMount() {
+    window.addEventListener('resize', this.onResize);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResize);
+  }
+  placeVals(posts) {
+    const s = this.state;
+    const full = s.placeOpen;
+    if (!full) return { placeOpen: false, pv: {} };
+    const [region, name] = full.split(' · ');
+    const info = this.placeInfo[full] || { category: '', address: region };
+    const hits = posts.map((p, i) => ({ p, i })).filter(({ p }) => p.place === full);
+    const coords = hits.length ? hits[0].p.coords : '';
+    const recs = hits.map(({ p, i }) => ({
+      caption: p.caption, handle: p.handle, date: p.time, color: (p.color || this.colors[(i * 3) % this.colors.length]),
+      aria: p.name + '의 기록 열기, ' + p.caption,
+      open: () => this.setState({ open: i, draft: '' })
+    }));
+    const saved = s.savedPlaces.includes(full);
+    return {
+      placeOpen: true,
+      closePlace: () => this.setState({ placeOpen: null }),
+      pv: {
+        name: name, category: info.category, address: info.address, coords: coords,
+        mapHref: 'https://map.kakao.com/?q=' + encodeURIComponent(region + ' ' + name),
+        saveFill: saved ? '#141414' : 'none', savePressed: saved ? 'true' : 'false',
+        saveLabel: saved ? name + ' 저장 취소' : name + ' 저장',
+        toggleSave: () => {
+          const cur = this.state.savedPlaces;
+          this.setState({ savedPlaces: cur.includes(full) ? cur.filter((x) => x !== full) : cur.concat([full]) });
+        },
+        count: recs.length, noRecs: recs.length === 0, recs: recs,
+        noPhotos: recs.length === 0,
+        photos: recs.map((r, k) => ({ color: r.color, open: r.open, aria: name + ' 사진 ' + (k + 1) + ' · 기록 열기' }))
+      }
+    };
+  }
+  loadRecent() {
+    try {
+      const v = JSON.parse(localStorage.getItem('arch.recent') || 'null');
+      if (Array.isArray(v)) return v.slice(0, 10);
+    } catch (e) {}
+    return ['영도', '골목', '@minseo.walk'];
+  }
+  saveRecent(list) {
+    this.setState({ recent: list });
+    try { localStorage.setItem('arch.recent', JSON.stringify(list)); } catch (e) {}
+  }
+  addRecent(term) {
+    const t = (term || '').trim();
+    if (!t) return;
+    this.saveRecent([t].concat(this.state.recent.filter((x) => x !== t)).slice(0, 10));
+  }
+  searchVals(posts) {
+    const s = this.state;
+    if (!s.searchOpen) return { sr: {} };
+    const q = s.sq.trim();
+    const ql = q.toLowerCase();
+    const qh = ql.replace(/^@/, '');
+    const SUF = 'Desktop';
+    const people = [
+      { name: '민서', handle: 'minseo.walk', priv: false },
+      { name: '도윤', handle: 'doyoon_sea', priv: false },
+      { name: '하린', handle: 'harin.k', priv: true },
+      { name: '지우', handle: 'jiwoo_', priv: false },
+      { name: '유나', handle: 'yuna_', priv: false },
+      { name: '서준', handle: 'seojun.nite', priv: false }
+    ];
+    const colls = [
+      { title: '바다 가는 길', desc: '파도 소리가 들리던 곳들.', handle: 'doyoon_sea', count: 2, color: '#C8FF42' },
+      { title: '영도의 오후', desc: '', handle: 'doyoon_sea', count: 1, color: '#C8FF42' },
+      { title: '다시 갈 곳', desc: '', handle: 'doyoon_sea', count: 3, color: '#C8FF42' }
+    ];
+    const profileHref = (h) => (h === 'harin.k' ? 'OtherProfilePrivate' : 'OtherProfile') + SUF + '.dc.html';
+    const has = (txt) => txt.toLowerCase().includes(ql);
+    const postHits = posts.map((p, i) => ({ p, i })).filter(({ p }) => has(p.caption + ' ' + p.place + ' ' + p.name + ' @' + p.handle));
+    const placeMap = {};
+    posts.forEach((p) => {
+      if (!placeMap[p.place]) placeMap[p.place] = { place: p.place, coords: p.coords, count: 0 };
+      placeMap[p.place].count++;
+    });
+    const placeHits = Object.values(placeMap).filter((x) => has(x.place));
+    const userHits = people.filter((u) => u.name.includes(q) || u.handle.toLowerCase().includes(qh));
+    const collHits = colls.filter((c) => has(c.title + ' ' + c.desc) || c.handle.includes(qh));
+    const tab = s.stab;
+    const lim = (arr, k) => (tab === 'all' ? arr.slice(0, 3) : tab === k ? arr : []);
+    const keep = (t) => () => this.addRecent(t);
+    const sr = {
+      q: s.sq,
+      onQ: (e) => this.setState({ sq: e.target.value, stab: 'all' }),
+      inputRef: (el) => { if (el && this.wantFocus) { this.wantFocus = false; try { el.focus(); } catch (e) {} } },
+      submit: (e) => { e.preventDefault(); this.addRecent(this.state.sq); },
+      idle: !q, active: !!q,
+      recent: s.recent.map((t) => ({
+        term: t, removeLabel: t + ' 최근 검색어 삭제',
+        use: () => { this.setState({ sq: t, stab: 'all' }); this.addRecent(t); },
+        remove: () => this.saveRecent(this.state.recent.filter((x) => x !== t))
+      })),
+      hasRecent: s.recent.length > 0, noRecent: s.recent.length === 0,
+      clearRecent: () => this.saveRecent([]),
+      tabs: [['all', '전체', postHits.length + placeHits.length + userHits.length + collHits.length], ['posts', '기록', postHits.length], ['places', '장소', placeHits.length], ['users', '사용자', userHits.length], ['colls', '컬렉션', collHits.length]].map(([id, label, n], k) => ({
+        label: label, n: n, selected: tab === id ? 'true' : 'false',
+        bg: tab === id ? '#F7F9E9' : 'rgba(247,249,233,.18)', fg: tab === id ? '#141414' : '#F7F9E9', divider: k < 4 ? '0' : '0',
+        pick: () => this.setState({ stab: id })
+      })),
+      none: !!q && postHits.length + placeHits.length + userHits.length + collHits.length === 0,
+      posts: lim(postHits, 'posts').map(({ p, i }) => ({
+        place: p.place, caption: p.caption, handle: p.handle, time: p.time,
+        color: (p.color || this.colors[(i * 3) % this.colors.length]), aria: p.name + '의 기록, ' + p.place + ' 열기',
+        open: () => { this.addRecent(q); this.setState({ open: i, draft: '' }); }
+      })),
+      places: lim(placeHits, 'places').map((x) => {
+        const [region, name] = x.place.split(' · ');
+        return {
+          name: name, region: region, coords: x.coords, count: x.count, aria: x.place + ' 장소 자세히 보기',
+          pick: () => { this.addRecent(name); this.setState({ placeOpen: x.place }); }
+        };
+      }),
+      users: lim(userHits, 'users').map((u, k) => {
+        const n = posts.filter((p) => p.handle === u.handle).length;
+        return {
+          name: u.name, handle: u.handle, initial: u.name[0], lock: u.priv ? ' 🔒' : '',
+          color: this.colors[(people.indexOf(u) * 5 + 2) % this.colors.length],
+          meta: n ? '기록 ' + n + '개' : '', href: profileHref(u.handle), aria: u.name + ' 프로필로 이동',
+          go: () => { this.addRecent('@' + u.handle); this.setFrom('feed'); this.setViewUser(u.handle); }
+        };
+      }),
+      colls: lim(collHits, 'colls').map((c) => ({
+        title: c.title, handle: c.handle, count: c.count, color: c.color, href: profileHref(c.handle),
+        aria: c.title + ' 컬렉션, @' + c.handle + ' 프로필로 이동',
+        go: () => { this.addRecent(c.title); this.setFrom('feed'); }
+      }))
+    };
+    for (const [k, arr] of [['posts', postHits], ['places', placeHits], ['users', userHits], ['colls', collHits]]) {
+      sr['show_' + k] = !!q && arr.length > 0 && (tab === 'all' || tab === k);
+      sr['n_' + k] = arr.length;
+      sr['more_' + k] = tab === 'all' && arr.length > 3;
+      sr['go_' + k] = () => this.setState({ stab: k });
+    }
+    return { sr: sr };
+  }
+  newPost() {
+    try {
+      const v = JSON.parse(sessionStorage.getItem('arch.newPost') || 'null');
+      return v && v.place ? v : null;
+    } catch (e) { return null; }
+  }
+  makePosts(n) {
+    const out = [];
+    const base = this.samples.length;
+    for (let i = 0; i < n; i++) {
+      const b = this.samples[i % base];
+      const mins = 30 + (i - base) * 17;
+      out.push({
+        ...b,
+        ago: i < base ? [0, 4, 11, 19, 27][i] : mins,
+        time: i < base ? b.time : (mins < 60 ? mins + '분 전' : Math.floor(mins / 60) + '시간 전'),
+        following: i % 3 === 1 && i >= base ? !b.following : b.following,
+        likes: i < base ? b.likes : b.likes + (i * 7) % 23
+      });
+    }
+    const np = this.newPost();
+    if (np) {
+      out.push({
+        name: '나', handle: '아이디', time: '방금 전', ago: -1, caption: np.caption || '', place: np.place, coords: np.coords || '',
+        following: false, likes: 0, mine: true, ratio: np.ratio, r: np.r, color: np.color, photo: np.photo || ''
+      });
+    }
+    return out;
+  }
+  modalView(posts, s) {
+    const i = s.open;
+    const p = i === null || i === undefined ? null : posts[i];
+    if (!p) return {};
+    const liked = !!s.liked[i];
+    const saved = !!s.saved[i];
+    const reported = !!s.reported[i];
+    const following = this.followOf(p, i);
+    const color = '#C8FF42';
+    const comments = s.comments[i] || [];
+    return {
+      dialogLabel: p.name + '의 기록',
+      color: color,
+      initial: p.name[0],
+      name: p.name,
+      meta: p.time + ' · ' + p.place,
+      profileLabel: p.name + ' 프로필 보기',
+      goAuthor: () => { this.setFrom('feed'); this.setViewUser(p.handle); },
+      ratio: p.ratio || this.ratios[i % this.ratios.length],
+      photo: p.photo || '', hasPhoto: !!p.photo, notMine: !p.mine, profileHref: p.mine ? 'ProfileDesktop.dc.html' : 'OtherProfileDesktop.dc.html',
+      no: String(i + 1).padStart(4, '0'),
+      coords: p.coords || '',
+      time: p.time,
+      photoW: this.fitPhoto(i, p).w,
+      photoH: this.fitPhoto(i, p).h,
+      dialogW: this.fitPhoto(i, p).w + 400,
+      caption: p.caption,
+      place: p.place,
+      handle: p.handle,
+      date: this.fmtDate(p.ago),
+      likes: p.likes + (liked ? 1 : 0),
+      heartFill: liked ? '#141414' : 'none',
+      likePressed: liked ? 'true' : 'false',
+      likeLabel: liked ? '좋아요 취소' : '좋아요',
+      likeAnim: s.justLiked === i ? 'pop' : '',
+      toggleLike: () => this.toggle('liked', i, 'justLiked'),
+      saveFill: saved ? '#141414' : 'none',
+      savePressed: saved ? 'true' : 'false',
+      saveText: saved ? '저장됨' : '저장',
+      saveAnim: s.justSaved === i ? 'pop' : '',
+      toggleSave: () => this.toggle('saved', i, 'justSaved'),
+      reportPressed: reported ? 'true' : 'false',
+      likeWeight: liked ? 700 : 400,
+      saveWeight: saved ? 700 : 400,
+      reportWeight: reported ? 700 : 400,
+      reportFill: reported ? '#141414' : 'none',
+      reportText: reported ? '신고됨' : '신고',
+      toggleReport: () => { if (!reported) this.setState({ rp: { reason: '', note: '', done: () => this.setState({ reported: { ...this.state.reported, [i]: true } }) } }); },
+      followLabel: following ? '팔로잉' : '팔로우',
+      followPressed: following ? 'true' : 'false',
+      followBg: following ? 'rgba(20,20,20,.13)' : '#141414',
+      followFg: following ? '#141414' : '#C8FF42',
+      toggleFollow: () => this.setState({ follow: { ...s.follow, [i]: !following } }),
+      comments: comments.map((c, ci) => ({ ...c, mine: c.name === '나', del: () => this.setState({ comments: { ...this.state.comments, [i]: (this.state.comments[i] || []).filter((_, j) => j !== ci) } }) })),
+      share: () => {
+        try { if (navigator.clipboard) navigator.clipboard.writeText('https://arch.example/record/' + i); } catch (e) {}
+        this.feedToastShow('링크를 복사했어요');
+      },
+      noComments: comments.length === 0,
+      commentCount: '댓글 ' + comments.length,
+      submitComment: (e) => {
+        e.preventDefault();
+        const t = (this.state.draft || '').trim();
+        if (!t) return;
+        const list = (this.state.comments[i] || []).concat([{ name: '나', text: t }]);
+        this.setState({ comments: { ...this.state.comments, [i]: list }, draft: '' });
+      }
+    };
+  }
+  fmtDate(ago) {
+    const d = new Date(Date.now() - ago * 60000);
+    const pad = (n) => String(n).padStart(2, '0');
+    return d.getFullYear() + '/' + pad(d.getMonth() + 1) + '/' + pad(d.getDate());
+  }
+  fitPhoto(i, p) {
+    const r = (p && p.r) || [0.8, 1, 0.75, 4 / 3, 1.25][i % 5];
+    return r <= 1 ? { w: Math.round(820 * r), h: 820 } : { w: 780, h: Math.round(780 / r) };
+  }
+  followOf(p, i) {
+    const v = this.state.follow[i];
+    return v === undefined ? p.following : v;
+  }
+  toggle(key, i, flag) {
+    const next = { ...this.state[key] };
+    next[i] = !next[i];
+    this.setState({ [key]: next, [flag]: next[i] ? i : null });
+  }
+  setFrom(v) {
+    try { sessionStorage.setItem('arch.from', v); } catch (e) {}
+  }
+  noticeList() {
+    return [
+      { id: 'n3', date: '2026/10/26', title: '장소 팝업이 새로 생겼어요', body: '저장한 장소, 컬렉션 속 장소, 검색 결과의 장소를 누르면 장소 정보와 그곳에 남겨진 기록을 한눈에 볼 수 있어요.' },
+      { id: 'n2', date: '2026/10/25', title: '이제 모바일에서 바로 기록할 수 있어요', body: '메뉴 버튼의 기록하기에서 사진을 찍고, 비율과 장소를 고르면 바로 피드에 올라가요.' },
+      { id: 'n1', date: '2026/10/24', title: '피드 검색이 더 편해졌어요', body: '기록, 장소, 사용자, 컬렉션을 한 번에 찾고 최근 검색어도 다시 볼 수 있어요.' }
+    ];
+  }
+  noticeVals() {
+    const open = !!this.state.noticeOpen;
+    const exp = this.state.noticeExp || {};
+    return {
+      noticeOpen: open,
+      openNotice: () => this.setState({ noticeOpen: true, noticeExp: { n3: true } }),
+      closeNotice: () => this.setState({ noticeOpen: false }),
+      notices: this.noticeList().map((n, k) => ({
+        ...n, isNew: k === 0, expanded: exp[n.id] ? 'true' : 'false', showBody: !!exp[n.id], chevron: exp[n.id] ? 180 : 0,
+        toggle: () => this.setState({ noticeExp: { ...(this.state.noticeExp || {}), [n.id]: !(this.state.noticeExp || {})[n.id] } })
+      }))
+    };
+  }
+  relOf(h, dflt) {
+    let m = null;
+    try { m = JSON.parse(localStorage.getItem('arch.rel') || 'null'); } catch (e) {}
+    const v = m && m[h];
+    if (v === 'following') return true;
+    if (v === 'requested') return 'requested';
+    if (v === 'none') return false;
+    return dflt === undefined ? false : dflt;
+  }
+  setRel(h, v) {
+    try {
+      const m = JSON.parse(localStorage.getItem('arch.rel') || '{}') || {};
+      m[h] = v === true ? 'following' : v === 'requested' ? 'requested' : 'none';
+      localStorage.setItem('arch.rel', JSON.stringify(m));
+    } catch (e) {}
+  }
+  followsMe(h) {
+    return h === 'jiwoo_' || (h === 'seojun.nite' && this.notifStore('arch.notifReq') === 'accepted');
+  }
+  setViewUser(h) {
+    try { sessionStorage.setItem('arch.viewUser', h); } catch (e) {}
+  }
+  notifData() {
+    return [
+      { id: 'a1', group: '오늘', type: 'like', who: '도윤', handle: 'doyoon_sea', time: '5분 전', rec: 1, place: '부산 · 영도', color: '#C8FF42' },
+      { id: 'a2', group: '오늘', type: 'comment', who: '민서', handle: 'minseo.walk', time: '32분 전', rec: 0, place: '서울 · 북촌', text: '빛이 정말 예쁘게 들어오네요. 저도 가 볼래요!', color: '#C8FF42' },
+      { id: 'a3', group: '오늘', type: 'request', who: '서준', handle: 'seojun.nite', time: '1시간 전', color: '#C8FF42' },
+      { id: 'a4', group: '오늘', type: 'follow', who: '지우', handle: 'jiwoo_', time: '3시간 전', color: '#C8FF42' },
+      { id: 'a5', group: '이번 주', type: 'like', who: '유나', handle: 'yuna_', others: 2, time: '2일 전', rec: 4, place: '강릉 · 주문진', color: '#C8FF42' },
+      { id: 'a6', group: '이번 주', type: 'comment', who: '하린', handle: 'harin.k', time: '4일 전', rec: 3, place: '전주 · 남부시장', text: '여기 아침 공기가 진짜 좋죠.', color: '#C8FF42' }
+    ];
+  }
+  notifStore(key, val) {
+    try {
+      if (val === undefined) return JSON.parse(localStorage.getItem(key) || 'null');
+      localStorage.setItem(key, JSON.stringify(val));
+    } catch (e) {}
+    return null;
+  }
+  notifVals() {
+    const s = this.state;
+    if (this.notifRead === undefined) {
+      this.notifRead = this.notifStore('arch.notifRead') || [];
+      this.notifReq = this.notifStore('arch.notifReq') || '';
+      
+    }
+    const read = this.notifRead;
+    const data = this.notifData();
+    const recColor = (k) => this.notifColors[(k * 5 + 1) % 8];
+    const unreadN = data.filter((n) => !read.includes(n.id)).length;
+    const mark = (id) => {
+      if (this.notifRead.includes(id)) return;
+      this.notifRead = this.notifRead.concat([id]);
+      this.notifStore('arch.notifRead', this.notifRead);
+      this.setState({ notifTick: (this.state.notifTick || 0) + 1 });
+    };
+    const profileHref = (h) => (h === 'harin.k' ? 'OtherProfilePrivateDesktop.dc.html' : 'OtherProfileDesktop.dc.html');
+    const rows = data.map((n, k) => {
+      const unread = !read.includes(n.id);
+      const isRec = n.type === 'like' || n.type === 'comment';
+      const msg = n.type === 'like' ? (n.others ? '님 외 ' + n.others + '명이 내 기록을 좋아해요.' : '님이 내 기록을 좋아해요.')
+        : n.type === 'comment' ? '님이 내 기록에 댓글을 남겼어요.'
+        : n.type === 'follow' ? '님이 나를 팔로우하기 시작했어요.'
+        : '님이 팔로우를 요청했어요.';
+      const req = n.type === 'request' ? this.notifReq : '';
+      return {
+        ...n, msg: msg, cls: unread ? 'nt-row unread' : 'nt-row', unread: unread, initial: n.who[0],
+        first: k === 0 || data[k - 1].group !== n.group,
+        sub: n.type === 'comment' ? '“' + n.text + '”' : isRec ? '⌖ ' + n.place : '@' + n.handle,
+        hasThumb: isRec, thumb: isRec ? recColor(n.rec) : '',
+        href: isRec ? 'ProfileDesktop.dc.html' : profileHref(n.handle),
+        aria: n.who + msg + ' ' + n.time,
+        go: (e) => {
+          mark(n.id);
+          if (isRec && this.openRecHere && this.openRecHere(n.rec)) { if (e && e.preventDefault) e.preventDefault(); return; }
+          try {
+            if (isRec) sessionStorage.setItem('arch.openRec', String(n.rec));
+            else { sessionStorage.setItem('arch.from', 'profile'); sessionStorage.setItem('arch.viewUser', n.handle); }
+          } catch (e2) {}
+          this.setState({ notifOpen: false });
+        },
+        isFollow: n.type === 'follow', isReq: n.type === 'request' && !req, reqDone: n.type === 'request' && !!req,
+        reqText: req === 'accepted' ? '요청을 수락했어요' : '요청을 거절했어요',
+        backLabel: this.relOf('jiwoo_') === true ? '팔로잉' : '맞팔로우',
+        backBg: this.relOf('jiwoo_') === true ? 'rgba(247,249,233,.18)' : '#141414', backFg: this.relOf('jiwoo_') === true ? '#F7F9E9' : '#C8FF42',
+        backPressed: this.relOf('jiwoo_') === true ? 'true' : 'false',
+        toggleBack: () => { this.setRel('jiwoo_', this.relOf('jiwoo_') !== true); mark(n.id); },
+        accept: () => { this.notifReq = 'accepted'; this.notifStore('arch.notifReq', 'accepted'); this.setRel('seojun.nite', this.relOf('seojun.nite')); mark(n.id); },
+        decline: () => { this.notifReq = 'declined'; this.notifStore('arch.notifReq', 'declined'); mark(n.id); }
+      };
+    });
+    const open = !!s.notifOpen;
+    return {
+      notifOpen: open, notifExpanded: open ? 'true' : 'false',
+      notifUnread: unreadN > 0, notifCount: unreadN,
+      notifLabel: unreadN ? '알림, 안 읽은 알림 ' + unreadN + '개' : '알림',
+      notifBellBg: open ? '#C8FF42' : 'none', notifBellFg: open ? '#141414' : '#F7F9E9',
+      toggleNotif: () => this.setState({ notifOpen: !this.state.notifOpen }),
+      closeNotif: () => this.setState({ notifOpen: false }),
+      readAll: () => {
+        this.notifRead = data.map((n) => n.id);
+        this.notifStore('arch.notifRead', this.notifRead);
+        this.setState({ notifTick: (this.state.notifTick || 0) + 1 });
+      },
+      noUnread: unreadN === 0,
+      notifs: rows
+    };
+  }
+  isGuest() {
+    try { return sessionStorage.getItem('arch.guest') === '1'; } catch (e) { return false; }
+  }
+  feedToastShow(t) {
+    this.setState({ feedToast: t });
+    if (this.feedToastTimer) clearTimeout(this.feedToastTimer);
+    this.feedToastTimer = setTimeout(() => this.setState({ feedToast: '' }), 2400);
+  }
+  guestify(o) {
+    const ask = () => this.setState({ guestPrompt: true, notifOpen: false });
+    const askEv = (e) => { if (e && e.preventDefault) e.preventDefault(); ask(); };
+    o.toggleNotif = ask;
+    o.guardNav = askEv;
+    o.openMobileOnly = ask;
+    const lists = (o.posts || []).concat(...(o.cols || []).map((c) => c.posts || []));
+    lists.forEach((p) => { p.toggleLike = ask; p.toggleSave = ask; p.toggleFollow = ask; });
+    if (o.sel) { ['toggleLike', 'toggleSave', 'toggleFollow', 'toggleReport'].forEach((k) => { o.sel[k] = ask; }); o.sel.submitComment = askEv; }
+    if (o.pv) o.pv.toggleSave = ask;
+    return o;
+  }
+  pillVals(cur) {
+    // the nav pill slides over from the tab that was clicked a moment ago
+    const W = [2, 2, 4, 4, 3, 3].map(n => 32 + n * 14), GAP = 6;
+    const left = i => W.slice(0, i).reduce((a, w) => a + w + GAP, 0);
+    let from = '0px', sx = 1;
+    try {
+      const p = JSON.parse(sessionStorage.getItem('arch.navPrev') || 'null');
+      if (p && p.i !== cur && Date.now() - p.t < 4000) { from = (left(p.i) - left(cur)) + 'px'; sx = W[p.i] / W[cur]; }
+    } catch (e) {}
+    return {
+      pillFrom: from, pillSx: sx.toFixed(3),
+      navClick: () => { try { sessionStorage.setItem('arch.navPrev', JSON.stringify({ i: cur, t: Date.now() })); } catch (e) {} },
+    };
+  }
+  setAuth(patch) {
+    this.setState({ auth: { ...this.state.auth, ...patch, note: '' } });
+  }
+  openAuth(tab) {
+    this.setState({ guestPrompt: false, auth: { tab: tab || 'login', id: '', pw: '', auto: true, email: '', sid: '', spw: '', spw2: '', note: '' } });
+  }
+  authVals() {
+    const a = this.state.auth;
+    if (!a) return { authOpen: false, auth: {}, authTabs: [] };
+    const isLogin = a.tab === 'login';
+    const interestPool = ['차', '맛집', '카페', '음악', '산책', '사진', '책', '건축', '바다'];
+    const picked = a.interests || [];
+    const resetOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((a.resetEmail || '').trim());
+    const idOk = /^[a-z0-9._]{2,20}$/i.test(a.sid.replace(/^@/, ''));
+    const taken = ['minseo.walk', 'doyoon_sea', 'harin.k', 'jiwoo_', 'yuna_', 'seojun.nite'];
+    const dup = idOk && taken.includes(a.sid.replace(/^@/, '').toLowerCase());
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(a.email.trim());
+    const takenEmails = ['me@archyourview.kr', 'minseo@example.com', 'doyoon@example.com', 'harin@example.com', 'jiwoo@example.com', 'yuna@example.com'];
+    const emailDup = emailOk && takenEmails.includes(a.email.trim().toLowerCase());
+    let hint = '';
+    if (a.sid && !idOk) hint = '아이디는 영문·숫자·._ 2–20자로 만들어 주세요.';
+    else if (a.spw && a.spw.length < 6) hint = '비밀번호는 6자 이상이어야 해요.';
+    else if (a.spw2 && a.spw !== a.spw2) hint = '비밀번호가 서로 달라요.';
+    const val = (k) => (e) => this.setAuth({ [k]: e.target.value });
+    const chk = (k) => (e) => this.setAuth({ [k]: e.target.checked });
+    return {
+      authOpen: true,
+      auth: {
+        ...a, isLogin: isLogin, isSignup: a.tab === 'signup', isReset: a.tab === 'reset', isSetup: a.tab === 'setup',
+        title: { login: '로그인', signup: '회원가입', reset: '비밀번호 찾기', setup: '프로필 설정' }[a.tab],
+        showTabs: isLogin || a.tab === 'signup', showSocial: isLogin || a.tab === 'signup',
+        resetEmail: a.resetEmail || '', resetSent: !!a.resetSent, resetNotSent: !a.resetSent, resetDisabled: !resetOk,
+        setupName: a.setupName || '', setupId: a.sid ? a.sid.replace(/^@/, '').toLowerCase() : '', setupDisabled: !(a.setupName || '').trim(),
+        setupInterests: interestPool.map((t) => ({
+          label: t, pressed: picked.includes(t) ? 'true' : 'false', bg: picked.includes(t) ? '#F7F9E9' : 'rgba(247,249,233,.13)', fg: picked.includes(t) ? '#141414' : '#F7F9E9',
+          toggle: () => {
+            const cur = this.state.auth.interests || [];
+            const next = cur.includes(t) ? cur.filter((x) => x !== t) : cur.length < 3 ? cur.concat([t]) : cur;
+            this.setAuth({ interests: next });
+          }
+        })),
+        loginDisabled: !(a.id.trim() && a.pw.length >= 6),
+        signupDisabled: !(emailOk && !emailDup && idOk && !dup && a.spw.length >= 6 && a.spw === a.spw2),
+        emailDup: emailDup, emailInvalid: emailDup ? 'true' : 'false', emailBorder: emailDup ? '#F28B82' : 'transparent',
+        dup: dup, sidInvalid: dup ? 'true' : 'false', sidBorder: dup ? '#F28B82' : 'transparent',
+        hint: hint, hasHint: !!hint, hasNote: !!a.note
+      },
+      authSeg: a.tab === 'signup' ? 1 : 0,
+      authTabs: [['login', '로그인'], ['signup', '회원가입']].map(([id, label]) => ({
+        label: label, selected: a.tab === id ? 'true' : 'false',
+        bg: a.tab === id ? '#F7F9E9' : 'rgba(247,249,233,.13)', fg: a.tab === id ? '#141414' : '#F7F9E9',
+        pick: () => this.setAuth({ tab: id })
+      })),
+      closeAuth: () => this.setState({ auth: null }),
+      onAuthId: val('id'), onAuthPw: val('pw'), onAuthAuto: chk('auto'),
+      onAuthEmail: val('email'), onAuthSid: val('sid'), onAuthSpw: val('spw'), onAuthSpw2: val('spw2'),
+      submitLogin: (e) => { e.preventDefault(); const b = this.state.auth; if (b.id.trim() && b.pw.length >= 6) this.authDone(); },
+      submitSignup: (e) => { e.preventDefault(); if (!this.authVals().auth.signupDisabled) this.setAuth({ tab: 'setup', setupName: '', interests: [] }); },
+      submitSetup: (e) => {
+        e.preventDefault();
+        const b = this.state.auth;
+        if (!(b.setupName || '').trim()) return;
+        try { localStorage.setItem('arch.profile', JSON.stringify({ name: b.setupName.trim(), id: b.sid.replace(/^@/, '').toLowerCase(), interests: b.interests || [] })); } catch (err) {}
+        this.authDone();
+      },
+      skipSetup: () => {
+        const b = this.state.auth;
+        try { localStorage.setItem('arch.profile', JSON.stringify({ name: '', id: b.sid.replace(/^@/, '').toLowerCase(), interests: [] })); } catch (err) {}
+        this.authDone();
+      },
+      onSetupName: (e) => this.setAuth({ setupName: e.target.value.slice(0, 12) }),
+      onResetEmail: (e) => this.setAuth({ resetEmail: e.target.value }),
+      submitReset: (e) => { e.preventDefault(); if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((this.state.auth.resetEmail || '').trim())) this.setAuth({ resetSent: true }); },
+      backToLogin: () => this.setAuth({ tab: 'login', resetSent: false }),
+      findPw: () => this.setAuth({ tab: 'reset', resetEmail: '', resetSent: false }),
+      openTerms: () => this.setAuth({ note: '이용약관은 설정 › 문의하기에서 볼 수 있어요.' }),
+      openPrivacy: () => this.setAuth({ note: '개인정보 처리방침은 설정 › 문의하기에서 볼 수 있어요.' }),
+      kakao: () => this.setState({ auth: { ...this.state.auth, note: '카카오 로그인은 곧 연결될 예정이에요.' } })
+    };
+  }
+  authDone() {
+    // signed in right here: drop guest mode and stay on this page
+    try { sessionStorage.removeItem('arch.guest'); } catch (e) {}
+    this.setState({ auth: null, guestPrompt: false });
+  }
+  reportVals() {
+    const r = this.state.rp;
+    if (!r) return { rpOpen: false, rpForm: false, rpDone: false, rpReasons: [] };
+    const reasons = ['스팸·광고', '부적절한 사진', '혐오·괴롭힘', '사실과 다른 장소 정보', '저작권 침해', '기타'];
+    const patch = (p) => this.setState({ rp: { ...this.state.rp, ...p } });
+    return {
+      rpOpen: true, rpForm: !r.sent, rpDone: !!r.sent,
+      rpReasons: reasons.map((label) => ({ label: label, checked: r.reason === label ? 'true' : 'false', pick: () => patch({ reason: label }) })),
+      rpNote: r.note || '', rpOnNote: (e) => patch({ note: e.target.value.slice(0, 200) }),
+      rpDisabled: !r.reason,
+      rpSubmit: () => {
+        const cur = this.state.rp;
+        if (!cur || !cur.reason) return;
+        const next = { ...cur, sent: true };
+        if (cur.done) cur.done();
+        this.setState({ rp: next });
+      },
+      rpClose: () => this.setState({ rp: null })
+    };
+  }
+  renderVals() {
+    this.notifColors = ['#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42'];
+    const nv = this.notifVals();
+    const out = { ...this.renderValsBase(), ...this.noticeVals(), ...nv };
+    const guest = this.isGuest();
+    out.isGuest = guest;
+    out.guardNav = () => {};
+    out.guestPrompt = !!this.state.guestPrompt;
+    out.closeGuest = () => this.setState({ guestPrompt: false });
+    out.loginHref = 'TicketDesktop.dc.html';
+    out.goLogin = (e) => { if (e && e.preventDefault) e.preventDefault(); this.openAuth('login'); };
+    Object.assign(out, this.authVals(), this.reportVals());
+    out.feedToastOn = !!this.state.feedToast; out.feedToast = this.state.feedToast || '';
+    return guest ? this.guestify(out) : out;
+  }
+  renderValsBase() {
+    const s = this.state;
+    const q = s.query.trim();
+    const tabDefs = [
+      { id: 'collection', label: '컬렉션' },
+      { id: 'all', label: '전체' },
+      { id: 'friends', label: '친구' }
+    ];
+    const posts = this.makePosts(this.props.postCount ?? 12);
+    const list = posts
+      .map((p, i) => ({ p, i }))
+      .filter(({ p, i }) => s.tab !== 'friends' || this.followOf(p, i))
+      .filter(({ p, i }) => s.tab !== 'collection' || s.saved[i])
+      .filter(({ p }) => !q || (p.caption + p.place + p.name).includes(q))
+      .sort((a, b) => (b.p.mine ? 1 : 0) - (a.p.mine ? 1 : 0));
+    const d = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    const label = tabDefs.find((t) => t.id === s.tab).label;
+    let emptyText = '';
+    if (!list.length) {
+      if (q) emptyText = '‘' + q + '’에 맞는 기록이 없어요.';
+      else if (s.tab === 'friends') emptyText = '친구들의 새로운 기록이 아직 없습니다.';
+      else if (s.tab === 'collection') emptyText = '저장한 기록이 없어요. 마음에 드는 기록을 저장해 보세요.';
+      else emptyText = '아직 기록이 없어요.';
+    }
+    return { ...this.pillVals(1),
+      fromFeed: () => this.setFrom('feed'),
+      mobileOnly: !!this.state.mobileOnly,
+      openMobileOnly: () => this.setState({ mobileOnly: true }),
+      closeMobileOnly: () => this.setState({ mobileOnly: false }),
+      ...this.searchVals(posts),
+      ...this.placeVals(posts),
+      searchOpen: !!s.searchOpen,
+      openSearch: () => { this.wantFocus = true; this.setState({ searchOpen: true, sq: this.state.query, stab: 'all' }); },
+      closeSearch: () => this.setState({ searchOpen: false }),
+      hasQuery: !!q, noQuery: !q,
+      searchLabel: q ? '‘' + q + '’ 기록만 보는 중' : '기록, 장소, 사람, 컬렉션 검색',
+      searchColor: q ? '#F7F9E9' : 'rgba(247,249,233,.72)',
+      clearQuery: () => this.setState({ query: '' }),
+      today: d.getFullYear() + '/' + pad(d.getMonth() + 1) + '/' + pad(d.getDate()),
+      query: s.query,
+      onQuery: (e) => this.setState({ query: e.target.value }),
+      onSearchSubmit: (e) => { e.preventDefault(); },
+      summary: (q ? '‘' + q + '’ 검색 · ' : '') + label + ' · 기록 ' + list.length + '개',
+      empty: list.length === 0,
+      emptyText: emptyText,
+      viewOpen: !!s.viewOpen,
+      viewExpanded: s.viewOpen ? 'true' : 'false',
+      viewChevron: s.viewOpen ? 180 : 0,
+      viewLabel: label,
+      toggleView: () => this.setState({ viewOpen: !this.state.viewOpen }),
+      closeView: () => this.setState({ viewOpen: false }),
+      viewOpts: tabDefs.map((t) => ({
+        label: t.label, active: s.tab === t.id, checked: s.tab === t.id ? 'true' : 'false',
+        pick: () => this.setState({ tab: t.id, viewOpen: false })
+      })),
+      tabs: tabDefs.map((t, i) => ({
+        ...t,
+        active: s.tab === t.id,
+        pressed: s.tab === t.id ? 'true' : 'false',
+        bg: s.tab === t.id ? '#F7F9E9' : 'rgba(247,249,233,.18)',
+        fg: s.tab === t.id ? '#141414' : '#F7F9E9',
+        divider: i < tabDefs.length - 1 ? '0' : '0',
+        pick: () => this.setState({ tab: t.id })
+      })),
+      colCount: s.vw < 760 ? 1 : s.vw < 1100 ? 2 : 3,
+      scrollRef: (el) => { this.scroller = el; },
+      onScroll: (e) => {
+        const show = e.currentTarget.scrollTop > 480;
+        if (show !== this.state.showTop) this.setState({ showTop: show });
+      },
+      toTop: () => {
+        if (!this.scroller) return;
+        const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        this.scroller.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+      },
+      topClass: s.showTop ? 'to-top show' : 'to-top',
+      topHidden: s.showTop ? 'false' : 'true',
+      topTab: s.showTop ? 0 : -1,
+      modalOpen: s.open !== null && !!posts[s.open],
+      closeModal: () => this.setState({ open: null, draft: '' }),
+      draft: s.draft,
+      onDraft: (e) => this.setState({ draft: e.target.value }),
+      sel: this.modalView(posts, s),
+      posts: list.map(({ p, i }) => {
+        const liked = !!s.liked[i];
+        const saved = !!s.saved[i];
+        const following = this.followOf(p, i);
+        const color = '#C8FF42';
+        return {
+          ...p,
+          color: color,
+          ratio: p.ratio || this.ratios[i % this.ratios.length],
+          hasPhoto: !!p.photo, notMine: !p.mine, profileHref: p.mine ? 'ProfileDesktop.dc.html' : 'OtherProfileDesktop.dc.html',
+          vAlign: this.vAligns[i % this.vAligns.length],
+          hAlign: this.hAligns[i % this.hAligns.length],
+          rot: this.angles[i % this.angles.length],
+          initial: p.name[0],
+          no: String(i + 1).padStart(4, '0'),
+          aria: p.name + '의 기록, ' + p.place,
+          profileLabel: p.name + ' 프로필 보기',
+          goAuthor: () => { this.setFrom('feed'); this.setViewUser(p.handle); },
+          openPlace: () => this.setState({ placeOpen: p.place }), placeLabel: p.place + ' 장소 자세히 보기',
+          likes: p.likes + (liked ? 1 : 0),
+          heartFill: liked ? '#141414' : 'none',
+          likePressed: liked ? 'true' : 'false',
+          likeLabel: liked ? '좋아요 취소' : '좋아요',
+          likeAnim: s.justLiked === i ? 'pop' : '',
+          toggleLike: () => this.toggle('liked', i, 'justLiked'),
+          saveFill: saved ? '#141414' : 'none',
+          savePressed: saved ? 'true' : 'false',
+          saveLabel: saved ? '저장 취소' : '저장',
+          saveAnim: s.justSaved === i ? 'pop' : '',
+          toggleSave: () => this.toggle('saved', i, 'justSaved'),
+          openPost: () => this.setState({ open: i, draft: '' }),
+          date: this.fmtDate(p.ago),
+          openLabel: p.name + '의 기록 자세히 보기',
+          followLabel: following ? '팔로잉' : '팔로우',
+          followPressed: following ? 'true' : 'false',
+          followBg: following ? 'rgba(20,20,20,.13)' : '#141414',
+          followFg: following ? '#141414' : '#C8FF42',
+          toggleFollow: () => this.setState({ follow: { ...s.follow, [i]: !following } })
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

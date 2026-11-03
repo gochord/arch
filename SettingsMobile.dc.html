@@ -1,0 +1,847 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>arch; 설정 · 모바일</title>
+<meta name="viewport" content="width=390">
+<script src="./shell.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@font-face{font-family:'Pretendard Variable';font-weight:45 920;font-style:normal;font-display:swap;src:url('assets/blob/f9299b363a48d37a9d320e5eaf3254f6.woff2') format('woff2-variations'),url('assets/blob/f9299b363a48d37a9d320e5eaf3254f6.woff2') format('woff2')}
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{opacity:.75}
+.p-scroll{scrollbar-width:thin;scrollbar-color:rgba(247,249,233,.35) transparent}
+.p-scroll::-webkit-scrollbar{width:8px}.p-scroll::-webkit-scrollbar-thumb{background:rgba(247,249,233,.35);border-radius:999px}
+.m-scroll{scrollbar-width:none}.m-scroll::-webkit-scrollbar{display:none}
+.logo-mask{-webkit-mask:url('assets/blob/3cbd3d619de1f4350868f689fb0f0636.png') center/contain no-repeat;mask:url('assets/blob/3cbd3d619de1f4350868f689fb0f0636.png') center/contain no-repeat}
+button{font:inherit;cursor:pointer}
+.notch-sm{-webkit-mask:radial-gradient(circle 10px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 10px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 10px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 10px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat;mask:radial-gradient(circle 10px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 10px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 10px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 10px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat}
+.s-nav{width:100%;height:52px;border:0;border-bottom:1px solid transparent;background:none;color:rgba(247,249,233,.72);display:flex;justify-content:space-between;align-items:center;padding:0 4px;font-size:15px;font-weight:500;text-align:left}
+.s-nav:hover{color:#F7F9E9}
+.s-nav[aria-current="page"]{color:#F7F9E9;font-weight:700}
+.s-nav:focus-visible,.s-row:focus-visible,.s-sw:focus-visible,.s-btn:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+.s-row{width:100%;min-height:56px;border:0;border-bottom:1.5px dashed rgba(20,20,20,.35);background:none;color:#141414;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:0;font-size:15px;font-weight:500;text-align:left;text-decoration:none}
+.s-row:last-child{border-bottom:0}
+.s-row:hover{opacity:1;background:rgba(20,20,20,.04)}
+.s-field{width:100%;box-sizing:border-box;height:48px;border:1px solid transparent;background:rgba(247,249,233,.16);padding:0 16px;font:inherit;font-size:14px;color:#F7F9E9;border-radius:16px}
+textarea.s-field{height:140px;padding:14px 16px;resize:none;line-height:1.55}
+.s-field::placeholder{color:rgba(247,249,233,.72)}
+.s-field:focus{outline:none;border-color:#F7F9E9}
+.s-btn{height:48px;border:0;border-radius:999px;background:#F7F9E9;color:#141414;font-size:14px;font-weight:700;padding:0 22px;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;cursor:pointer}
+.s-btn:disabled{opacity:.35;cursor:not-allowed}
+.s-btn.line{background:rgba(247,249,233,.16);color:#F7F9E9;border:1px solid transparent}
+.s-sw{flex:none;width:48px;height:28px;border-radius:999px;border:1.5px solid transparent;padding:0;position:relative;cursor:pointer;transition:background .2s ease;background:rgba(247,249,233,.16)}
+.g-h{margin:34px 0 14px;font-size:18px;font-weight:700;letter-spacing:-.01em}
+.g-h.first{margin-top:6px}
+.g-box{border:1px solid transparent;border-radius:20px;padding:6px;overflow:hidden;background:rgba(247,249,233,.16)}
+.g-row{width:100%;min-height:58px;box-sizing:border-box;border:0;background:none;color:#F7F9E9;display:flex;justify-content:space-between;align-items:center;gap:14px;padding:0 12px;border-radius:20px;font:inherit;font-size:15px;font-weight:500;text-align:left;text-decoration:none;cursor:pointer}
+.g-row:hover{background:rgba(247,249,233,.05);opacity:1}
+.g-row:focus-visible{outline:2px solid #F7F9E9;outline-offset:-4px;border-radius:999px}
+.g-row.static{cursor:default}
+.g-row.static:hover{background:none}
+.g-meta{font-size:13px;color:rgba(247,249,233,.72);font-weight:400}
+.g-sub{display:block;margin-top:3px;font-size:12px;font-weight:400;color:rgba(247,249,233,.72)}
+.s-sw span{position:absolute;top:2px;width:19px;height:19px;border-radius:50%;transition:left .2s cubic-bezier(.2,.8,.2,1),background .2s ease}
+.s-in{animation:sIn .3s ease both}
+@keyframes sIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.toast{animation:toastIn .3s cubic-bezier(.2,.8,.2,1) both}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+
+.nt-row{position:relative;display:flex;align-items:flex-start;gap:12px;padding:14px 16px;margin:4px 0;border-radius:20px}
+.nt-row:hover{background:rgba(247,249,233,.05)}
+.nt-row.unread{background:rgba(247,249,233,.07)}
+.nt-link{position:absolute;inset:0;z-index:1;border-radius:20px}
+.nt-link:focus-visible{outline:2px solid #F7F9E9;outline-offset:-2px}
+.nt-act{position:relative;z-index:2;height:32px;border-radius:999px;font:inherit;font-size:12px;font-weight:700;padding:0 14px;cursor:pointer}
+.nt-act:focus-visible,.nt-top:focus-visible{outline:2px solid #F7F9E9;outline-offset:2px}
+.nt-top{border:0;background:none;color:#F7F9E9;font:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:8px 4px}
+.nt-top:disabled{opacity:.4;cursor:default}
+.nt-in{animation:ntIn .2s ease both}
+@keyframes ntIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.notch-xs{-webkit-mask:radial-gradient(circle 6px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 6px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 6px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 6px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat;mask:radial-gradient(circle 6px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 6px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 6px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 6px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat}
+.doc-scroll{scrollbar-width:thin}
+.dk-btn{position:absolute;left:50%;bottom:12px;z-index:83;width:56px;height:56px;margin-left:-28px;border-radius:50%;border:1px solid transparent;background:#C8FF42;color:#141414;display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 10px 26px rgba(0,0,0,.5);transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.dk-btn:active{transform:scale(.94)}
+.dk-btn:focus-visible{outline:2px solid #F7F9E9;outline-offset:4px}
+.dk-disc{position:absolute;left:50%;bottom:-130px;opacity:0;z-index:82;width:260px;height:260px;margin-left:-130px;border-radius:50%;background:#F7F9E9;transform:scale(.2308);transition:transform .5s cubic-bezier(.2,.8,.2,1),box-shadow .5s ease,opacity .2s ease;pointer-events:none;touch-action:none}
+.dk-disc.on{opacity:1;transform:scale(1);pointer-events:auto;box-shadow:0 -10px 40px rgba(0,0,0,.45)}
+.dk-arc{position:absolute;left:50%;bottom:0;width:0;height:0;z-index:81;transition:z-index 0s}
+.dk-t{position:absolute;left:-62px;top:-64px;animation-duration:.5s;width:124px;height:128px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:flex-start;gap:6px;padding:10px 12px;color:#141414;text-decoration:none;transition:transform .75s cubic-bezier(.22,1,.36,1),box-shadow .75s ease;animation:dkIn .45s cubic-bezier(.2,.8,.2,1) backwards;will-change:transform}
+.dk-t:hover,.dk-t:focus-visible{--lift:-14px}
+.dk-t:active{--lift:-20px}
+.dk-t:focus-visible{outline:2px solid #F7F9E9;outline-offset:3px}
+@keyframes dkIn{from{opacity:0;transform:rotate(0deg) translateY(-60px) scale(.4)}}
+.dk-l1{display:block;width:16px;height:2px;background:currentColor;border-radius:1px;transition:transform .25s ease,opacity .2s ease}
+.dk-notch{-webkit-mask:radial-gradient(circle 7px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 7px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 7px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 7px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat;mask:radial-gradient(circle 7px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 7px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 7px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 7px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat}
+.doc-sheet{animation:docUp .35s cubic-bezier(.22,1,.36,1) both}
+@keyframes docUp{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+
+button{transition:scale .15s ease,background-color .2s ease,opacity .2s ease}
+button:not(:disabled):active{scale:.97}
+button,a{-webkit-tap-highlight-color:transparent}
+
+/* ticket notch motif softened to the rounded system (home ticket + menu wheel keep theirs) */
+.notch,.notch-sm,.notch-xs{-webkit-mask:none!important;mask:none!important;overflow:hidden}
+.notch{border-radius:28px}.notch-sm{border-radius:20px}.notch-xs{border-radius:14px}
+.view-menu{border-radius:20px!important;padding:6px;box-sizing:border-box;-webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%)}
+.view-opt{border-bottom:0!important;border-radius:14px;padding:0 14px!important}
+
+/* tickets: soft rounded body with a semicircle bite on each side, like a coupon */
+.notch,.notch-sm,.notch-xs,.dk-notch{-webkit-mask:radial-gradient(circle var(--bite) at 0 var(--at,50%),#0000 97%,#000 100%) left/51% 100% no-repeat,radial-gradient(circle var(--bite) at 100% var(--at,50%),#0000 97%,#000 100%) right/51% 100% no-repeat!important;mask:radial-gradient(circle var(--bite) at 0 var(--at,50%),#0000 97%,#000 100%) left/51% 100% no-repeat,radial-gradient(circle var(--bite) at 100% var(--at,50%),#0000 97%,#000 100%) right/51% 100% no-repeat!important;overflow:hidden}
+.notch{--bite:12px;border-radius:28px}.notch-sm{--bite:9px;border-radius:20px}.notch-xs{--bite:5px;border-radius:12px}.dk-notch{--bite:8px;border-radius:16px}
+
+/* ticket cards: bites sit on the dashed tear line instead of mid-height */
+:where(.notch,.notch-sm,.notch-xs){position:relative}
+.notch:has(.tear2),.notch-sm:has(.tear2),.notch-xs:has(.tear2),.dk-notch:has(.tear2){-webkit-mask:none!important;mask:none!important}
+.tear2::before,.tear2::after{content:"";position:absolute;width:var(--bite-d,18px);height:var(--bite-d,18px);margin-top:calc(var(--bite-d,18px) / -2 - 1px);border-radius:50%;background:var(--bite-bg,#000000)}
+.tear2::before{left:calc(var(--bite-d,18px) / -2)}.tear2::after{right:calc(var(--bite-d,18px) / -2)}
+.notch-sm{--bite-d:16px}.dk-notch{--bite-d:14px}
+
+.g-row + .g-row{box-shadow:none}
+
+/* point colour: neon marks where you are */
+.navlink[aria-current="page"]{color:#C8FF42!important;border-bottom-color:#C8FF42!important}
+.rc-step.on{background:#C8FF42!important;color:#141414!important}
+.g-row[aria-current="page"]{color:#C8FF42}
+a[aria-label="설정"][aria-current="page"]{background:#C8FF42!important;color:#141414!important}
+
+/* icon buttons: one 44px round hit area, 24px icons, soft line ends */
+button svg,a svg,button svg *,a svg *{stroke-linecap:round!important;stroke-linejoin:round!important}
+.ic-btn{width:44px!important;height:44px!important;min-width:44px;border-radius:50%!important;padding:0!important;display:grid!important;place-items:center!important;box-sizing:border-box}
+.ic-btn>svg,.ic-tog>svg{width:24px!important;height:24px!important;flex:none}
+/* pressed save / like: neon icon on a dark round chip, readable on any background */
+.ic-tog>svg{box-sizing:content-box;padding:7px;margin:-7px;border-radius:50%;transition:background-color .2s ease}
+.ic-tog[aria-pressed="true"]>svg{background:#141414}
+.ic-tog[aria-pressed="true"]>svg path{fill:#C8FF42!important;stroke:#C8FF42!important}
+
+/* popups, sheets and menus: one translucent glass panel like the notification panel */
+
+.gl .auth-card,.auth-card.gl{-webkit-mask:none!important;mask:none!important;border-radius:28px}
+.gl.view-menu .view-opt[aria-checked="true"],.gl .view-opt[aria-current="true"]{color:#C8FF42}
+.gl .tear2::before,.gl .tear2::after{display:none}
+
+/* menu wheel: glass disc and glass tickets, neon only on the page you're on */
+.dk-disc{background:rgba(30,30,28,.8)!important;-webkit-backdrop-filter:blur(28px) saturate(160%);backdrop-filter:blur(28px) saturate(160%)}
+.dk-t{color:#F7F9E9;-webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%)}
+.dk-t[aria-current="page"]{color:#141414}
+.dk-t .tear2{position:absolute;left:12px;right:12px;top:54px;border-top-color:var(--tear,rgba(247,249,233,.45))!important;transition:border-color .35s ease}
+.dk-t .tear2::before,.dk-t .tear2::after{display:none}
+.dk-arc .dk-t.dk-notch{--at:54px;-webkit-mask:radial-gradient(circle 7px at 0 var(--at),#0000 97%,#000 100%) left/51% 100% no-repeat,radial-gradient(circle 7px at 100% var(--at),#0000 97%,#000 100%) right/51% 100% no-repeat!important;mask:radial-gradient(circle 7px at 0 var(--at),#0000 97%,#000 100%) left/51% 100% no-repeat,radial-gradient(circle 7px at 100% var(--at),#0000 97%,#000 100%) right/51% 100% no-repeat!important}
+
+/* atmosphere: faint light behind the glass and a film grain over the ground */
+:root{--grain:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+.amb{background-image:var(--grain),radial-gradient(60% 45% at 100% 0%,rgba(200,255,66,.10),transparent 70%),radial-gradient(55% 40% at 0% 100%,rgba(247,249,233,.06),transparent 70%)!important;background-repeat:repeat,no-repeat,no-repeat!important;background-size:160px 160px,100% 100%,100% 100%!important}
+.amb.amb-home{background-image:var(--grain),radial-gradient(42% 32% at 50% 56%,rgba(200,255,66,.22),transparent 72%),radial-gradient(30% 24% at 22% 18%,rgba(247,249,233,.10),transparent 70%)!important}
+.gl,.gr,.dk-disc{background-image:var(--grain)!important;background-size:160px 160px!important}
+/* a soft neon bloom behind the login card and the open menu wheel */
+.auth-card{box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 140px 20px rgba(200,255,66,.16)!important}
+.dk-disc.on{box-shadow:0 -10px 40px rgba(0,0,0,.45),0 0 120px 30px rgba(200,255,66,.18)}
+/* curation ring: focus on the lifted cover, the rest falls out of focus */
+.cr-face{transition:filter .35s ease}
+.cr-stage:has(.cr-pop) .cr-face{filter:blur(4px) brightness(.5)}
+.cr-stage:has(.cr-pop) .cr-back{filter:blur(4px) brightness(.3)}
+
+/* header logo: the two-tone wordmark (cream letters, neon TM) */
+.logo-img{-webkit-mask:none!important;mask:none!important;background:url('assets/blob/5c28f671acf3728f9a2cebb11036a206.png') left center/contain no-repeat!important}
+
+/* solid = printed paper: every ticket and card shares one fine paper grain and one soft shadow */
+:root{--paper:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .11 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+:where(.paper,.pcard,.st-cell){position:relative}
+.paper::after,.notch::after,.notch-sm::after,.notch-xs::after,.notch4::after,.pcard::after,.st-cell::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:var(--paper);background-size:140px 140px;z-index:1}
+.pcard{background-image:none!important;box-shadow:0 12px 28px rgba(0,0,0,.35)!important}
+.st-cell{box-shadow:0 12px 28px rgba(0,0,0,.35)}
+
+/* ticket cards inside glass panels keep their side notches, tinted like the panel behind them */
+.gl{--bite-bg:#262624}
+.gl .tear2::before,.gl .tear2::after{display:block;background:var(--bite-bg) var(--grain,none);background-size:160px 160px}
+
+/* segmented selectors: one highlight that springs over to the picked option (iOS-like) */
+.seg{position:relative;isolation:isolate;--n:2;--i:0;--P:4px;--G:4px;display:grid!important;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);grid-template-columns:none!important;padding:var(--P)!important;gap:var(--G)!important;border-radius:999px!important;background:rgba(247,249,233,.10)!important;overflow:visible!important;border:0!important}
+.seg::before{content:"";position:absolute;z-index:-1;top:var(--P);bottom:var(--P);left:var(--P);width:calc((100% - 2 * var(--P) - (var(--n) - 1) * var(--G)) / var(--n));border-radius:999px;background:var(--seg-c,#F7F9E9);box-shadow:0 4px 14px rgba(0,0,0,.25);transform:translateX(calc(var(--i) * (100% + var(--G))));transition:transform .4s cubic-bezier(.3,1.15,.5,1);transition:transform .45s linear(0, 0.1 5%, 0.42 13%, 0.76 23%, 0.95 33%, 1.03 43%, 1.035 50%, 1.012 64%, 1.002 78%, 1)}
+.seg :is(button,a):is([aria-selected],[aria-pressed],[aria-checked]){background:transparent!important;border:0!important;border-radius:999px!important;transition:color .25s ease .05s}
+.seg:not(.seg-tint) :is(button,a):is([aria-selected="true"],[aria-pressed="true"],[aria-checked="true"]){color:#141414!important}
+.seg-fit{display:grid!important;width:max-content;max-width:100%}
+.seg-fit :is(button,a){padding:9px 18px!important;justify-content:center}
+.seg-tint{--P:0px;--G:8px;--seg-c:rgba(247,249,233,.16);background:none!important}
+.seg-tint::before{box-shadow:none}
+.rt-solo.seg{background:none!important;padding:0!important}.rt-solo.seg::before{display:none}.rt-solo.seg .ptab.ptab.ptab{color:#F7F9E9!important;padding-left:0!important}
+.seg:has(:is(button,a):nth-of-type(2):last-of-type){--n:2}
+.seg:has(:is(button,a):nth-of-type(3):last-of-type){--n:3}
+.seg:has(:is(button,a):nth-of-type(4):last-of-type){--n:4}
+.seg:has(:is(button,a):nth-of-type(5):last-of-type){--n:5}
+.seg:has(:is(button,a):nth-of-type(2):is([aria-selected="true"],[aria-pressed="true"],[aria-checked="true"])){--i:1}
+.seg:has(:is(button,a):nth-of-type(3):is([aria-selected="true"],[aria-pressed="true"],[aria-checked="true"])){--i:2}
+.seg:has(:is(button,a):nth-of-type(4):is([aria-selected="true"],[aria-pressed="true"],[aria-checked="true"])){--i:3}
+.seg:has(:is(button,a):nth-of-type(5):is([aria-selected="true"],[aria-pressed="true"],[aria-checked="true"])){--i:4}
+
+/* the other sliders share the same spring */
+.auth-seg::before,.g-slide::before{transition:transform .4s cubic-bezier(.3,1.15,.5,1);transition:transform .45s linear(0, 0.1 5%, 0.42 13%, 0.76 23%, 0.95 33%, 1.03 43%, 1.035 50%, 1.012 64%, 1.002 78%, 1)}
+.navlink[aria-current="page"]::before{animation-duration:.5s;animation-timing-function:cubic-bezier(.3,1.15,.5,1);animation-timing-function:linear(0, 0.1 5%, 0.42 13%, 0.76 23%, 0.95 33%, 1.03 43%, 1.035 50%, 1.012 64%, 1.002 78%, 1)}
+
+/* tear lines: short round-capped dashes with a little more air between them */
+:root{--dash:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='9' height='2' viewBox='0 0 9 2'><line x1='1' y1='1' x2='3' y2='1' stroke='black' stroke-width='2' stroke-linecap='round'/></svg>") left center/auto 100% repeat-x}
+.dk-t .tear2{border-top:0!important;background:var(--tear,rgba(247,249,233,.45))!important}
+.tear2::before,.tear2::after{margin-top:calc(var(--bite-d,18px) / -2 + 1px)}
+.dk-t .tear2{-webkit-mask:var(--dash)!important;mask:var(--dash)!important}
+
+/* header bell sits a hair higher so it lines up with the settings gear */
+/* bookmark drawn at the heart's visual height */
+
+/* liked / saved: the icon itself fills in, no chip behind it (heart matches the bookmark) */
+.ic-tog.ic-tog[aria-pressed="true"]>svg{background:none!important}
+.ic-tog.ic-tog[aria-pressed="true"]>svg path{fill:currentColor!important;stroke:currentColor!important}
+
+/* bell and gear never touch when both are lit */
+a.ic-btn[aria-label="설정"]{margin-left:8px}
+</style>
+</helmet>
+<div class="amb" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #000000; color: #F7F9E9; font-family: 'Pretendard Variable', Pretendard, sans-serif;">
+<header style="position: sticky; top: 0; z-index: 10; height: 58px; padding: 0 12px 0 16px; display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,.55); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); border-bottom: 1px solid transparent;">
+<a href="TicketMobileIn.dc.html" aria-label="arch; 홈으로" style="display: block; width: 70px; height: 32px;"><span class="logo-mask logo-img" style="display: block; width: 100%; height: 100%; background: #F7F9E9;"></span></a>
+<div style="display: flex; align-items: center;">
+<button type="button" onClick="{{toggleNotif}}" class="ic-btn" aria-label="{{notifLabel}}" aria-haspopup="dialog" aria-expanded="{{notifExpanded}}" style="position: relative; width: 44px; height: 44px; border: 0; border-radius: 50%; background: {{notifBellBg}}; color: {{notifBellFg}}; display: grid; place-items: center;"><sc-if value="{{notifUnread}}" hint-placeholder-val="{{true}}"><span aria-hidden="true" style="position: absolute; top: 9px; right: 10px; width: 8px; height: 8px; border-radius: 50%; background: #C8FF42; box-shadow: 0 0 0 2px #141414;"></span></sc-if><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 15.2v-4.6a5.8 5.8 0 0 1 11.6 0v4.6l1.6 2.1H4.6z"></path><path d="M10 20h4"></path></svg></button>
+<a class="ic-btn" href="SettingsMobile.dc.html" aria-label="설정" aria-current="page" style="width: 44px; height: 44px; border-radius: 50%; background: #F7F9E9; color: #141414; display: grid; place-items: center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg></a>
+<a href="ProfileMobile.dc.html" aria-label="내 프로필" style="box-sizing: border-box; margin-left: 11px; flex: none; width: 34px; height: 34px; border-radius: 50%; border: 1px solid transparent; color: #F7F9E9; font-size: 12px; font-weight: 700; display: grid; place-items: center; background: rgba(247,249,233,.16);">나</a>
+</div>
+</header>
+<main class="m-scroll" style="position: absolute; top: 58px; left: 0; right: 0; bottom: 74px; overflow-y: auto; padding: 18px 16px 28px; box-sizing: border-box;">
+<sc-if value="{{inList}}" hint-placeholder-val="{{true}}">
+<a href="ProfileMobile.dc.html" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: rgba(247,249,233,.72); padding: 6px 0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>프로필</a>
+<h1 style="margin: 8px 0 16px; font-size: 28px; font-weight: 700; letter-spacing: -.03em;">설정</h1>
+<div style="display: flex; align-items: center; gap: 12px; padding: 4px 2px 18px;">
+<span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid transparent; display: grid; place-items: center; font-size: 15px; font-weight: 700; background: rgba(247,249,233,.16);">나</span>
+<span style="min-width: 0;"><span style="display: block; font-size: 15px; font-weight: 700;">@{{acct.id}}</span><span class="g-sub" style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-variant-numeric: tabular-nums;">{{acct.email}}</span></span>
+</div>
+<nav aria-label="설정 메뉴" class="g-box">
+<sc-for list="{{navItems}}" as="i" hint-placeholder-count="5">
+<button type="button" class="g-row" onClick="{{i.pick}}">{{i.label}}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; opacity: .7;"><path d="M9 5l7 7-7 7"></path></svg></button>
+</sc-for>
+</nav>
+</sc-if>
+<sc-if value="{{inDetail}}" hint-placeholder-val="{{false}}">
+<button type="button" onClick="{{backToList}}" style="display: inline-flex; align-items: center; gap: 6px; border: 0; background: none; font-size: 13px; color: rgba(247,249,233,.72); padding: 6px 0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>설정</button>
+<h1 style="margin: 8px 0 16px; font-size: 28px; font-weight: 700; letter-spacing: -.03em;">{{secTitle}}</h1>
+<sc-if value="{{sec.account}}" hint-placeholder-val="{{true}}">
+<div class="s-in">
+<h2 class="g-h first">내 계정</h2>
+<div class="g-box">
+<div class="g-row static" style="min-height: 76px;"><span style="display: flex; align-items: center; gap: 14px; min-width: 0;"><span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid transparent; display: grid; place-items: center; font-size: 15px; font-weight: 700; background: rgba(247,249,233,.16);">나</span><span style="min-width: 0;"><span style="display: block; font-size: 15px; font-weight: 700;">@{{acct.id}}</span><span class="g-sub" style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-variant-numeric: tabular-nums;">{{acct.email}}</span></span></span></div>
+</div>
+<h2 class="g-h">로그인 및 보안</h2>
+<div class="g-box">
+<button type="button" class="g-row" onClick="{{togglePw}}" aria-expanded="{{pw.expanded}}"><span>비밀번호 변경</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; opacity: .7; transform: rotate({{pw.chevron}}deg); transition: transform .2s ease;"><path d="M9 5l7 7-7 7"></path></svg></button>
+<sc-if value="{{pw.open}}" hint-placeholder-val="{{false}}">
+<form onSubmit="{{savePw}}" class="s-in" style="display: flex; flex-direction: column; gap: 8px; padding: 4px 18px 18px;">
+<input class="s-field" type="password" autocomplete="current-password" aria-label="현재 비밀번호" placeholder="현재 비밀번호" value="{{pw.cur}}" onChange="{{onPwCur}}">
+<input class="s-field" type="password" autocomplete="new-password" aria-label="새 비밀번호" placeholder="새 비밀번호 (6자 이상)" value="{{pw.next}}" onChange="{{onPwNext}}">
+<input class="s-field" type="password" autocomplete="new-password" aria-label="새 비밀번호 확인" placeholder="새 비밀번호 확인" value="{{pw.next2}}" onChange="{{onPwNext2}}">
+<sc-if value="{{pw.hasHint}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; font-size: 12px; font-weight: 600; color: #F28B82;">{{pw.hint}}</p></sc-if>
+<button type="submit" class="s-btn" disabled="{{pw.disabled}}" style="align-self: flex-end; margin-top: 4px;">변경하기</button>
+</form>
+</sc-if>
+<button type="button" class="g-row" onClick="{{kakao}}"><span>카카오 계정 연결</span><span style="display: flex; align-items: center; gap: 8px;"><span class="g-meta">연결 안 됨</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; opacity: .7;"><path d="M9 5l7 7-7 7"></path></svg></span></button>
+</div>
+<h2 class="g-h">계정 관리</h2>
+<div class="g-box">
+<a class="g-row" href="{{logoutHref}}"><span>로그아웃</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; opacity: .7;"><path d="M9 5l7 7-7 7"></path></svg></a>
+<button type="button" class="g-row" onClick="{{openWithdraw}}" style="color: #F28B82;"><span>회원 탈퇴</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; opacity: .7;"><path d="M9 5l7 7-7 7"></path></svg></button>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{sec.notify}}" hint-placeholder-val="{{false}}">
+<div class="s-in">
+<h2 class="g-h first">알림 받기</h2>
+<div class="g-box">
+<div class="g-row static"><span>모든 알림</span><button type="button" class="s-sw" role="switch" aria-checked="{{nAll.checked}}" aria-label="모든 알림" onClick="{{nAll.toggle}}" style="background: {{nAll.track}};"><span style="border-radius: 50%; left: {{nAll.knobX}}px; background: {{nAll.knob}};"></span></button></div>
+</div>
+<h2 class="g-h">종류별 알림</h2>
+<div class="g-box">
+<sc-for list="{{nRows}}" as="n" hint-placeholder-count="4">
+<div class="g-row static" style="min-height: 64px;"><span style="min-width: 0;"><span style="display: block;">{{n.label}}</span><span class="g-sub">{{n.desc}}</span></span><button type="button" class="s-sw" role="switch" aria-checked="{{n.checked}}" aria-label="{{n.label}} 알림" onClick="{{n.toggle}}" style="background: {{n.track}};"><span style="border-radius: 50%; left: {{n.knobX}}px; background: {{n.knob}};"></span></button></div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{sec.reports}}" hint-placeholder-val="{{false}}">
+<div class="s-in">
+<h2 class="g-h first">내가 신고한 기록</h2>
+<p style="margin: -4px 0 14px; font-size: 13px; color: rgba(247,249,233,.72);">검토가 끝나면 결과를 알려 드려요.</p>
+<sc-if value="{{repEmpty}}" hint-placeholder-val="{{false}}"><div class="g-box"><p style="margin: 0; padding: 30px 0; text-align: center; font-size: 14px; color: rgba(247,249,233,.72);">신고한 기록이 없어요.</p></div></sc-if>
+<div class="g-box">
+<sc-for list="{{reports}}" as="r" hint-placeholder-count="3">
+<div class="g-row static" style="padding-top: 12px; padding-bottom: 12px;">
+<span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: {{r.color}};"></span>
+<span style="flex: 1; min-width: 0;"><span style="display: block; font-size: 14px; font-weight: 600;">{{r.place}} · @{{r.handle}}</span><span class="g-sub" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{r.caption}}</span><span class="g-sub" style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; font-variant-numeric: tabular-nums;">{{r.date}} · {{r.reason}}</span></span>
+<span style="flex: none; padding: 4px 10px; border: 1px solid transparent; border-radius: 999px; font-size: 11px; font-weight: 700; background: {{r.badgeBg}}; color: {{r.badgeFg}};">{{r.status}}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{sec.blocked}}" hint-placeholder-val="{{false}}">
+<div class="s-in">
+<h2 class="g-h first">차단한 계정</h2>
+<p style="margin: -4px 0 14px; font-size: 13px; color: rgba(247,249,233,.72);">차단한 사람은 내 프로필과 기록을 볼 수 없고, 나도 그 사람의 게시물을 볼 수 없어요.</p>
+<sc-if value="{{blockedEmpty}}" hint-placeholder-val="{{false}}"><div class="g-box"><p style="margin: 0; padding: 30px 0; text-align: center; font-size: 14px; color: rgba(247,249,233,.72);">차단한 계정이 없어요.</p></div></sc-if>
+<sc-if value="{{blockedAny}}" hint-placeholder-val="{{true}}"><div class="g-box">
+<sc-for list="{{blockedRows}}" as="b" hint-placeholder-count="2">
+<div class="g-row static"><span style="display: flex; align-items: center; gap: 12px; min-width: 0;"><span aria-hidden="true" style="flex: none; width: 40px; height: 40px; border-radius: 50%; border: 1px solid transparent; display: grid; place-items: center; font-size: 14px; font-weight: 700; background: rgba(247,249,233,.16);">{{b.initial}}</span><span style="min-width: 0;"><span style="display: block; font-weight: 600;">{{b.name}}</span><span class="g-sub" style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-variant-numeric: tabular-nums;">@{{b.handle}}</span></span></span><button type="button" class="s-btn line" onClick="{{b.unblock}}" style="height: 32px; padding: 0 14px; font-size: 12px; border-radius: 999px;">차단 해제</button></div>
+</sc-for>
+</div></sc-if>
+</div>
+</sc-if>
+<sc-if value="{{sec.data}}" hint-placeholder-val="{{false}}">
+<div class="s-in">
+<h2 class="g-h first">내 기록 내보내기</h2>
+<p style="margin: -4px 0 14px; font-size: 13px; color: rgba(247,249,233,.72);">지금까지 남긴 기록과 컬렉션을 파일로 받아 보관할 수 있어요.</p>
+<div class="g-box">
+<sc-for list="{{expOpts}}" as="o" hint-placeholder-count="2">
+<label class="g-row"><span>{{o.label}} <span class="g-meta" style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-variant-numeric: tabular-nums;">{{o.count}}</span></span><input type="checkbox" checked="{{o.on}}" onChange="{{o.toggle}}" style="width: 18px; height: 18px; margin: 0; accent-color: #F7F9E9;"></label>
+</sc-for>
+</div>
+<h2 class="g-h">파일 형식</h2>
+<div class="g-box" role="radiogroup" aria-label="파일 형식">
+<sc-for list="{{expFmts}}" as="t" hint-placeholder-count="2">
+<button type="button" class="g-row" role="radio" aria-checked="{{t.selected}}" onClick="{{t.pick}}"><span>{{t.label}}</span><svg width="18" height="16" viewBox="0 0 44 40" aria-hidden="true" style="flex: none; opacity: {{t.chk}};"><path d="M6 21 L16 31 L39 6" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linejoin="miter"></path></svg></button>
+</sc-for>
+</div>
+<button type="button" class="s-btn" onClick="{{runExport}}" disabled="{{exp.disabled}}" style="width: 100%; margin-top: 22px; height: 56px;">{{exp.label}}</button>
+<sc-if value="{{exp.ready}}" hint-placeholder-val="{{false}}"><a class="s-btn line s-in" href="{{exp.href}}" download="{{exp.file}}" style="width: 100%; box-sizing: border-box; margin-top: 8px; height: 56px;">↓ {{exp.file}} 받기</a></sc-if>
+</div>
+</sc-if>
+<sc-if value="{{sec.info}}" hint-placeholder-val="{{false}}">
+<div class="s-in">
+<sc-if value="{{ask.notSent}}" hint-placeholder-val="{{true}}">
+<form onSubmit="{{sendAsk}}">
+<h2 class="g-h first">문의 종류</h2>
+<div class="g-box" role="radiogroup" aria-label="문의 종류">
+<sc-for list="{{askCats}}" as="c" hint-placeholder-count="3">
+<button type="button" class="g-row" role="radio" aria-checked="{{c.selected}}" onClick="{{c.pick}}"><span>{{c.label}}</span><svg width="18" height="16" viewBox="0 0 44 40" aria-hidden="true" style="flex: none; opacity: {{c.chk}};"><path d="M6 21 L16 31 L39 6" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linejoin="miter"></path></svg></button>
+</sc-for>
+</div>
+<h2 class="g-h">내용</h2>
+<textarea class="s-field" aria-label="문의 내용" placeholder="궁금한 점이나 불편한 점을 적어 주세요." value="{{ask.text}}" onChange="{{onAskText}}"></textarea>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;"><span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; color: rgba(247,249,233,.72); font-variant-numeric: tabular-nums;">{{ask.count}}/500</span><button type="submit" class="s-btn" disabled="{{ask.disabled}}">보내기</button></div>
+</form>
+</sc-if>
+<sc-if value="{{ask.sent}}" hint-placeholder-val="{{false}}">
+<h2 class="g-h first">문의하기</h2>
+<div class="g-box s-in"><div style="padding: 20px 18px; font-size: 14px; line-height: 1.6;">문의가 접수됐어요. 답변은 가입한 이메일로 보내 드릴게요.<br><button type="button" onClick="{{askAgain}}" style="margin-top: 8px; border: 0; background: none; color: #F7F9E9; font-size: 13px; font-weight: 600; text-decoration: underline; padding: 4px 0;">새 문의 작성</button></div></div>
+</sc-if>
+<h2 class="g-h">약관 및 정보</h2>
+<div class="g-box">
+<button type="button" class="g-row" onClick="{{openTerms}}" aria-haspopup="dialog"><span>이용약관</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; opacity: .7;"><path d="M9 5l7 7-7 7"></path></svg></button>
+<button type="button" class="g-row" onClick="{{openPrivacy}}" aria-haspopup="dialog"><span>개인정보 처리방침</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; opacity: .7;"><path d="M9 5l7 7-7 7"></path></svg></button>
+<div class="g-row static"><span>앱 버전</span><span class="g-meta" style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-variant-numeric: tabular-nums;">{{version}}</span></div>
+</div>
+</div>
+</sc-if>
+</sc-if>
+</main>
+<sc-if value="{{dock.open}}" hint-placeholder-val="{{false}}">
+<div onClick="{{dock.close}}" onWheel="{{dock.onWheel}}" onPointerDown="{{dock.onDown}}" onPointerMove="{{dock.onMove}}" onPointerUp="{{dock.onUp}}" onPointerCancel="{{dock.onUp}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 80; background: rgba(0,0,0,.62); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); touch-action: none;"></div>
+<nav aria-label="메뉴" class="dk-arc" style="z-index: {{dock.arcZ}};">
+<sc-for list="{{dock.tabs}}" as="t" hint-placeholder-count="6">
+<a class="dk-t dk-notch" href="{{t.href}}" onClick="{{t.go}}" aria-current="{{t.current}}" aria-label="{{t.label}}" style="background: {{t.bg}}; color: {{t.fg}}; --tear: {{t.tear}}; transition: transform .75s cubic-bezier(.22,1,.36,1), box-shadow .75s ease, background-color .35s ease, color .35s ease; transform: {{t.tf}}; opacity: {{t.op}}; pointer-events: {{t.pe}}; animation-delay: {{t.delay}}s; box-shadow: {{t.shadow}};">
+<span style="font-size: 15px; font-weight: 700; letter-spacing: -.02em; text-align: center;">{{t.label}}</span>
+<span style="display: flex; justify-content: space-between; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; font-variant-numeric: tabular-nums;"><span>{{t.num}}</span><span>{{t.note}}</span></span>
+<span class="tear2" aria-hidden="true" style="display: block; border-top: 0; height: 1.6px; background: url('data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%229%22 height=%222%22 viewBox=%220 0 9 2%22&gt;&lt;line x1=%221%22 y1=%221%22 x2=%223%22 y2=%221%22 stroke=%22rgba(20,20,20,.7)%22 stroke-width=%222%22 stroke-linecap=%22round%22/&gt;&lt;/svg&gt;') left center/auto 100% repeat-x;"></span>
+</a>
+</sc-for>
+</nav>
+</sc-if>
+<div class="dk-disc {{dock.discCls}}" aria-hidden="true" onPointerDown="{{dock.onDown}}" onPointerMove="{{dock.onMove}}" onPointerUp="{{dock.onUp}}" onPointerCancel="{{dock.onUp}}" onWheel="{{dock.onWheel}}"><span style="position: absolute; left: 0; right: 0; top: 22px; text-align: center; color: #F7F9E9; opacity: {{dock.hintOp}}; transition: opacity .3s ease .2s;"><span style="display: block; font-size: 11px; font-weight: 700; letter-spacing: .16em;">MENU</span><span style="display: block; margin-top: 6px; font-size: 12px; color: rgba(247,249,233,.72);">옆으로 쓸어 돌리고 탭해서 이동</span></span></div>
+<a href="{{dock.selHref}}" ref="{{dock.navRef}}" tabindex="-1" aria-hidden="true" style="position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; border-radius: 50%;"></a>
+<button type="button" class="dk-btn" onClick="{{dock.toggle}}" aria-label="{{dock.btnLabel}}" aria-expanded="{{dock.expanded}}" style="background: {{dock.btnBg}}; color: {{dock.btnFg}};">
+<span aria-hidden="true" style="display: flex; flex-direction: column; gap: 4px; align-items: center;"><span class="dk-l1" style="transform: {{dock.l1}};"></span><span class="dk-l1" style="opacity: {{dock.l2}};"></span><span class="dk-l1" style="transform: {{dock.l3}};"></span></span>
+</button>
+<sc-if value="{{wd.open}}" hint-placeholder-val="{{false}}">
+<div onClick="{{closeWithdraw}}" style="position: absolute; inset: 0; z-index: 40; background: rgba(0,0,0,.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"></div>
+<div style="position: absolute; inset: 0; z-index: 41; display: grid; place-items: center; pointer-events: none; padding: 20px; box-sizing: border-box;">
+<div role="alertdialog" aria-modal="true" aria-labelledby="wdTitle" aria-describedby="wdDesc" class="s-in gr" style="pointer-events: auto; border-radius: 28px; border: 1px solid transparent; width: 340px; max-width: 100%; box-sizing: border-box; padding: 26px 24px 24px; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); box-shadow: 0 30px 80px rgba(0,0,0,.55); color: #F7F9E9;">
+<h2 id="wdTitle" style="margin: 0; font-size: 22px; font-weight: 700;">정말 탈퇴할까요?</h2>
+<p id="wdDesc" style="margin: 10px 0 0; font-size: 13px; line-height: 1.65;">기록, 컬렉션, 저장 목록이 모두 삭제되고 되돌릴 수 없어요. 계속하려면 아래에 <b>탈퇴</b>라고 입력해 주세요.</p>
+<input class="s-field" type="text" aria-label="탈퇴 확인 입력" placeholder="탈퇴" value="{{wd.text}}" onChange="{{onWdText}}" style="margin-top: 14px;">
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px;">
+<button type="button" class="s-btn line" onClick="{{closeWithdraw}}">닫기</button>
+<sc-if value="{{wd.ready}}" hint-placeholder-val="{{false}}"><a class="s-btn" href="{{logoutHref}}" style="background: #F28B82; color: #141414;">탈퇴하기</a></sc-if>
+<sc-if value="{{wd.notReady}}" hint-placeholder-val="{{true}}"><button type="button" class="s-btn" disabled="{{yes}}" style="background: #F28B82; color: #141414;">탈퇴하기</button></sc-if>
+</div>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{false}}">
+<div role="status" class="toast gr" style="position: absolute; left: 50%; bottom: 96px; z-index: 60; padding: 12px 20px; border-radius: 999px; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); color: #F7F9E9; font-size: 13px; font-weight: 600; white-space: nowrap; box-shadow: 0 10px 26px rgba(0,0,0,.4);">{{toast}}</div>
+</sc-if>
+
+<sc-if value="{{noticeOpen}}" hint-placeholder-val="{{false}}">
+<div onClick="{{closeNotice}}" style="position: absolute; inset: 0; z-index: 78; background: rgba(0,0,0,.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);"></div>
+<div style="position: absolute; inset: 0; z-index: 79; display: grid; place-items: center; pointer-events: none; padding: 20px; box-sizing: border-box;">
+<div role="dialog" aria-modal="true" aria-labelledby="ntTitleM" class="gr" style="pointer-events: auto; width: 100%; max-height: 100%; box-sizing: border-box; display: flex; flex-direction: column; border-radius: 28px; border: 1px solid transparent; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); box-shadow: 0 30px 80px rgba(0,0,0,.55); color: #F7F9E9; font-family: 'Pretendard Variable', Pretendard, sans-serif; overflow: hidden;">
+<div style="flex: none; padding: 22px 22px 14px; border-bottom: 1px solid transparent;">
+<span style="display: block; font-size: 11px; font-weight: 700; letter-spacing: .14em; color: rgba(247,249,233,.72);">NOTICE</span>
+<h2 id="ntTitleM" style="margin: 6px 0 0; font-size: 22px; font-weight: 700;">공지</h2>
+</div>
+<div class="m-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 4px 22px 8px;">
+<sc-for list="{{notices}}" as="n" hint-placeholder-count="3">
+<div style="padding: 16px 0; border-bottom: 1px solid transparent;">
+<span style="display: flex; align-items: center; gap: 8px;"><span style="font-size: 15px; font-weight: 700;">{{n.title}}</span><sc-if value="{{n.isNew}}" hint-placeholder-val="{{false}}"><span style="flex: none; padding: 2px 7px; border-radius: 999px; background: #F7F9E9; color: #141414; font-size: 11px; font-weight: 700; letter-spacing: .04em;">NEW</span></sc-if></span>
+<p style="margin: 6px 0 0; font-size: 13px; line-height: 1.6; color: rgba(247,249,233,.72);">{{n.body}}</p>
+<span style="display: block; margin-top: 6px; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; color: rgba(247,249,233,.72); font-variant-numeric: tabular-nums;">{{n.date}}</span>
+</div>
+</sc-for>
+</div>
+<div style="flex: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px 18px 22px; border-top: 1px solid transparent;">
+<label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer;"><input type="checkbox" checked="{{noticeHide}}" onChange="{{onNoticeHide}}" style="width: 18px; height: 18px; margin: 0; accent-color: #F7F9E9;">다시 보지 않기</label>
+<button type="button" onClick="{{closeNotice}}" style="height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #F7F9E9; color: #141414; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer;">닫기</button>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{notifOpen}}" hint-placeholder-val="{{false}}">
+<div role="dialog" aria-modal="true" aria-label="알림" class="gl nt-in" style="position: absolute; inset: 0; z-index: 70; display: flex; flex-direction: column; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); box-shadow: 0 20px 50px rgba(0,0,0,.55); color: #F7F9E9; font-family: 'Pretendard Variable', Pretendard, sans-serif;">
+<div style="flex: none; height: 58px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 12px; border-bottom: 1px solid transparent;">
+<button type="button" class="nt-top" onClick="{{closeNotif}}" aria-label="닫기" style="justify-self: start; display: flex; align-items: center; gap: 4px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>뒤로</button>
+<h2 style="margin: 0; font-size: 18px; font-weight: 700;">알림</h2>
+<button type="button" class="nt-top" onClick="{{readAll}}" disabled="{{noUnread}}" style="justify-self: end;">모두 읽음</button>
+</div>
+<div class="m-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 4px 4px 24px;">
+<sc-for list="{{notifs}}" as="n" hint-placeholder-count="5">
+<sc-if value="{{n.first}}" hint-placeholder-val="{{false}}"><h3 style="margin: 14px 16px 6px; font-size: 12px; font-weight: 700; letter-spacing: .06em; color: rgba(247,249,233,.72);">{{n.group}}</h3></sc-if>
+<div class="{{n.cls}}">
+<a class="nt-link" href="{{n.href}}" onClick="{{n.go}}" aria-label="{{n.aria}}"></a>
+<span aria-hidden="true" style="flex: none; width: 40px; height: 40px; border-radius: 50%; background: {{n.color}}; color: #141414; display: grid; place-items: center; font-size: 15px; font-weight: 700;">{{n.initial}}</span>
+<span style="flex: 1; min-width: 0;">
+<span style="display: block; font-size: 14px; line-height: 1.45;"><b style="font-weight: 700;">{{n.who}}</b>{{n.msg}}</span>
+<span style="display: block; margin-top: 3px; font-size: 12px; color: rgba(247,249,233,.72); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{n.sub}}</span>
+<span style="display: block; margin-top: 3px; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; color: rgba(247,249,233,.72); font-variant-numeric: tabular-nums;">{{n.time}}</span>
+<sc-if value="{{n.isReq}}" hint-placeholder-val="{{false}}"><span style="display: flex; gap: 6px; margin-top: 10px;"><button type="button" class="nt-act" onClick="{{n.accept}}" style="border: 0; background: #F7F9E9; color: #141414;">수락</button><button type="button" class="nt-act" onClick="{{n.decline}}" style="border: 1px solid transparent; background: rgba(247,249,233,.16); color: #F7F9E9;">거절</button></span></sc-if>
+<sc-if value="{{n.reqDone}}" hint-placeholder-val="{{false}}"><span style="display: block; margin-top: 8px; font-size: 12px; font-weight: 600;">{{n.reqText}}</span></sc-if>
+</span>
+<sc-if value="{{n.hasThumb}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" class="notch-xs" style="flex: none; width: 44px; height: 44px; background: {{n.thumb}};"></span></sc-if>
+<sc-if value="{{n.isFollow}}" hint-placeholder-val="{{false}}"><button type="button" class="nt-act" onClick="{{n.toggleBack}}" aria-pressed="{{n.backPressed}}" style="flex: none; align-self: center; border: 1px solid transparent; background: {{n.backBg}}; color: {{n.backFg}};">{{n.backLabel}}</button></sc-if>
+<sc-if value="{{n.unread}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="color: #141414; position: absolute; left: 5px; top: 50%; width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: #C8FF42;"></span></sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{docOpen}}" hint-placeholder-val="{{false}}">
+<div onClick="{{closeDoc}}" style="position: absolute; inset: 0; z-index: 90; background: rgba(0,0,0,.6);"></div>
+<div style="position: absolute; inset: 0; z-index: 91; display: flex; flex-direction: column; box-sizing: border-box;">
+<div role="dialog" aria-modal="true" aria-labelledby="docTitle" class="doc-sheet gr" style="border-radius: 28px 28px 0 0; overflow: hidden; flex: 1; min-height: 0; width: 100%; display: flex; flex-direction: column; border: 0; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); box-shadow: 0 30px 80px rgba(0,0,0,.55); color: #F7F9E9; font-family: 'Pretendard Variable', Pretendard, sans-serif; overflow: hidden;">
+<div style="flex: none; display: flex; justify-content: space-between; align-items: center; padding: 14px 8px 12px 20px; border-bottom: 1px solid transparent;">
+<h2 id="docTitle" style="margin: 0; font-size: 18px; font-weight: 700;">{{doc.title}}</h2>
+<button class="ic-btn" type="button" onClick="{{closeDoc}}" aria-label="닫기" style="width: 40px; height: 40px; border: 0; background: none; color: #F7F9E9; display: grid; place-items: center; cursor: pointer; border-radius: 50%;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<div class="doc-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 4px 20px 32px; -webkit-overflow-scrolling: touch;">
+<sc-for list="{{doc.sections}}" as="d" hint-placeholder-count="3">
+<section style="padding: 14px 0; border-bottom: 1px solid transparent;"><h3 style="margin: 0; font-size: 14px; font-weight: 700;">{{d.h}}</h3><p style="margin: 6px 0 0; font-size: 13px; line-height: 1.7; color: rgba(247,249,233,.72);">{{d.b}}</p></section>
+</sc-for>
+<p style="margin: 16px 0 0; font-size: 11px; color: rgba(247,249,233,.72);">시행일 2026.11.01 · 초안</p>
+</div>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"myRecordCount":{"editor":"range","default":9,"min":0,"max":30,"step":1},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.colors = ['#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42'];
+    this.sections = [['account', '계정'], ['notify', '알림'], ['reports', '신고 내역'], ['blocked', '차단한 계정'], ['data', '데이터'], ['info', '문의하기']];
+    this.reportSeed = [
+      { place: '부산 · 영도', handle: 'doyoon_sea', caption: '오늘은 바다가 유난히 가까이 느껴지는 오후.', reason: '스팸·광고', days: 3, done: false, c: 0 },
+      { place: '전주 · 남부시장', handle: 'jiwoo_', caption: '시장 문이 열리기 전, 가장 고요한 골목의 온도.', reason: '부적절한 사진', days: 12, done: true, c: 5 },
+      { place: '강릉 · 주문진', handle: 'yuna_', caption: '창가에 앉아 아무것도 하지 않았던 한 시간.', reason: '저작권 침해', days: 26, done: true, c: 3 }
+    ];
+    this.state = {
+      sec: null,
+      pw: { open: false, cur: '', next: '', next2: '' },
+      notify: { like: true, comment: true, follow: true, request: true },
+      exp: { posts: true, colls: true, fmt: 'json', busy: false, href: '' },
+      ask: { cat: 'use', text: '', sent: false },
+      wd: { open: false, text: '' },
+      toast: ''
+    };
+    this.timers = [];
+  }
+  componentWillUnmount() {
+    this.timers.forEach((t) => clearTimeout(t));
+  }
+  showToast(t) {
+    this.setState({ toast: t });
+    this.timers.push(setTimeout(() => { if (this.state.toast === t) this.setState({ toast: '' }); }, 2200));
+  }
+  set(key, patch) {
+    this.setState({ [key]: { ...this.state[key], ...patch } });
+  }
+  sw(on, toggle) {
+    return { checked: on ? 'true' : 'false', toggle: toggle, track: on ? '#C8FF42' : 'rgba(247,249,233,.18)', knob: on ? '#141414' : '#F7F9E9', knobX: on ? 23 : 3 };
+  }
+  buildExport() {
+    const e = this.state.exp;
+    const pad = (x) => String(x).padStart(2, '0');
+    const posts = [];
+    const n = this.props.myRecordCount ?? 9;
+    const base = [['서울 · 북촌', '바람이 불 때마다 나뭇잎 사이로 빛이 흔들렸다.'], ['부산 · 영도', '오늘은 바다가 유난히 가까이 느껴지는 오후.'], ['경주 · 황남동', '길을 잘못 들어서 만난 조용한 담장. 오래 기억하고 싶다.'], ['전주 · 남부시장', '시장 문이 열리기 전, 가장 고요한 골목의 온도.'], ['강릉 · 주문진', '창가에 앉아 아무것도 하지 않았던 한 시간.']];
+    for (let k = 0; k < n; k++) {
+      const d = new Date(Date.now() - k * 2 * 86400000);
+      posts.push({ place: base[k % 5][0], caption: base[k % 5][1], date: d.getFullYear() + '/' + pad(d.getMonth() + 1) + '/' + pad(d.getDate()) });
+    }
+    const colls = [['바다 가는 길', 2], ['골목의 온도', 2], ['창가 자리', 1], ['오래된 담장', 2], ['아침 시장', 1], ['빛이 흔들리는 곳', 1], ['다시 갈 곳', 3], ['느린 오후', 0]].map(([t, c]) => ({ title: t, items: c }));
+    let text;
+    if (e.fmt === 'json') {
+      const o = {};
+      if (e.posts) o.records = posts;
+      if (e.colls) o.collections = colls;
+      text = JSON.stringify(o, null, 2);
+    } else {
+      const rows = [];
+      if (e.posts) { rows.push('type,place,caption,date'); posts.forEach((p) => rows.push(['record', p.place, '"' + p.caption + '"', p.date].join(','))); }
+      if (e.colls) { rows.push('type,title,items'); colls.forEach((c) => rows.push(['collection', c.title, c.items].join(','))); }
+      text = rows.join('\n');
+    }
+    return 'data:' + (e.fmt === 'json' ? 'application/json' : 'text/csv') + ';charset=utf-8,' + encodeURIComponent(text);
+  }
+  noticeList() {
+    return [
+      { id: 'n3', date: '2026/10/26', title: '장소 팝업이 새로 생겼어요', body: '저장한 장소, 컬렉션 속 장소, 검색 결과의 장소를 누르면 장소 정보와 그곳에 남겨진 기록을 한눈에 볼 수 있어요.' },
+      { id: 'n2', date: '2026/10/25', title: '이제 모바일에서 바로 기록할 수 있어요', body: '메뉴 버튼의 기록하기에서 사진을 찍고, 비율과 장소를 고르면 바로 피드에 올라가요.' },
+      { id: 'n1', date: '2026/10/24', title: '피드 검색이 더 편해졌어요', body: '기록, 장소, 사용자, 컬렉션을 한 번에 찾고 최근 검색어도 다시 볼 수 있어요.' }
+    ];
+  }
+  initNotice() {
+    let show = false;
+    try {
+      const fromHome = sessionStorage.getItem('arch.fromHome') === '1';
+      const seen = sessionStorage.getItem('arch.noticeSeen') === '1';
+      const hide = localStorage.getItem('arch.noticeHide') === '1';
+      if (fromHome) sessionStorage.removeItem('arch.fromHome');
+      show = fromHome && !seen && !hide;
+      if (show) sessionStorage.setItem('arch.noticeSeen', '1');
+    } catch (e) {}
+    this.state.noticeOpen = show;
+    return show;
+  }
+  noticeVals() {
+    const open = this.state.noticeOpen === undefined ? this.initNotice() : !!this.state.noticeOpen;
+    const hide = !!this.state.noticeHide;
+    return {
+      noticeOpen: open,
+      noticeHide: hide,
+      onNoticeHide: (e) => this.setState({ noticeHide: !!e.target.checked }),
+      closeNotice: () => {
+        if (this.state.noticeHide) { try { localStorage.setItem('arch.noticeHide', '1'); } catch (e) {} }
+        this.setState({ noticeOpen: false });
+      },
+      notices: this.noticeList().map((n, k) => ({ ...n, isNew: k === 0 }))
+    };
+  }
+  relOf(h, dflt) {
+    let m = null;
+    try { m = JSON.parse(localStorage.getItem('arch.rel') || 'null'); } catch (e) {}
+    const v = m && m[h];
+    if (v === 'following') return true;
+    if (v === 'requested') return 'requested';
+    if (v === 'none') return false;
+    return dflt === undefined ? false : dflt;
+  }
+  setRel(h, v) {
+    try {
+      const m = JSON.parse(localStorage.getItem('arch.rel') || '{}') || {};
+      m[h] = v === true ? 'following' : v === 'requested' ? 'requested' : 'none';
+      localStorage.setItem('arch.rel', JSON.stringify(m));
+    } catch (e) {}
+  }
+  followsMe(h) {
+    return h === 'jiwoo_' || (h === 'seojun.nite' && this.notifStore('arch.notifReq') === 'accepted');
+  }
+  setViewUser(h) {
+    try { sessionStorage.setItem('arch.viewUser', h); } catch (e) {}
+  }
+  notifData() {
+    return [
+      { id: 'a1', group: '오늘', type: 'like', who: '도윤', handle: 'doyoon_sea', time: '5분 전', rec: 1, place: '부산 · 영도', color: '#C8FF42' },
+      { id: 'a2', group: '오늘', type: 'comment', who: '민서', handle: 'minseo.walk', time: '32분 전', rec: 0, place: '서울 · 북촌', text: '빛이 정말 예쁘게 들어오네요. 저도 가 볼래요!', color: '#C8FF42' },
+      { id: 'a3', group: '오늘', type: 'request', who: '서준', handle: 'seojun.nite', time: '1시간 전', color: '#C8FF42' },
+      { id: 'a4', group: '오늘', type: 'follow', who: '지우', handle: 'jiwoo_', time: '3시간 전', color: '#C8FF42' },
+      { id: 'a5', group: '이번 주', type: 'like', who: '유나', handle: 'yuna_', others: 2, time: '2일 전', rec: 4, place: '강릉 · 주문진', color: '#C8FF42' },
+      { id: 'a6', group: '이번 주', type: 'comment', who: '하린', handle: 'harin.k', time: '4일 전', rec: 3, place: '전주 · 남부시장', text: '여기 아침 공기가 진짜 좋죠.', color: '#C8FF42' }
+    ];
+  }
+  notifStore(key, val) {
+    try {
+      if (val === undefined) return JSON.parse(localStorage.getItem(key) || 'null');
+      localStorage.setItem(key, JSON.stringify(val));
+    } catch (e) {}
+    return null;
+  }
+  notifVals() {
+    const s = this.state;
+    if (this.notifRead === undefined) {
+      this.notifRead = this.notifStore('arch.notifRead') || [];
+      this.notifReq = this.notifStore('arch.notifReq') || '';
+      
+    }
+    const read = this.notifRead;
+    const data = this.notifData();
+    const recColor = (k) => this.notifColors[(k * 5 + 1) % 8];
+    const unreadN = data.filter((n) => !read.includes(n.id)).length;
+    const mark = (id) => {
+      if (this.notifRead.includes(id)) return;
+      this.notifRead = this.notifRead.concat([id]);
+      this.notifStore('arch.notifRead', this.notifRead);
+      this.setState({ notifTick: (this.state.notifTick || 0) + 1 });
+    };
+    const profileHref = (h) => (h === 'harin.k' ? 'OtherProfilePrivateMobile.dc.html' : 'OtherProfileMobile.dc.html');
+    const rows = data.map((n, k) => {
+      const unread = !read.includes(n.id);
+      const isRec = n.type === 'like' || n.type === 'comment';
+      const msg = n.type === 'like' ? (n.others ? '님 외 ' + n.others + '명이 내 기록을 좋아해요.' : '님이 내 기록을 좋아해요.')
+        : n.type === 'comment' ? '님이 내 기록에 댓글을 남겼어요.'
+        : n.type === 'follow' ? '님이 나를 팔로우하기 시작했어요.'
+        : '님이 팔로우를 요청했어요.';
+      const req = n.type === 'request' ? this.notifReq : '';
+      return {
+        ...n, msg: msg, cls: unread ? 'nt-row unread' : 'nt-row', unread: unread, initial: n.who[0],
+        first: k === 0 || data[k - 1].group !== n.group,
+        sub: n.type === 'comment' ? '“' + n.text + '”' : isRec ? '⌖ ' + n.place : '@' + n.handle,
+        hasThumb: isRec, thumb: isRec ? recColor(n.rec) : '',
+        href: isRec ? 'ProfileMobile.dc.html' : profileHref(n.handle),
+        aria: n.who + msg + ' ' + n.time,
+        go: (e) => {
+          mark(n.id);
+          if (isRec && this.openRecHere && this.openRecHere(n.rec)) { if (e && e.preventDefault) e.preventDefault(); return; }
+          try {
+            if (isRec) sessionStorage.setItem('arch.openRec', String(n.rec));
+            else { sessionStorage.setItem('arch.from', 'profile'); sessionStorage.setItem('arch.viewUser', n.handle); }
+          } catch (e2) {}
+          this.setState({ notifOpen: false });
+        },
+        isFollow: n.type === 'follow', isReq: n.type === 'request' && !req, reqDone: n.type === 'request' && !!req,
+        reqText: req === 'accepted' ? '요청을 수락했어요' : '요청을 거절했어요',
+        backLabel: this.relOf('jiwoo_') === true ? '팔로잉' : '맞팔로우',
+        backBg: this.relOf('jiwoo_') === true ? 'rgba(247,249,233,.18)' : '#141414', backFg: this.relOf('jiwoo_') === true ? '#F7F9E9' : '#C8FF42',
+        backPressed: this.relOf('jiwoo_') === true ? 'true' : 'false',
+        toggleBack: () => { this.setRel('jiwoo_', this.relOf('jiwoo_') !== true); mark(n.id); },
+        accept: () => { this.notifReq = 'accepted'; this.notifStore('arch.notifReq', 'accepted'); this.setRel('seojun.nite', this.relOf('seojun.nite')); mark(n.id); },
+        decline: () => { this.notifReq = 'declined'; this.notifStore('arch.notifReq', 'declined'); mark(n.id); }
+      };
+    });
+    const open = !!s.notifOpen;
+    return {
+      notifOpen: open, notifExpanded: open ? 'true' : 'false',
+      notifUnread: unreadN > 0, notifCount: unreadN,
+      notifLabel: unreadN ? '알림, 안 읽은 알림 ' + unreadN + '개' : '알림',
+      notifBellBg: open ? '#C8FF42' : 'none', notifBellFg: open ? '#141414' : '#F7F9E9',
+      toggleNotif: () => this.setState({ notifOpen: !this.state.notifOpen }),
+      closeNotif: () => this.setState({ notifOpen: false }),
+      readAll: () => {
+        this.notifRead = data.map((n) => n.id);
+        this.notifStore('arch.notifRead', this.notifRead);
+        this.setState({ notifTick: (this.state.notifTick || 0) + 1 });
+      },
+      noUnread: unreadN === 0,
+      notifs: rows
+    };
+  }
+  dockVals() {
+    const s = this.state;
+    const open = !!s.dockOpen;
+    const cur = null;
+    const tabs = [
+      ['home', '홈', 'TicketMobileIn.dc.html', '#C8FF42', false],
+      ['feed', '피드', 'FeedMobile.dc.html', '#C8FF42', false],
+      ['record', '기록하기', 'RecordMobile.dc.html', '#C8FF42', true],
+      ['curation', '큐레이션', 'CurationMobile.dc.html', '#C8FF42', false],
+      ['store', '스토어', 'StoreMobile.dc.html', '#C8FF42', false],
+      ['profile', '프로필', 'ProfileMobile.dc.html', '#C8FF42', true]
+    ];
+    // six wide tickets spread over the whole top half, so the rim is full down to the bottom edge
+    const step = 33;
+    const span = step * (tabs.length - 1);
+    const lim = 18;
+    const rot = Math.max(-lim, Math.min(lim, s.dockRot || 0));
+    const anySel = !!s.dockSel;
+    const guest = this.isGuest ? this.isGuest() : false;
+    const close = () => this.setState({ dockOpen: false });
+    const clampRot = (x) => Math.max(-lim, Math.min(lim, x));
+    return {
+      dock: {
+        arcZ: 81, selHref: (tabs.find((t) => t[0] === s.dockSel) || [])[2] || '#',
+        navRef: (el) => { this.dockNavEl = el; },
+        open: open, expanded: open ? 'true' : 'false', discCls: open ? 'on' : '', hintOp: open ? 1 : 0,
+        btnBg: open ? '#141414' : '#C8FF42', btnFg: open ? '#F7F9E9' : '#141414', btnLabel: open ? '메뉴 닫기' : '메뉴 열기',
+        l1: open ? 'translateY(6px) rotate(45deg)' : 'none', l2: open ? 0 : 1, l3: open ? 'translateY(-6px) rotate(-45deg)' : 'none',
+        toggle: () => this.setState({ dockOpen: !this.state.dockOpen, dockSel: null, dockRot: 0 }),
+        close: () => { if (this.dockMoved) { this.dockMoved = false; return; } close(); },
+        onWheel: (e) => this.setState({ dockRot: clampRot((this.state.dockRot || 0) - (e.deltaX || e.deltaY || 0) * 0.15) }),
+        onDown: (e) => { this.dockPtr = { x: e.clientX, rot: rot }; this.dockMoved = false; },
+        onMove: (e) => {
+          const p = this.dockPtr;
+          if (!p) return;
+          const dx = e.clientX - p.x;
+          if (Math.abs(dx) > 5) this.dockMoved = true;
+          this.setState({ dockRot: clampRot(p.rot + dx * 0.3) });
+        },
+        onUp: () => { this.dockPtr = null; },
+        tabs: tabs.map(([id, label, href, color, member], i) => {
+          const deg = -span / 2 + i * step + rot;
+          const here = id === cur;
+          const sel = s.dockSel === id;
+          return {
+            label: label, href: href, num: String(i + 1).padStart(2, '0'),
+            bg: (sel || (here && !s.dockSel)) ? '#C8FF42' : 'rgba(30,30,28,.72)', fg: (sel || (here && !s.dockSel)) ? '#141414' : '#F7F9E9', tear: (sel || (here && !s.dockSel)) ? 'rgba(20,20,20,.7)' : 'rgba(247,249,233,.45)', note: here ? '지금 여기' : '',
+            current: here ? 'page' : 'false', deg: deg.toFixed(1),
+            tf: 'rotate(' + deg.toFixed(1) + 'deg) translateY(calc(' + (sel ? -180 : -122) + 'px + var(--lift, 0px)))',
+            op: 1, pe: anySel ? 'none' : 'auto',
+            shadow: sel ? '0 -10px 26px rgba(0,0,0,.4)' : '0 -4px 14px rgba(0,0,0,.25)',
+            delay: (Math.abs(deg) / 400).toFixed(2),
+            go: (e) => {
+              if (here) { if (e && e.preventDefault) e.preventDefault(); close(); return; }
+              if (guest && member) { if (e && e.preventDefault) e.preventDefault(); this.setState({ dockOpen: false, guestPrompt: true }); return; }
+              if (e && e.preventDefault) e.preventDefault();
+              this.setState({ dockSel: id });
+              setTimeout(() => {
+                if (this.dockNavEl) this.dockNavEl.click();
+                this.setState({ dockOpen: false, dockSel: null });
+              }, 760);
+            }
+          };
+        })
+      }
+    };
+  }
+  renderVals() {
+    this.notifColors = ['#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42'];
+    const nv = this.notifVals();
+    return { ...this.renderValsBase(), ...this.noticeVals(), ...nv, ...this.dockVals(), ...this.blockedVals() };
+  }
+  legalDoc(kind) {
+    const terms = [
+      ['제1조 (목적)', '이 약관은 아치(arch;)가 제공하는 공간 기록 서비스의 이용 조건과 절차, 이용자와 아치의 권리·의무를 정하는 것을 목적으로 합니다.'],
+      ['제2조 (계정)', '이용자는 정확한 정보로 계정을 만들어야 하며, 계정과 비밀번호를 안전하게 관리할 책임이 있습니다.'],
+      ['제3조 (게시물)', '이용자가 올린 기록의 권리는 이용자에게 있습니다. 다른 사람의 권리를 침해하거나 법령에 어긋나는 게시물은 별도의 통지 없이 숨겨질 수 있습니다.'],
+      ['제4조 (서비스 변경과 중단)', '아치는 더 나은 서비스를 위해 기능을 바꾸거나 점검으로 잠시 중단할 수 있으며, 중요한 변경은 공지를 통해 미리 알려 드립니다.'],
+      ['제5조 (탈퇴)', '이용자는 설정에서 언제든 탈퇴할 수 있고, 탈퇴하면 기록과 컬렉션은 삭제됩니다.']
+    ];
+    const privacy = [
+      ['수집하는 정보', '이메일, 아이디, 비밀번호(암호화), 프로필 정보, 이용자가 올린 사진과 장소 정보를 수집합니다.'],
+      ['이용 목적', '계정 관리, 기록 저장과 공유, 알림 제공, 서비스 개선을 위해서만 사용합니다.'],
+      ['위치 정보', '기록할 때 근처 장소를 찾기 위해서만 위치를 사용하고, 정확한 위치는 다른 사람에게 공개하지 않습니다.'],
+      ['보관 기간', '탈퇴 시 지체 없이 삭제합니다. 다만 법령에 따라 보관해야 하는 정보는 정해진 기간 동안 보관합니다.'],
+      ['문의', '개인정보 관련 문의는 설정 > 문의하기를 통해 접수하실 수 있습니다.']
+    ];
+    return kind === 'privacy'
+      ? { title: '개인정보 처리방침', sections: privacy.map(([h, b]) => ({ h, b })) }
+      : { title: '이용약관', sections: terms.map(([h, b]) => ({ h, b })) };
+  }
+  blockedVals() {
+    let list = [];
+    try { list = JSON.parse(localStorage.getItem('arch.blocked') || '[]') || []; } catch (e) {}
+    return {
+      blockedEmpty: list.length === 0, blockedAny: list.length > 0,
+      blockedRows: list.map((b) => ({
+        name: b.name || b.handle, handle: b.handle, initial: (b.name || b.handle)[0],
+        unblock: () => {
+          const next = list.filter((x) => x.handle !== b.handle);
+          try { localStorage.setItem('arch.blocked', JSON.stringify(next)); } catch (e) {}
+          this.showToast('@' + b.handle + ' 님의 차단을 해제했어요.');
+        }
+      })),
+      docOpen: !!this.state.doc, doc: this.state.doc ? this.legalDoc(this.state.doc) : { sections: [] },
+      openTerms: () => this.setState({ doc: 'terms' }), openPrivacy: () => this.setState({ doc: 'privacy' }),
+      closeDoc: () => this.setState({ doc: null })
+    };
+  }
+  renderValsBase() {
+    const s = this.state;
+    const sec = s.sec;
+    const pw = s.pw;
+    let pwHint = '';
+    if (pw.next && pw.next.length < 6) pwHint = '새 비밀번호는 6자 이상이어야 해요.';
+    else if (pw.next2 && pw.next !== pw.next2) pwHint = '새 비밀번호가 서로 달라요.';
+    else if (pw.next && pw.cur && pw.next === pw.cur) pwHint = '지금 비밀번호와 다르게 정해 주세요.';
+    const pwOk = pw.cur.length > 0 && pw.next.length >= 6 && pw.next === pw.next2 && pw.next !== pw.cur;
+    const nf = s.notify;
+    const allOn = nf.like && nf.comment && nf.follow && nf.request;
+    const anyOn = nf.like || nf.comment || nf.follow || nf.request;
+    const nDefs = [['like', '좋아요', '내 기록에 좋아요가 눌렸을 때'], ['comment', '댓글', '내 기록에 댓글이 달렸을 때'], ['follow', '새 팔로워', '누군가 나를 팔로우했을 때'], ['request', '팔로우 요청', '팔로우 요청이 오거나 수락됐을 때']];
+    const pad = (x) => String(x).padStart(2, '0');
+    const e = s.exp;
+    const recN = this.props.myRecordCount ?? 9;
+    const a = s.ask;
+    const curLabel = (this.sections.find(([id]) => id === sec) || [null, '설정'])[1];
+    return {
+      yes: true,
+      version: '0.1.0',
+      logoutHref: 'TicketMobile.dc.html',
+      acct: { id: '아이디', email: 'me@archyourview.kr' },
+      navItems: this.sections.map(([id, label]) => ({
+        label: label, current: sec === id ? 'page' : 'false',
+        pick: () => this.setState({ sec: id, pw: { ...this.state.pw, open: false } })
+      })),
+      inList: !sec, inDetail: !!sec, secTitle: curLabel,
+      backToList: () => this.setState({ sec: null }),
+      sec: { account: sec === 'account', notify: sec === 'notify', reports: sec === 'reports', blocked: sec === 'blocked', data: sec === 'data', info: sec === 'info' },
+      pw: { ...pw, expanded: pw.open ? 'true' : 'false', chevron: pw.open ? 90 : 0, hint: pwHint, hasHint: !!pwHint, disabled: !pwOk },
+      togglePw: () => this.set('pw', { open: !this.state.pw.open, cur: '', next: '', next2: '' }),
+      onPwCur: (ev) => this.set('pw', { cur: ev.target.value }),
+      onPwNext: (ev) => this.set('pw', { next: ev.target.value }),
+      onPwNext2: (ev) => this.set('pw', { next2: ev.target.value }),
+      savePw: (ev) => { ev.preventDefault(); if (!pwOk) return; this.set('pw', { open: false, cur: '', next: '', next2: '' }); this.showToast('비밀번호를 바꿨어요.'); },
+      kakao: () => this.showToast('카카오 계정 연결은 곧 열릴 예정이에요.'),
+      openWithdraw: () => this.setState({ wd: { open: true, text: '' } }),
+      closeWithdraw: () => this.setState({ wd: { open: false, text: '' } }),
+      onWdText: (ev) => this.set('wd', { text: ev.target.value }),
+      wd: { open: s.wd.open, text: s.wd.text, ready: s.wd.text.trim() === '탈퇴', notReady: s.wd.text.trim() !== '탈퇴' },
+      nAll: this.sw(allOn, () => { const v = !allOn; this.setState({ notify: { like: v, comment: v, follow: v, request: v } }); }),
+      nRows: nDefs.map(([k, label, desc]) => ({ label: label, desc: desc, ...this.sw(nf[k], () => this.set('notify', { [k]: !this.state.notify[k] })) })),
+      notifyNote: anyOn ? '' : '모든 알림이 꺼져 있어요.',
+      reports: this.reportSeed.map((r) => {
+        const d = new Date(Date.now() - r.days * 86400000);
+        return {
+          ...r, color: this.colors[r.c], date: d.getFullYear() + '/' + pad(d.getMonth() + 1) + '/' + pad(d.getDate()),
+          status: r.done ? '처리 완료' : '검토 중', badgeBg: r.done ? '#F7F9E9' : 'rgba(247,249,233,.18)', badgeFg: r.done ? '#141414' : '#F7F9E9'
+        };
+      }),
+      repEmpty: this.reportSeed.length === 0,
+      expOpts: [['posts', '내 기록', recN + '개'], ['colls', '컬렉션', '8개']].map(([k, label, count]) => ({
+        label: label, count: count, on: !!e[k], toggle: () => this.set('exp', { [k]: !this.state.exp[k], href: '' })
+      })),
+      expFmts: [['json', 'JSON'], ['csv', 'CSV']].map(([id, label]) => ({
+        label: label, selected: e.fmt === id ? 'true' : 'false', chk: e.fmt === id ? 1 : 0, bg: e.fmt === id ? '#141414' : 'rgba(20,20,20,.13)', fg: e.fmt === id ? '#F7F9E9' : '#141414',
+        pick: () => this.set('exp', { fmt: id, href: '' })
+      })),
+      exp: {
+        disabled: !(e.posts || e.colls) || e.busy, label: e.busy ? '파일 만드는 중…' : '내보내기',
+        ready: !!e.href, href: e.href, file: 'arch-records.' + e.fmt
+      },
+      runExport: () => {
+        if (!(this.state.exp.posts || this.state.exp.colls)) return;
+        this.set('exp', { busy: true, href: '' });
+        this.timers.push(setTimeout(() => { this.set('exp', { busy: false, href: this.buildExport() }); this.showToast('파일이 준비됐어요.'); }, 900));
+      },
+      askCats: [['use', '이용 문의'], ['bug', '오류 신고'], ['idea', '제안']].map(([id, label], i) => ({
+        label: label, selected: a.cat === id ? 'true' : 'false', chk: a.cat === id ? 1 : 0, bg: a.cat === id ? '#141414' : 'rgba(20,20,20,.13)', fg: a.cat === id ? '#F7F9E9' : '#141414',
+        divider: i < 2 ? '0' : '0', pick: () => this.set('ask', { cat: id })
+      })),
+      ask: { text: a.text, count: a.text.length, disabled: a.text.trim().length < 5, sent: a.sent, notSent: !a.sent },
+      onAskText: (ev) => this.set('ask', { text: ev.target.value.slice(0, 500) }),
+      sendAsk: (ev) => { ev.preventDefault(); if (this.state.ask.text.trim().length < 5) return; this.set('ask', { sent: true, text: '' }); this.showToast('문의를 보냈어요.'); },
+      askAgain: () => this.set('ask', { sent: false }),
+      toast: s.toast, hasToast: !!s.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

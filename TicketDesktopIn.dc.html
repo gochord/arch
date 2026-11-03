@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>arch; 홈 티켓 · 데스크톱 · 로그인 상태</title>
+<meta name="viewport" content="width=1280">
+<script src="./shell.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 1280px; height: 960px; background: #000000;">
+<dc-import name="TicketDesktop" signed-in="{{yes}}" hint-size="1280px,960px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { yes: true };
+  }
+}
+</script>
+</body>
+</html>

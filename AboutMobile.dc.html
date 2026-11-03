@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>arch; 어바웃 · 모바일</title>
+<meta name="viewport" content="width=390">
+<script src="./shell.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@font-face{font-family:'Pretendard Variable';font-weight:45 920;font-style:normal;font-display:swap;src:url('assets/blob/f9299b363a48d37a9d320e5eaf3254f6.woff2') format('woff2-variations'),url('assets/blob/f9299b363a48d37a9d320e5eaf3254f6.woff2') format('woff2')}
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{opacity:.75}
+.logo-mask{-webkit-mask:url('assets/blob/3cbd3d619de1f4350868f689fb0f0636.png') center/contain no-repeat;mask:url('assets/blob/3cbd3d619de1f4350868f689fb0f0636.png') center/contain no-repeat}
+.m-scroll{scrollbar-width:none}.m-scroll::-webkit-scrollbar{display:none}
+.m-scroll{scrollbar-width:none}.m-scroll::-webkit-scrollbar{display:none}
+.notch-sm{-webkit-mask:radial-gradient(circle 10px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 10px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 10px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 10px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat;mask:radial-gradient(circle 10px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 10px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 10px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 10px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat}
+.ab-step{position:relative;display:flex;flex-direction:column;gap:10px;color:#141414;min-width:0}
+.ab-cta{display:inline-flex;align-items:center;gap:10px;height:56px;padding:0 24px;border-radius:999px;background:#F7F9E9;color:#141414;font-size:15px;font-weight:700;text-decoration:none}
+.ab-cta:hover{opacity:.85}
+.ab-cta:focus-visible,.ab-home:focus-visible{outline:2px solid #F7F9E9;outline-offset:3px}
+.ab-home{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#F7F9E9;text-decoration:none;padding:10px 4px}
+.ab-in{animation:abIn .6s cubic-bezier(.2,.7,.2,1) both}
+@keyframes abIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+
+button{transition:scale .15s ease,background-color .2s ease,opacity .2s ease}
+button:not(:disabled):active{scale:.97}
+button,a{-webkit-tap-highlight-color:transparent}
+
+/* ticket notch motif softened to the rounded system (home ticket + menu wheel keep theirs) */
+.notch,.notch-sm,.notch-xs{-webkit-mask:none!important;mask:none!important;overflow:hidden}
+.notch{border-radius:28px}.notch-sm{border-radius:20px}.notch-xs{border-radius:14px}
+.view-menu{border-radius:20px!important;padding:6px;box-sizing:border-box;-webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%)}
+.view-opt{border-bottom:0!important;border-radius:14px;padding:0 14px!important}
+
+/* tickets: soft rounded body with a semicircle bite on each side, like a coupon */
+.notch,.notch-sm,.notch-xs,.dk-notch{-webkit-mask:radial-gradient(circle var(--bite) at 0 var(--at,50%),#0000 97%,#000 100%) left/51% 100% no-repeat,radial-gradient(circle var(--bite) at 100% var(--at,50%),#0000 97%,#000 100%) right/51% 100% no-repeat!important;mask:radial-gradient(circle var(--bite) at 0 var(--at,50%),#0000 97%,#000 100%) left/51% 100% no-repeat,radial-gradient(circle var(--bite) at 100% var(--at,50%),#0000 97%,#000 100%) right/51% 100% no-repeat!important;overflow:hidden}
+.notch{--bite:12px;border-radius:28px}.notch-sm{--bite:9px;border-radius:20px}.notch-xs{--bite:5px;border-radius:12px}.dk-notch{--bite:8px;border-radius:16px}
+
+/* ticket cards: bites sit on the dashed tear line instead of mid-height */
+:where(.notch,.notch-sm,.notch-xs){position:relative}
+.notch:has(.tear2),.notch-sm:has(.tear2),.notch-xs:has(.tear2),.dk-notch:has(.tear2){-webkit-mask:none!important;mask:none!important}
+.tear2::before,.tear2::after{content:"";position:absolute;width:var(--bite-d,18px);height:var(--bite-d,18px);margin-top:calc(var(--bite-d,18px) / -2 - 1px);border-radius:50%;background:var(--bite-bg,#000000)}
+.tear2::before{left:calc(var(--bite-d,18px) / -2)}.tear2::after{right:calc(var(--bite-d,18px) / -2)}
+.notch-sm{--bite-d:16px}.dk-notch{--bite-d:14px}
+
+/* atmosphere: faint light behind the glass and a film grain over the ground */
+:root{--grain:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+.amb{background-image:var(--grain),radial-gradient(60% 45% at 100% 0%,rgba(200,255,66,.10),transparent 70%),radial-gradient(55% 40% at 0% 100%,rgba(247,249,233,.06),transparent 70%)!important;background-repeat:repeat,no-repeat,no-repeat!important;background-size:160px 160px,100% 100%,100% 100%!important}
+.amb.amb-home{background-image:var(--grain),radial-gradient(42% 32% at 50% 56%,rgba(200,255,66,.22),transparent 72%),radial-gradient(30% 24% at 22% 18%,rgba(247,249,233,.10),transparent 70%)!important}
+.gl,.gr,.dk-disc{background-image:var(--grain)!important;background-size:160px 160px!important}
+/* a soft neon bloom behind the login card and the open menu wheel */
+.auth-card{box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 140px 20px rgba(200,255,66,.16)!important}
+.dk-disc.on{box-shadow:0 -10px 40px rgba(0,0,0,.45),0 0 120px 30px rgba(200,255,66,.18)}
+/* curation ring: focus on the lifted cover, the rest falls out of focus */
+.cr-face{transition:filter .35s ease}
+.cr-stage:has(.cr-pop) .cr-face{filter:blur(4px) brightness(.5)}
+.cr-stage:has(.cr-pop) .cr-back{filter:blur(4px) brightness(.3)}
+
+/* header logo: the two-tone wordmark (cream letters, neon TM) */
+.logo-img{-webkit-mask:none!important;mask:none!important;background:url('assets/blob/5c28f671acf3728f9a2cebb11036a206.png') left center/contain no-repeat!important}
+
+/* solid = printed paper: every ticket and card shares one fine paper grain and one soft shadow */
+:root{--paper:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .11 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+:where(.paper,.pcard,.st-cell){position:relative}
+.paper::after,.notch::after,.notch-sm::after,.notch-xs::after,.notch4::after,.pcard::after,.st-cell::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:var(--paper);background-size:140px 140px;z-index:1}
+.pcard{background-image:none!important;box-shadow:0 12px 28px rgba(0,0,0,.35)!important}
+.st-cell{box-shadow:0 12px 28px rgba(0,0,0,.35)}
+
+/* tear lines: short round-capped dashes with a little more air between them */
+:root{--dash:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='9' height='2' viewBox='0 0 9 2'><line x1='1' y1='1' x2='3' y2='1' stroke='black' stroke-width='2' stroke-linecap='round'/></svg>") left center/auto 100% repeat-x}
+.dk-t .tear2{border-top:0!important;background:var(--tear,rgba(247,249,233,.45))!important}
+.tear2::before,.tear2::after{margin-top:calc(var(--bite-d,18px) / -2 + 1px)}
+
+/* about essay */
+.ab-essay{margin:48px auto 0;max-width:680px;text-align:left;color:#F7F9E9}
+.ab-quotes{display:flex;flex-direction:column;gap:28px}
+.ab-q{margin:0}
+.ab-q::before{content:"“";display:block;height:.5em;font-size:44px;font-weight:800;line-height:1;color:#C8FF42}
+.ab-q blockquote{margin:0;font-size:16px;font-weight:600;line-height:1.75;letter-spacing:-.015em;word-break:keep-all}
+.ab-q figcaption{margin-top:10px;font-size:12px;font-weight:500;letter-spacing:.04em;color:rgba(247,249,233,.55)}
+.ab-star{margin:40px 0;text-align:center;font-size:22px;color:#C8FF42}
+.ab-body p{margin:0 0 18px;font-size:14px;line-height:1.85;color:rgba(247,249,233,.78);word-break:keep-all}
+.ab-body .ab-lead{margin-bottom:20px;font-size:19px;font-weight:700;line-height:1.5;color:#F7F9E9}
+.ab-body .ab-pivot{margin:28px 0 20px;font-size:17px;font-weight:700;color:#F7F9E9}
+.ab-close{text-align:center}
+.ab-close p{margin:0 0 8px;font-size:15px;font-weight:600;line-height:1.7;word-break:keep-all}
+.ab-close .ab-final{margin-top:28px;font-size:24px;font-weight:800;letter-spacing:-.03em;color:#C8FF42}
+</style>
+</helmet>
+<div class="amb" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #000000; color: #F7F9E9; font-family: 'Pretendard Variable', Pretendard, sans-serif;">
+<header style="position: absolute; top: 0; left: 0; right: 0; z-index: 10; height: 58px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px 0 16px; box-sizing: border-box; background: rgba(0,0,0,.55); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); border-bottom: 1px solid transparent;">
+<a href="{{homeHref}}" aria-label="arch; 홈으로" style="display: block; width: 70px; height: 32px;"><span class="logo-mask logo-img" style="display: block; width: 100%; height: 100%; background: #F7F9E9;"></span></a>
+<a class="ab-home" href="{{homeHref}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>홈으로</a>
+</header>
+<main class="m-scroll" style="position: absolute; top: 58px; left: 0; right: 0; bottom: 0; overflow-y: auto;">
+<div style="max-width: 1120px; margin: 0 auto; padding: 0 18px; box-sizing: border-box;">
+
+<section class="ab-in" aria-labelledby="abTitle" style="padding: 72px 0 60px; text-align: center; border-bottom: 1px solid transparent;">
+<span style="font-size: 11px; font-weight: 700; letter-spacing: .14em;">ABOUT arch;</span>
+<h1 id="abTitle" style="margin: 12px 0 0; font-size: 44px; font-weight: 800; line-height: 1.08; letter-spacing: -.045em;">취향이<br>도착하는 곳,<br>arch;</h1>
+<p style="margin: 22px auto 0; max-width: 520px; font-size: 14px; line-height: 1.75; color: rgba(247,249,233,.72);">취향으로 발견하고, 그 자리에서 기록하세요.<br>아치는 지나온 장소와 순간을 티켓처럼 모으는 공간 아카이빙 서비스예요.</p>
+<p style="margin: 18px 0 0; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 12px; color: rgba(247,249,233,.72); font-variant-numeric: tabular-nums;">37° 34′ N, 126° 58′ E · @archyourview</p>
+<article class="ab-essay" aria-label="arch; 소개">
+<div class="ab-quotes"><figure class="ab-q"><blockquote>우리는 정말 자신이 원하는 곳으로 여행을 떠나는 걸까? 혹시 다른 누군가가 그곳을 원하기 때문에, 많은 이들이 그곳을 원하기 때문에. 우리 역시 그곳을 원하게 된 것은 아닐까? 우리는 한번쯤 당연히 자신의 것이라고 믿는 욕망의 출처를 고민해볼 필요가 있진 않은가.</blockquote><figcaption>Inspired by René Girard</figcaption></figure><figure class="ab-q"><blockquote>취향은 지극히 개인적인 것처럼 보이지만, 그것이 평가받는 기준은 언제나 개인의 바깥에도 존재한다. 우리는 좋아하는 것을 선택한다고 생각하면서도, 때로는 남들에게 좋은 취향으로 인정받을 만한 것을 선택한다.</blockquote><figcaption>Inspired by Pierre Bourdieu</figcaption></figure><figure class="ab-q"><blockquote>우리는 여행을 마치고 무엇을 가지고 돌아올까? 유명한 장소에서 찍은 사진, 누군가에게 보여주기 위해 이렇게 저렇게 꾸며낸 사진과 기록들. 그러나 누군가 우리에게 그곳에서 무엇을 느꼈는지 묻는다면, 우리는 얼마나 많은 이야기를 할 수 있을까?</blockquote><figcaption>Inspired by Erich Fromm</figcaption></figure></div>
+<p class="ab-star" aria-hidden="true">✳︎</p>
+<div class="ab-body"><p class="ab-lead">그렇다면 오늘날 우리의 여행은 어떠한가.</p><p>어디로 떠나고 싶을 때, 우리는 자연스럽게 SNS에서 수없이 마주했던 장소들을 떠올린다. 이미 많은 이들이 방문했고, 누군가에 의해 그 가치가 인정된 장소들. 그런데 잠시 멈추어 생각해보자.</p><p>우리는 그곳이 정말 좋아서 가는 것일까, 아니면 그곳이 좋다고 여겨지기 때문에 가고 싶어진 것일까.</p><p>물론 유행하는 장소를 찾아가는 것 그 자체로는 문제가 아닐 것이다. 다만 그러한 선택이 반복되는 동안, 우리는 자신의 취향이 향하는 곳을 충분히 돌아보고 있는가. 새로운 장소를 발견하기보다 이미 발견된 장소를 따라가고, 스스로의 취향을 확장하기보다 남들에게 인정받는 취향 안에 스스로를 가두고 있는 것은 아닐까.</p><p>어쩌면 우리 모두는 어느 정도 흔히 '비주류'라고 불리는 취향을 가지고 있을지도 모른다. 남들에게 이야기하기에는 조금 낯선 취향, 아직 스스로도 제대로 발견하지 못한 취향, 혹은 언젠가 좋아했지만 어느새 잊어버린 취향까지. 그러나 우리는 자신의 취향조차 남들에게 있어 보여야 한다는 생각에, 그것을 충분히 들여다보기도 전에 유행을 따라가곤 한다.</p><p>우리는 흔히 비주류라고 불리는 취향이 주류의 취향보다 특별하다고 이야기하려는 것이 아니다. 다만 이미 많은 사람들에게 인정받은 장소들 너머에도, 각자의 마음을 움직일 수 있는 수많은 장소와 경험들이 존재한다는 사실을 이야기하고 싶었다.</p><p class="ab-pivot">arch;는 바로 이러한 문제의식에서 출발했다.</p><p>Archive, 기록하고 보관한다는 의미에서 출발한 arch;는 동시에 서로 다른 공간을 연결하는 하나의 문이기도 하다. 익숙한 장소에서 낯선 장소로, 이미 알고 있던 취향에서 미처 발견하지 못했던 취향으로 나아가는 문. 그리고 그 문을 지나 마주한 장소에서의 감정과 생각을 자신만의 기록으로 남길 수 있는 공간.</p><p>그러기 위해 우리는 누군가가 이미 좋다고 평가한 장소를 추천하는 데 그치지 않고, 각자가 자신의 취향에 따라 새로운 공간을 탐색할 수 있는 기회를 만들고자 한다. 직접 발굴한 장소들을 소개하고, 그곳에 직접 방문했을 때만 남길 수 있는 기록을 통해 그 순간의 감정과 생각을 자신만의 방식으로 간직할 수 있도록 하는 것. 그렇게 쌓인 기록들이 단순히 방문한 장소의 목록이 아니라, 자신이 무엇에 끌리고 어떤 순간에 마음이 움직였는지를 돌아볼 수 있는 하나의 아카이브가 되기를 바란다.</p></div>
+<p class="ab-star" aria-hidden="true">✳︎</p>
+<div class="ab-close"><p>남들이 좋다고 하는 곳에 끌려가는 것이 아닌, 내가 끌리는 곳으로 향하는 것.</p><p>그 과정에서 미처 알지 못했던, 잊어왔던 나의 설렘이 향하는 곳을 알게 되는 것.</p><p>그 경험을 자신만의 기록으로 남기는 것.</p><p class="ab-final">취향이 도착하는 곳, arch;</p></div>
+</article>
+</section>
+
+<section aria-labelledby="abHow" style="padding: 30px 0 10px;">
+<h2 id="abHow" style="margin: 0 0 16px; font-size: 22px; font-weight: 700; letter-spacing: -.03em;">아치는 이렇게 써요</h2>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;">
+<article class="ab-step notch-sm" style="background: #C8FF42; padding: 16px 16px 18px;">
+<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; letter-spacing: .08em; font-variant-numeric: tabular-nums;">01</span>
+<span class="tear2" aria-hidden="true" style="display: block; border-top: 0; height: 2px; background: url('data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%229%22 height=%222%22 viewBox=%220 0 9 2%22&gt;&lt;line x1=%221%22 y1=%221%22 x2=%223%22 y2=%221%22 stroke=%22rgba(20,20,20,.8)%22 stroke-width=%222%22 stroke-linecap=%22round%22/&gt;&lt;/svg&gt;') left center/auto 100% repeat-x;"></span>
+<h3 style="margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -.02em;">기록하기</h3>
+<p style="margin: 0; font-size: 13px; line-height: 1.65;">지금 있는 곳을 사진 한 장과 짧은 문장으로 남기면, 한 장의 티켓이 돼요.</p>
+</article>
+<article class="ab-step notch-sm" style="background: #C8FF42; padding: 16px 16px 18px;">
+<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; letter-spacing: .08em; font-variant-numeric: tabular-nums;">02</span>
+<span class="tear2" aria-hidden="true" style="display: block; border-top: 0; height: 2px; background: url('data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%229%22 height=%222%22 viewBox=%220 0 9 2%22&gt;&lt;line x1=%221%22 y1=%221%22 x2=%223%22 y2=%221%22 stroke=%22rgba(20,20,20,.8)%22 stroke-width=%222%22 stroke-linecap=%22round%22/&gt;&lt;/svg&gt;') left center/auto 100% repeat-x;"></span>
+<h3 style="margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -.02em;">피드</h3>
+<p style="margin: 0; font-size: 13px; line-height: 1.65;">다른 사람들이 지나온 장소를 둘러보고, 마음에 드는 기록과 장소를 저장해요.</p>
+</article>
+<article class="ab-step notch-sm" style="background: #C8FF42; padding: 16px 16px 18px;">
+<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; letter-spacing: .08em; font-variant-numeric: tabular-nums;">03</span>
+<span class="tear2" aria-hidden="true" style="display: block; border-top: 0; height: 2px; background: url('data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%229%22 height=%222%22 viewBox=%220 0 9 2%22&gt;&lt;line x1=%221%22 y1=%221%22 x2=%223%22 y2=%221%22 stroke=%22rgba(20,20,20,.8)%22 stroke-width=%222%22 stroke-linecap=%22round%22/&gt;&lt;/svg&gt;') left center/auto 100% repeat-x;"></span>
+<h3 style="margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -.02em;">컬렉션</h3>
+<p style="margin: 0; font-size: 13px; line-height: 1.65;">내 기록과 저장한 장소를 나만의 주제로 묶어 하나의 여정으로 남겨요.</p>
+</article>
+<article class="ab-step notch-sm" style="background: #C8FF42; padding: 16px 16px 18px;">
+<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; letter-spacing: .08em; font-variant-numeric: tabular-nums;">04</span>
+<span class="tear2" aria-hidden="true" style="display: block; border-top: 0; height: 2px; background: url('data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%229%22 height=%222%22 viewBox=%220 0 9 2%22&gt;&lt;line x1=%221%22 y1=%221%22 x2=%223%22 y2=%221%22 stroke=%22rgba(20,20,20,.8)%22 stroke-width=%222%22 stroke-linecap=%22round%22/&gt;&lt;/svg&gt;') left center/auto 100% repeat-x;"></span>
+<h3 style="margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -.02em;">큐레이션</h3>
+<p style="margin: 0; font-size: 13px; line-height: 1.65;">아치가 기록들 사이에서 골라 엮은 장소 이야기를 매거진처럼 넘겨 봐요.</p>
+</article>
+</div>
+</section>
+
+<section aria-labelledby="abWhy" style="padding: 30px 0 10px; display: block; gap: 48px;">
+<h2 id="abWhy" style="margin: 0 0 14px; font-size: 22px; font-weight: 700; letter-spacing: -.03em;">우리가 믿는 것</h2>
+<div style="flex: 1; min-width: 0;">
+<div style="padding: 18px 0 20px; border-top: 1px solid transparent;">
+<h3 style="margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -.02em;">장소는 감각으로 기억돼요</h3>
+<p style="margin: 8px 0 0; font-size: 14px; line-height: 1.7; color: rgba(247,249,233,.72);">빛, 소리, 온도처럼 그 자리에서만 느낄 수 있는 것을 놓치지 않도록 기록해요.</p>
+</div>
+<div style="padding: 18px 0 20px; border-top: 1px solid transparent;">
+<h3 style="margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -.02em;">취향이 길이 돼요</h3>
+<p style="margin: 8px 0 0; font-size: 14px; line-height: 1.7; color: rgba(247,249,233,.72);">누군가의 기록이 다음 사람의 목적지가 되고, 그렇게 취향이 지도처럼 이어져요.</p>
+</div>
+<div style="padding: 18px 0 20px; border-top: 1px solid transparent;">
+<h3 style="margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -.02em;">지역과 함께 걸어요</h3>
+<p style="margin: 8px 0 0; font-size: 14px; line-height: 1.7; color: rgba(247,249,233,.72);">영주, 고흥, 이천, 태안처럼 이야기가 있는 지역의 굿즈와 장소를 함께 소개해요.</p>
+</div>
+</div>
+</section>
+
+<section aria-label="시작하기" style="margin: 20px 0 40px; padding: 22px 20px; border: 1px solid transparent; border-radius: 20px; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 20px; background: rgba(247,249,233,.16);">
+<div><h2 style="margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -.03em;">지금 있는 곳을 기록해 보세요</h2>
+<p style="margin: 8px 0 0; font-size: 14px; color: rgba(247,249,233,.72);">공간의 감각을 선명히 담는 곳, 아치에서 첫 티켓을 만들어 보세요.</p></div>
+<a class="ab-cta" href="{{homeHref}}">시작하기 <span aria-hidden="true">→</span></a>
+</section>
+
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    // back to whichever home ticket (signed in or out) opened this page
+    let signedIn = false;
+    try { signedIn = sessionStorage.getItem('arch.aboutFrom') === 'in'; } catch (e) {}
+    return { homeHref: (signedIn ? 'TicketMobileIn' : 'TicketMobile') + '.dc.html' };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,2104 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>arch; 프로필 · 모바일</title>
+<meta name="viewport" content="width=390">
+<script src="./shell.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@font-face{font-family:'Pretendard Variable';font-weight:45 920;font-style:normal;font-display:swap;src:url('assets/blob/f9299b363a48d37a9d320e5eaf3254f6.woff2') format('woff2-variations'),url('assets/blob/f9299b363a48d37a9d320e5eaf3254f6.woff2') format('woff2')}
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{opacity:.75}
+.notch{-webkit-mask:radial-gradient(circle 12px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 12px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 12px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 12px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat;mask:radial-gradient(circle 12px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 12px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 12px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 12px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat}
+.lbl{display:block;font-size:11px;font-weight:500;letter-spacing:.08em}
+.val{display:block;margin-top:4px;font-size:15px;font-weight:500;font-family:'Pretendard Variable',Pretendard,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mono{font-family:'Pretendard Variable', Pretendard, sans-serif;font-weight:500;font-variant-numeric:tabular-nums}
+.cell{padding:7px 10px 8px;min-width:0}
+.ctile:focus-visible,.cbtn:focus-visible{outline:2px solid #F7F9E9;outline-offset:3px}
+.cstack{position:relative;display:block;width:100%;aspect-ratio:1/1}
+.cs{position:absolute;inset:11%;display:block;overflow:hidden;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.cs-back{transform:rotate(-6deg) translate(-3%,1%);filter:brightness(.55)}
+.cs-front{transform:rotate(2deg)}
+.ctile:hover .cs-back,.ctile:focus-visible .cs-back{transform:rotate(-10deg) translate(-7%,2%)}
+.ctile:hover .cs-front,.ctile:focus-visible .cs-front{transform:rotate(5deg) translate(5%,-2%)}
+.cs-flat{transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.ctile:hover .cs-flat{transform:translateY(-3px)}
+.pl-x{width:48px;height:48px;border-radius:50%;border:1px solid transparent;background:rgba(20,20,20,.13);color:#141414;display:grid;place-items:center;cursor:pointer;padding:0}
+.pl-x:hover{background:rgba(20,20,20,.06)}
+.pl-save{width:40px;height:40px;border:0;background:none;color:#141414;display:grid;place-items:center;cursor:pointer;padding:0}
+.pl-map{height:40px;border:1.5px solid transparent;background:rgba(20,20,20,.13);color:#141414;font:inherit;font-size:13px;font-weight:700;padding:0 14px;display:inline-flex;align-items:center;gap:6px;text-decoration:none;white-space:nowrap}
+.pl-map:hover{background:#141414;color:#F7F9E9;opacity:1}
+.pl-x:focus-visible,.pl-save:focus-visible,.pl-map:focus-visible,.pl-tile:focus-visible{outline:2px solid #141414;outline-offset:2px}
+.pl-tile{border:0;padding:0;font:inherit;text-align:left;cursor:pointer;color:#141414;transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.pl-tile:hover{transform:translateY(-3px)}
+.pl-tile-open{position:absolute;inset:0;z-index:1;border:0;padding:0;background:transparent;cursor:pointer}
+.pl-open-cover{position:absolute;inset:0;z-index:1;border:0;padding:0;background:transparent;cursor:pointer}
+.pl-open-cover:focus-visible{outline:2px solid #141414;outline-offset:-4px}
+.pcard-hover{transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.pcard-hover:has(.pl-open-cover:hover){transform:translateY(-3px)}
+.mn-item{width:100%;height:42px;border:0;background:none;color:inherit;font:inherit;font-size:13px;font-weight:600;text-align:left;padding:0 14px;cursor:pointer}
+.mn-item:hover{background:rgba(247,249,233,.1)}
+.mn-item:focus-visible{outline:2px solid currentColor;outline-offset:-3px}
+.mini-link{border:0;background:none;color:inherit;font:inherit;font-size:11px;font-weight:600;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:0;opacity:.7}
+.mini-link:hover{opacity:1}
+.crec{transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.crec:has(.crec-open:hover){transform:translateY(-3px)}
+.crec-open:focus-visible{outline:2px solid #141414;outline-offset:-4px}
+.ctile .cimg{transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.ctile:hover .cimg{transform:translateY(-3px)}
+.ink-btn:focus-visible,.line-btn:focus-visible{outline:2px solid #141414;outline-offset:2px}
+.line-btn:hover{background:rgba(255,255,255,.3)}
+.rec-x:hover{background:#141414;color:#F7F9E9}
+.pick-row:hover{background:rgba(255,255,255,.25)}
+.search-pill.dark input::placeholder{color:rgba(247,249,233,.72)}
+.search-pill.dark:focus-within{outline:2px solid #F7F9E9;outline-offset:2px}
+.search-pill input::placeholder{color:rgba(20,20,20,.62)}
+.search-pill input:focus{outline:none}
+.search-pill:focus-within{outline:2px solid #141414;outline-offset:2px}
+.notch-sm{-webkit-mask:radial-gradient(circle 10px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 10px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 10px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 10px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat;mask:radial-gradient(circle 10px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 10px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 10px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 10px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat}
+.p-scroll{scrollbar-width:thin;scrollbar-color:rgba(247,249,233,.35) transparent}
+.p-scroll::-webkit-scrollbar{width:8px}.p-scroll::-webkit-scrollbar-thumb{background:rgba(247,249,233,.35);border-radius:999px}
+.comment-input::placeholder{color:rgba(20,20,20,.62)}
+.comment-input:focus{outline:2px solid #141414;outline-offset:1px}
+.ghost:hover{background:rgba(0,0,0,.06)}
+.pop{animation:pop .3s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{0%{transform:scale(.7)}100%{transform:scale(1)}}
+.rtile{transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.rtile:hover{transform:translateY(-3px)}
+.rtile:focus-visible{outline:2px solid #F7F9E9;outline-offset:3px}
+.rtile-cover:focus-visible{outline:2px solid #141414;outline-offset:-4px}
+.cellbtn:hover{background:rgba(0,0,0,.05)}
+.cellbtn:focus-visible{outline:2px solid #141414;outline-offset:-3px}
+.flbl{display:block;font-size:12px;font-weight:700;margin:0 0 8px;padding:0}
+.field{width:100%;box-sizing:border-box;height:48px;border:1px solid transparent;background:rgba(255,255,255,.35);border-radius:16px;padding:0 14px;font:inherit;font-size:15px;color:#141414}
+textarea.field{height:auto;padding:12px 14px;resize:none;line-height:1.5;display:block}
+.field:focus,.field:focus-within{outline:2px solid #141414;outline-offset:1px}
+.field input:focus{outline:none}
+.hint{margin:6px 0 0;font-size:12px;line-height:1.5}
+.pill-btn{font:inherit;cursor:pointer;height:32px;padding:0 14px}
+.pill-btn:focus-visible,.sw:focus-visible,.rbtn:focus-visible{outline:2px solid #141414;outline-offset:2px}
+.custom-pill input::placeholder{color:rgba(20,20,20,.62)}
+.custom-pill input:focus{outline:none}
+.custom-pill:focus-within{outline:2px solid #141414;outline-offset:2px}
+.zoom{width:100%;accent-color:#141414}
+.modal-back{cursor:pointer}
+.modal-in{animation:modalIn .35s cubic-bezier(.2,.8,.2,1) both}
+@keyframes modalIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.modal-in{animation:none}}
+.m-scroll{scrollbar-width:none}.m-scroll::-webkit-scrollbar{display:none}
+.pick-photo:hover,.rbtn:hover{background:rgba(255,255,255,.3)}
+.pill{height:30px;padding:0 13px;border:1.5px solid transparent;border-radius:999px;display:inline-flex;align-items:center;font-size:13px;font-weight:600;box-sizing:border-box;white-space:nowrap;background:rgba(20,20,20,.13)}
+.edit-btn:hover{opacity:.85}
+.edit-btn:focus-visible{outline:2px solid #141414;outline-offset:2px}
+.pcard{border-radius:24px;overflow:hidden;color:#141414;display:flex;flex-direction:column;box-sizing:border-box}
+.logo-mask{-webkit-mask:url('assets/blob/3cbd3d619de1f4350868f689fb0f0636.png') center/contain no-repeat;mask:url('assets/blob/3cbd3d619de1f4350868f689fb0f0636.png') center/contain no-repeat}
+.nt-row{position:relative;display:flex;align-items:flex-start;gap:12px;padding:14px 16px;margin:4px 0;border-radius:20px}
+.nt-row:hover{background:rgba(247,249,233,.05)}
+.nt-row.unread{background:rgba(247,249,233,.07)}
+.nt-link{position:absolute;inset:0;z-index:1;border-radius:20px}
+.nt-link:focus-visible{outline:2px solid #F7F9E9;outline-offset:-2px}
+.nt-act{position:relative;z-index:2;height:32px;border-radius:999px;font:inherit;font-size:12px;font-weight:700;padding:0 14px;cursor:pointer}
+.nt-act:focus-visible,.nt-top:focus-visible{outline:2px solid #F7F9E9;outline-offset:2px}
+.nt-top{border:0;background:none;color:#F7F9E9;font:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:8px 4px}
+.nt-top:disabled{opacity:.4;cursor:default}
+.nt-in{animation:ntIn .2s ease both}
+@keyframes ntIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.notch-xs{-webkit-mask:radial-gradient(circle 6px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 6px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 6px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 6px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat;mask:radial-gradient(circle 6px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 6px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 6px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 6px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat}
+.to-top{opacity:0;transform:translate(-50%,14px);pointer-events:none;transition:opacity .3s ease,transform .3s cubic-bezier(.2,.8,.2,1)}
+.to-top.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.to-top:focus-visible{outline:2px solid #F7F9E9;outline-offset:3px}
+.dk-btn{position:absolute;left:50%;bottom:12px;z-index:83;width:56px;height:56px;margin-left:-28px;border-radius:50%;border:1px solid transparent;background:#C8FF42;color:#141414;display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 10px 26px rgba(0,0,0,.5);transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.dk-btn:active{transform:scale(.94)}
+.dk-btn:focus-visible{outline:2px solid #F7F9E9;outline-offset:4px}
+.dk-disc{position:absolute;left:50%;bottom:-130px;opacity:0;z-index:82;width:260px;height:260px;margin-left:-130px;border-radius:50%;background:#F7F9E9;transform:scale(.2308);transition:transform .5s cubic-bezier(.2,.8,.2,1),box-shadow .5s ease,opacity .2s ease;pointer-events:none;touch-action:none}
+.dk-disc.on{opacity:1;transform:scale(1);pointer-events:auto;box-shadow:0 -10px 40px rgba(0,0,0,.45)}
+.dk-arc{position:absolute;left:50%;bottom:0;width:0;height:0;z-index:81;transition:z-index 0s}
+.dk-t{position:absolute;left:-62px;top:-64px;animation-duration:.5s;width:124px;height:128px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:flex-start;gap:6px;padding:10px 12px;color:#141414;text-decoration:none;transition:transform .75s cubic-bezier(.22,1,.36,1),box-shadow .75s ease;animation:dkIn .45s cubic-bezier(.2,.8,.2,1) backwards;will-change:transform}
+.dk-t:hover,.dk-t:focus-visible{--lift:-14px}
+.dk-t:active{--lift:-20px}
+.dk-t:focus-visible{outline:2px solid #F7F9E9;outline-offset:3px}
+@keyframes dkIn{from{opacity:0;transform:rotate(0deg) translateY(-60px) scale(.4)}}
+.dk-l1{display:block;width:16px;height:2px;background:currentColor;border-radius:1px;transition:transform .25s ease,opacity .2s ease}
+.dk-notch{-webkit-mask:radial-gradient(circle 7px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 7px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 7px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 7px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat;mask:radial-gradient(circle 7px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 7px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 7px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 7px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat}
+
+button{transition:scale .15s ease,background-color .2s ease,opacity .2s ease}
+button:not(:disabled):active{scale:.97}
+button,a{-webkit-tap-highlight-color:transparent}
+
+/* ticket notch motif softened to the rounded system (home ticket + menu wheel keep theirs) */
+.notch,.notch-sm,.notch-xs{-webkit-mask:none!important;mask:none!important;overflow:hidden}
+.notch{border-radius:28px}.notch-sm{border-radius:20px}.notch-xs{border-radius:14px}
+.view-menu{border-radius:20px!important;padding:6px;box-sizing:border-box;-webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%)}
+.view-opt{border-bottom:0!important;border-radius:14px;padding:0 14px!important}
+
+/* tickets: soft rounded body with a semicircle bite on each side, like a coupon */
+.notch,.notch-sm,.notch-xs,.dk-notch{-webkit-mask:radial-gradient(circle var(--bite) at 0 var(--at,50%),#0000 97%,#000 100%) left/51% 100% no-repeat,radial-gradient(circle var(--bite) at 100% var(--at,50%),#0000 97%,#000 100%) right/51% 100% no-repeat!important;mask:radial-gradient(circle var(--bite) at 0 var(--at,50%),#0000 97%,#000 100%) left/51% 100% no-repeat,radial-gradient(circle var(--bite) at 100% var(--at,50%),#0000 97%,#000 100%) right/51% 100% no-repeat!important;overflow:hidden}
+.notch{--bite:12px;border-radius:28px}.notch-sm{--bite:9px;border-radius:20px}.notch-xs{--bite:5px;border-radius:12px}.dk-notch{--bite:8px;border-radius:16px}
+
+/* ticket cards: bites sit on the dashed tear line instead of mid-height */
+:where(.notch,.notch-sm,.notch-xs){position:relative}
+.notch:has(.tear2),.notch-sm:has(.tear2),.notch-xs:has(.tear2),.dk-notch:has(.tear2){-webkit-mask:none!important;mask:none!important}
+.tear2::before,.tear2::after{content:"";position:absolute;width:var(--bite-d,18px);height:var(--bite-d,18px);margin-top:calc(var(--bite-d,18px) / -2 - 1px);border-radius:50%;background:var(--bite-bg,#000000)}
+.tear2::before{left:calc(var(--bite-d,18px) / -2)}.tear2::after{right:calc(var(--bite-d,18px) / -2)}
+.notch-sm{--bite-d:16px}.dk-notch{--bite-d:14px}
+
+/* icon buttons: one 44px round hit area, 24px icons, soft line ends */
+button svg,a svg,button svg *,a svg *{stroke-linecap:round!important;stroke-linejoin:round!important}
+.ic-btn{width:44px!important;height:44px!important;min-width:44px;border-radius:50%!important;padding:0!important;display:grid!important;place-items:center!important;box-sizing:border-box}
+.ic-btn>svg,.ic-tog>svg{width:24px!important;height:24px!important;flex:none}
+/* pressed save / like: neon icon on a dark round chip, readable on any background */
+.ic-tog>svg{box-sizing:content-box;padding:7px;margin:-7px;border-radius:50%;transition:background-color .2s ease}
+.ic-tog[aria-pressed="true"]>svg{background:#141414}
+.ic-tog[aria-pressed="true"]>svg path{fill:#C8FF42!important;stroke:#C8FF42!important}
+
+/* popups, sheets and menus: one translucent glass panel like the notification panel */
+.gl .crec-open:focus-visible{outline:2px solid #F7F9E9;outline-offset:-4px}
+.gl .ink-btn:focus-visible,.gl .line-btn:focus-visible{outline:2px solid #F7F9E9;outline-offset:2px}
+.gl .pl-map{height:40px;border:1.5px solid transparent;background:rgba(247,249,233,.13);color:#F7F9E9;font:inherit;font-size:13px;font-weight:700;padding:0 14px;display:inline-flex;align-items:center;gap:6px;text-decoration:none;white-space:nowrap}
+.gl .pl-map:hover{background:#F7F9E9;color:#141414;opacity:1}
+.gl .pl-x:focus-visible,.gl .pl-save:focus-visible,.gl .pl-map:focus-visible,.gl .pl-tile:focus-visible{outline:2px solid #F7F9E9;outline-offset:2px}
+.gl .pl-save{width:40px;height:40px;border:0;background:none;color:#F7F9E9;display:grid;place-items:center;cursor:pointer;padding:0}
+.gl .pl-tile{border:0;padding:0;font:inherit;text-align:left;cursor:pointer;color:#F7F9E9;transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.gl .pl-x{width:48px;height:48px;border-radius:50%;border:1px solid transparent;background:rgba(247,249,233,.13);color:#F7F9E9;display:grid;place-items:center;cursor:pointer;padding:0}
+.gl .pl-x:hover{background:rgba(247,249,233,.06)}
+.gl .rec-x:hover{background:#F7F9E9;color:#141414}
+.gl .search-pill input::placeholder{color:rgba(247,249,233,.62)}
+.gl .search-pill:focus-within{outline:2px solid #F7F9E9;outline-offset:2px}
+.gl .auth-card,.auth-card.gl{-webkit-mask:none!important;mask:none!important;border-radius:28px}
+.gl.view-menu .view-opt[aria-checked="true"],.gl .view-opt[aria-current="true"]{color:#C8FF42}
+.gl .tear2::before,.gl .tear2::after{display:none}
+
+/* menu wheel: glass disc and glass tickets, neon only on the page you're on */
+.dk-disc{background:rgba(30,30,28,.8)!important;-webkit-backdrop-filter:blur(28px) saturate(160%);backdrop-filter:blur(28px) saturate(160%)}
+.dk-t{color:#F7F9E9;-webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%)}
+.dk-t[aria-current="page"]{color:#141414}
+.dk-t .tear2{position:absolute;left:12px;right:12px;top:54px;border-top-color:var(--tear,rgba(247,249,233,.45))!important;transition:border-color .35s ease}
+.dk-t .tear2::before,.dk-t .tear2::after{display:none}
+.dk-arc .dk-t.dk-notch{--at:54px;-webkit-mask:radial-gradient(circle 7px at 0 var(--at),#0000 97%,#000 100%) left/51% 100% no-repeat,radial-gradient(circle 7px at 100% var(--at),#0000 97%,#000 100%) right/51% 100% no-repeat!important;mask:radial-gradient(circle 7px at 0 var(--at),#0000 97%,#000 100%) left/51% 100% no-repeat,radial-gradient(circle 7px at 100% var(--at),#0000 97%,#000 100%) right/51% 100% no-repeat!important}
+
+/* underline tabs → the same pill tabs used everywhere else */
+.ptab{margin-bottom:0!important;border-bottom:0!important;border-radius:999px;padding:9px 16px!important;align-items:center!important;transition:background-color .2s ease,color .2s ease}
+.ptab[aria-selected="true"]{background:#F7F9E9!important;color:#141414!important}
+.ptab[aria-selected="true"] span{color:inherit!important;opacity:.7}
+
+/* other people's profile has one list only: plain label instead of a pill */
+.rt-solo .ptab,.rt-solo .ptab[aria-selected="true"]{background:none!important;color:#F7F9E9!important;padding-left:0!important;cursor:default}
+
+/* atmosphere: faint light behind the glass and a film grain over the ground */
+:root{--grain:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+.amb{background-image:var(--grain),radial-gradient(60% 45% at 100% 0%,rgba(200,255,66,.10),transparent 70%),radial-gradient(55% 40% at 0% 100%,rgba(247,249,233,.06),transparent 70%)!important;background-repeat:repeat,no-repeat,no-repeat!important;background-size:160px 160px,100% 100%,100% 100%!important}
+.amb.amb-home{background-image:var(--grain),radial-gradient(42% 32% at 50% 56%,rgba(200,255,66,.22),transparent 72%),radial-gradient(30% 24% at 22% 18%,rgba(247,249,233,.10),transparent 70%)!important}
+.gl,.gr,.dk-disc{background-image:var(--grain)!important;background-size:160px 160px!important}
+/* a soft neon bloom behind the login card and the open menu wheel */
+.auth-card{box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 140px 20px rgba(200,255,66,.16)!important}
+.dk-disc.on{box-shadow:0 -10px 40px rgba(0,0,0,.45),0 0 120px 30px rgba(200,255,66,.18)}
+/* curation ring: focus on the lifted cover, the rest falls out of focus */
+.cr-face{transition:filter .35s ease}
+.cr-stage:has(.cr-pop) .cr-face{filter:blur(4px) brightness(.5)}
+.cr-stage:has(.cr-pop) .cr-back{filter:blur(4px) brightness(.3)}
+
+/* header logo: the two-tone wordmark (cream letters, neon TM) */
+.logo-img{-webkit-mask:none!important;mask:none!important;background:url('assets/blob/5c28f671acf3728f9a2cebb11036a206.png') left center/contain no-repeat!important}
+
+/* profile card: frosted neon glass with a fine grain and a soft sheen */
+.pcard{background-color:#C8FF42!important;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"),var(--grain),linear-gradient(135deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,0) 40%)!important;background-size:140px 140px,160px 160px,100% 100%!important;-webkit-backdrop-filter:blur(24px) saturate(170%);backdrop-filter:blur(24px) saturate(170%);box-shadow:0 22px 50px rgba(0,0,0,.45),0 0 90px rgba(200,255,66,.14)}
+
+/* solid = printed paper: every ticket and card shares one fine paper grain and one soft shadow */
+:root{--paper:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .11 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+:where(.paper,.pcard,.st-cell){position:relative}
+.paper::after,.notch::after,.notch-sm::after,.notch-xs::after,.notch4::after,.pcard::after,.st-cell::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:var(--paper);background-size:140px 140px;z-index:1}
+.pcard{background-image:none!important;box-shadow:0 12px 28px rgba(0,0,0,.35)!important}
+.st-cell{box-shadow:0 12px 28px rgba(0,0,0,.35)}
+
+/* ticket cards inside glass panels keep their side notches, tinted like the panel behind them */
+.gl{--bite-bg:#262624}
+.gl .tear2::before,.gl .tear2::after{display:block;background:var(--bite-bg) var(--grain,none);background-size:160px 160px}
+
+/* profile edit popup: glass like every other popup */
+.gl .custom-pill input::placeholder{color:rgba(247,249,233,.62)}
+.gl .custom-pill:focus-within{outline:2px solid #F7F9E9;outline-offset:2px}
+.gl .field{width:100%;box-sizing:border-box;height:48px;border:1px solid transparent;background:rgba(247,249,233,.13);border-radius:16px;padding:0 14px;font:inherit;font-size:15px;color:#F7F9E9}
+.gl .field:focus,.gl .field:focus-within{outline:2px solid #F7F9E9;outline-offset:1px}
+.gl .pick-photo:hover,.gl .rbtn:hover{background:rgba(255,255,255,.3)}
+.gl .pill-btn:focus-visible,.gl .sw:focus-visible,.gl .rbtn:focus-visible{outline:2px solid #F7F9E9;outline-offset:2px}
+.gl .pill{height:30px;padding:0 13px;border:1.5px solid transparent;border-radius:999px;display:inline-flex;align-items:center;font-size:13px;font-weight:600;box-sizing:border-box;white-space:nowrap;background:rgba(247,249,233,.13)}
+.gl .zoom{width:100%;accent-color:#F7F9E9}
+
+/* profile edit: neon for picked / pressed states, roomier status box */
+.gl textarea.field{padding:16px 18px!important;line-height:1.5}
+.ed-act{transition:background-color .2s ease,color .2s ease,scale .15s ease}
+.ed-act:not(:disabled):active,label.ed-act:active{background:#C8FF42!important;color:#141414!important}
+
+/* new collection popup: glass */
+
+
+/* segmented selectors: one highlight that springs over to the picked option (iOS-like) */
+.seg{position:relative;isolation:isolate;--n:2;--i:0;--P:4px;--G:4px;display:grid!important;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);grid-template-columns:none!important;padding:var(--P)!important;gap:var(--G)!important;border-radius:999px!important;background:rgba(247,249,233,.10)!important;overflow:visible!important;border:0!important}
+.seg::before{content:"";position:absolute;z-index:-1;top:var(--P);bottom:var(--P);left:var(--P);width:calc((100% - 2 * var(--P) - (var(--n) - 1) * var(--G)) / var(--n));border-radius:999px;background:var(--seg-c,#F7F9E9);box-shadow:0 4px 14px rgba(0,0,0,.25);transform:translateX(calc(var(--i) * (100% + var(--G))));transition:transform .4s cubic-bezier(.3,1.15,.5,1);transition:transform .45s linear(0, 0.1 5%, 0.42 13%, 0.76 23%, 0.95 33%, 1.03 43%, 1.035 50%, 1.012 64%, 1.002 78%, 1)}
+.seg :is(button,a):is([aria-selected],[aria-pressed],[aria-checked]){background:transparent!important;border:0!important;border-radius:999px!important;transition:color .25s ease .05s}
+.seg:not(.seg-tint) :is(button,a):is([aria-selected="true"],[aria-pressed="true"],[aria-checked="true"]){color:#141414!important}
+.seg-fit{display:grid!important;width:max-content;max-width:100%}
+.seg-fit :is(button,a){padding:9px 18px!important;justify-content:center}
+.seg-tint{--P:0px;--G:8px;--seg-c:rgba(247,249,233,.16);background:none!important}
+.seg-tint::before{box-shadow:none}
+.rt-solo.seg{background:none!important;padding:0!important}.rt-solo.seg::before{display:none}.rt-solo.seg .ptab.ptab.ptab{color:#F7F9E9!important;padding-left:0!important}
+.seg:has(:is(button,a):nth-of-type(2):last-of-type){--n:2}
+.seg:has(:is(button,a):nth-of-type(3):last-of-type){--n:3}
+.seg:has(:is(button,a):nth-of-type(4):last-of-type){--n:4}
+.seg:has(:is(button,a):nth-of-type(5):last-of-type){--n:5}
+.seg:has(:is(button,a):nth-of-type(2):is([aria-selected="true"],[aria-pressed="true"],[aria-checked="true"])){--i:1}
+.seg:has(:is(button,a):nth-of-type(3):is([aria-selected="true"],[aria-pressed="true"],[aria-checked="true"])){--i:2}
+.seg:has(:is(button,a):nth-of-type(4):is([aria-selected="true"],[aria-pressed="true"],[aria-checked="true"])){--i:3}
+.seg:has(:is(button,a):nth-of-type(5):is([aria-selected="true"],[aria-pressed="true"],[aria-checked="true"])){--i:4}
+
+/* the other sliders share the same spring */
+.auth-seg::before,.g-slide::before{transition:transform .4s cubic-bezier(.3,1.15,.5,1);transition:transform .45s linear(0, 0.1 5%, 0.42 13%, 0.76 23%, 0.95 33%, 1.03 43%, 1.035 50%, 1.012 64%, 1.002 78%, 1)}
+.navlink[aria-current="page"]::before{animation-duration:.5s;animation-timing-function:cubic-bezier(.3,1.15,.5,1);animation-timing-function:linear(0, 0.1 5%, 0.42 13%, 0.76 23%, 0.95 33%, 1.03 43%, 1.035 50%, 1.012 64%, 1.002 78%, 1)}
+
+/* tear lines: short round-capped dashes with a little more air between them */
+:root{--dash:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='9' height='2' viewBox='0 0 9 2'><line x1='1' y1='1' x2='3' y2='1' stroke='black' stroke-width='2' stroke-linecap='round'/></svg>") left center/auto 100% repeat-x}
+.dk-t .tear2{border-top:0!important;background:var(--tear,rgba(247,249,233,.45))!important}
+.tear2::before,.tear2::after{margin-top:calc(var(--bite-d,18px) / -2 + 1px)}
+.dk-t .tear2{-webkit-mask:var(--dash)!important;mask:var(--dash)!important}
+
+/* header bell sits a hair higher so it lines up with the settings gear */
+/* bookmark drawn at the heart's visual height */
+
+/* bookmark: same weight as the heart; when saved the icon itself fills in, no chip behind it */
+.sv-btn>svg{background:none!important}
+.sv-btn[aria-pressed="true"]>svg path{fill:currentColor!important;stroke:currentColor!important}
+
+/* report popup (glass) */
+.rp-opt{height:48px;border:0;border-radius:16px;background:rgba(247,249,233,.08);color:#F7F9E9;display:flex;align-items:center;gap:10px;padding:0 14px;font:inherit;font-size:14px;font-weight:600;text-align:left;cursor:pointer;transition:background-color .2s ease}
+.rp-opt[aria-checked="true"]{background:rgba(247,249,233,.18)}
+.rp-dot{width:18px;height:18px;flex:none;border-radius:50%;box-shadow:inset 0 0 0 1.5px #F7F9E9;display:grid;place-items:center}
+.rp-dot::after{content:"";width:9px;height:9px;border-radius:50%;background:transparent;transition:background-color .2s ease}
+.rp-opt[aria-checked="true"] .rp-dot::after{background:#C8FF42}
+.rp-note{display:block;width:100%;box-sizing:border-box;margin-top:10px;border:0;border-radius:16px;background:rgba(247,249,233,.13);color:#F7F9E9;padding:14px 16px;font:inherit;font-size:14px;line-height:1.5;resize:none}
+.rp-note::placeholder{color:rgba(247,249,233,.55)}
+.rp-note:focus{outline:2px solid #F7F9E9;outline-offset:-1px}
+.rp-cancel,.rp-submit{height:52px;border:0;border-radius:999px;font:inherit;font-size:15px;font-weight:700;cursor:pointer}
+.rp-cancel{background:rgba(247,249,233,.13);color:#F7F9E9}
+.rp-submit{background:#F7F9E9;color:#141414}
+.rp-submit:disabled{opacity:.35;cursor:not-allowed}
+
+/* other-profile menu: rounded rows inset from the panel edge; card no longer clips it */
+.pcard{overflow:visible!important}
+.pcard-foot{border-radius:0 0 24px 24px}
+.gl[role="menu"]:has(.mn-item){padding:6px!important;width:170px!important;box-sizing:border-box}
+.mn-item{border-radius:20px;transition:background-color .2s ease}
+.rp-danger{background:#F28B82;color:#141414}
+
+/* liked / saved: the icon itself fills in, no chip behind it (heart matches the bookmark) */
+.ic-tog.ic-tog[aria-pressed="true"]>svg{background:none!important}
+.ic-tog.ic-tog[aria-pressed="true"]>svg path{fill:currentColor!important;stroke:currentColor!important}
+
+/* bell and gear never touch when both are lit */
+a.ic-btn[aria-label="설정"]{margin-left:8px}
+</style>
+</helmet>
+<div class="amb" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #000000; color: #F7F9E9; font-family: 'Pretendard Variable', Pretendard, sans-serif;">
+<header style="position: sticky; top: 0; z-index: 10; height: 58px; padding: 0 12px 0 16px; display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,.55); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); border-bottom: 1px solid transparent;">
+<a href="TicketMobileIn.dc.html" aria-label="arch; 홈으로" style="display: block; width: 70px; height: 32px;"><span class="logo-mask logo-img" style="display: block; width: 100%; height: 100%; background: #F7F9E9;"></span></a>
+<div style="display: flex; align-items: center;">
+<button type="button" onClick="{{toggleNotif}}" class="ic-btn" aria-label="{{notifLabel}}" aria-haspopup="dialog" aria-expanded="{{notifExpanded}}" style="position: relative; width: 44px; height: 44px; border: 0; border-radius: 50%; background: {{notifBellBg}}; color: {{notifBellFg}}; display: grid; place-items: center;"><sc-if value="{{notifUnread}}" hint-placeholder-val="{{true}}"><span aria-hidden="true" style="position: absolute; top: 9px; right: 10px; width: 8px; height: 8px; border-radius: 50%; background: #C8FF42; box-shadow: 0 0 0 2px #141414;"></span></sc-if><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 15.2v-4.6a5.8 5.8 0 0 1 11.6 0v4.6l1.6 2.1H4.6z"></path><path d="M10 20h4"></path></svg></button>
+<a class="ic-btn" href="SettingsMobile.dc.html" aria-label="설정" style="width: 44px; height: 44px; border-radius: 50%; color: #F7F9E9; display: grid; place-items: center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg></a>
+<a href="ProfileMobile.dc.html" aria-label="내 프로필" style="box-sizing: border-box; margin-left: 11px; flex: none; width: 34px; height: 34px; border-radius: 50%; border: 1px solid transparent; color: #F7F9E9; font-size: 12px; font-weight: 700; display: grid; place-items: center; background: rgba(247,249,233,.16);">나</a>
+</div>
+</header>
+<main class="m-scroll" ref="{{topRef}}" onScroll="{{onTopScroll}}" style="position: absolute; top: 58px; left: 0; right: 0; bottom: 0; overflow-y: auto; padding: 20px 16px 96px; box-sizing: border-box;">
+<h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; margin: 0;">프로필</h1>
+<sc-if value="{{reqBanner}}" hint-placeholder-val="{{false}}">
+<div role="region" aria-label="팔로우 요청" style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 14px 16px 14px 18px; margin-bottom: 18px; border: 1px solid transparent; border-radius: 20px; background: rgba(247,249,233,.06);">
+<span style="flex: 1; min-width: 180px; font-size: 14px; line-height: 1.5;"><b style="font-weight: 700;">{{p.dName}}</b>님이 팔로우를 요청했어요.</span>
+<span style="display: flex; gap: 6px;"><button type="button" onClick="{{acceptReq}}" style="height: 40px; padding: 0 18px; border: 0; border-radius: 999px; background: #F7F9E9; color: #141414; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer;">수락</button><button type="button" onClick="{{declineReq}}" style="height: 40px; padding: 0 18px; border: 1px solid transparent; border-radius: 999px; background: rgba(247,249,233,.16); color: #F7F9E9; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer;">거절</button></span>
+</div>
+</sc-if>
+<section aria-label="프로필 카드" class="pcard" style="padding: 16px; background-color: {{color}};">
+<div style="display: flex; justify-content: space-between; align-items: center;">
+<span style="font-size: 11px; font-weight: 700; letter-spacing: .14em;">PROFILE CARD <span style="font-weight: 700;">{{privateTag}}</span></span>
+<span class="logo-mask" role="img" aria-label="arch;" style="width: 54px; height: 21px; background: #141414;"></span>
+</div>
+<div style="margin-top: 14px; display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 16px; align-items: center;">
+<div style="position: relative; width: 104px; height: 104px; border-radius: 50%; background: rgba(20,20,20,.14); display: grid; place-items: center;">
+<sc-if value="{{hasPhoto}}" hint-placeholder-val="{{false}}"><span style="position: absolute; inset: 0; border-radius: 50%; overflow: hidden;"><img src="{{p.photo}}" alt="프로필 사진" style="position: absolute; left: 50%; top: 50%; width: 100%; height: 100%; object-fit: cover; transform: translate(calc(-50% + {{p.px}}%), calc(-50% + {{p.py}}%)) scale({{p.zoom}});"></span></sc-if>
+<sc-if value="{{noPhoto}}" hint-placeholder-val="{{true}}"><span style="font-size: 32px; font-weight: 800;">{{p.initial}}</span></sc-if>
+</div>
+<div style="display: flex; flex-direction: column; min-width: 0; border-top: 1px solid transparent;">
+<div class="cell" style="border-bottom: 1px solid transparent;"><span class="lbl">NAME</span><span class="val">{{p.dName}}</span></div>
+<div class="cell" style="border-bottom: 1px solid transparent;"><span class="lbl">ID</span><span class="val mono">@{{p.dId}}</span></div>
+</div>
+</div>
+<div style="margin-top: 26px; border-top: 1px solid transparent;">
+<div class="cell" style="border-bottom: 1px solid transparent;"><span class="lbl">STATUS</span><span class="val" style="font-size: 14px;">{{p.status}}</span></div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid transparent;">
+<div class="cell" style="border-right: 1px solid transparent;"><span class="lbl">RECORDS</span><span class="val mono" style="font-size: 18px;">{{recordCount}}</span></div>
+<button type="button" class="cell cellbtn" onClick="{{openFollowers}}" aria-haspopup="dialog" aria-label="팔로워 {{followers}}명 보기" style="border: 0; border-right: 1px solid transparent; background: none; color: inherit; font: inherit; text-align: left; cursor: {{peopleCursor}};"><span class="lbl">FOLLOWERS</span><span class="val mono" style="font-size: 18px;">{{followers}}</span></button>
+<button type="button" class="cell cellbtn" onClick="{{openFollowing}}" aria-haspopup="dialog" aria-label="팔로잉 {{following}}명 보기" style="border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: {{peopleCursor}};"><span class="lbl">FOLLOWING</span><span class="val mono" style="font-size: 18px;">{{following}}</span></button>
+</div>
+<div style="margin-top: 14px; display: flex; align-items: center; gap: 10px;">
+<ul aria-label="관심사" style="list-style: none; margin: 0; padding: 0; flex: 1; min-width: 0; display: flex; flex-wrap: wrap; gap: 6px;">
+<sc-for list="{{cardInterests}}" as="it" hint-placeholder-count="3"><li class="pill">{{it.label}}</li></sc-for>
+<sc-if value="{{noInterests}}" hint-placeholder-val="{{false}}"><li style="font-size: 12px;">관심사를 추가해 보세요</li></sc-if>
+</ul>
+<div style="flex: none; display: flex; align-items: center;"><sc-if value="{{isMe}}" hint-placeholder-val="{{true}}"><button type="button" class="edit-btn" onClick="{{openEdit}}" aria-haspopup="dialog" style="height: 40px; padding: 0 12px; border: 1px solid transparent; background: #141414; color: {{color}}; font: inherit; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer; white-space: nowrap; border-radius: 999px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"></path><path d="M13.5 6.5l4 4"></path></svg>프로필 편집</button></sc-if><sc-if value="{{isOther}}" hint-placeholder-val="{{false}}"><button type="button" class="edit-btn" onClick="{{toggleFollowOther}}" aria-pressed="{{followOtherPressed}}" style="height: 40px; padding: 0 16px; border: 1px solid transparent; background: {{followOtherBg}}; color: {{followOtherFg}}; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; border-radius: 999px;">{{followOtherLabel}}</button><div style="position: relative; margin-left: 6px;"><button type="button" class="edit-btn" onClick="{{otherMenuToggle}}" aria-label="더보기" aria-haspopup="menu" aria-expanded="{{otherMenuExp}}" style="width: 38px; height: 38px; border: 1px solid transparent; background: rgba(20,20,20,.13); color: #141414; display: grid; place-items: center; cursor: pointer; padding: 0; border-radius: 50%;"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"></circle><circle cx="12" cy="12" r="1.8"></circle><circle cx="19" cy="12" r="1.8"></circle></svg></button><sc-if value="{{otherMenuOpen}}" hint-placeholder-val="{{false}}"><div class="gl" role="menu" style="border-radius: 28px; position: absolute; right: 0; top: calc(100% + 6px); z-index: 12; width: 150px; padding: 4px 0; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); color: #F7F9E9; box-shadow: 0 12px 26px rgba(0,0,0,.4);"><button type="button" role="menuitem" class="mn-item" onClick="{{shareProfile}}">프로필 링크 복사</button><button type="button" role="menuitem" class="mn-item" onClick="{{reportUser}}">신고하기</button><button type="button" role="menuitem" class="mn-item" onClick="{{toggleBlock}}" style="color: #F28B82;">{{blockLabel}}</button></div></sc-if></div></sc-if></div>
+</div>
+</div>
+<div class="pcard-foot" style="display: flex; justify-content: space-between; align-items: center; margin: 18px -16px -16px; padding: 12px 16px; background: rgba(20,20,20,.09); font-size: 11px; font-weight: 500;">
+<span>@{{p.dId}}</span>
+<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-variant-numeric: tabular-nums;">ISSUED {{issued}} · arch;</span>
+</div>
+</section>
+<sc-if value="{{locked}}" hint-placeholder-val="{{false}}">
+<section aria-label="비공개 계정" style="margin-top: 28px; padding: 40px 20px; border: 1.5px solid transparent; border-radius: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; box-sizing: border-box; background: rgba(247,249,233,.16);">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"></rect><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"></path></svg>
+<strong style="font-size: 15px; font-weight: 700;">{{lockTitle}}</strong>
+<p style="margin: 0; font-size: 13px; line-height: 1.6; color: rgba(247,249,233,.72);">{{lockText}}</p>
+</section>
+</sc-if>
+<sc-if value="{{notLocked}}" hint-placeholder-val="{{true}}"><section aria-labelledby="collTitleM" style="margin-top: 28px;">
+<div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
+<h2 id="collTitleM" style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .14em;">COLLECTIONS</h2>
+<button type="button" class="cbtn" onClick="{{openAll}}" style="border: 0; background: none; color: #F7F9E9; font: inherit; font-size: 12px; font-weight: 600; padding: 8px 0; cursor: pointer; display: flex; align-items: center; gap: 6px;">전체 보기 <span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-weight: 500; color: rgba(247,249,233,.72); font-variant-numeric: tabular-nums;">{{collTotal}}</span></button>
+</div>
+<div class="m-scroll" style="display: grid; grid-auto-flow: column; grid-auto-columns: 132px; gap: 12px; overflow-x: auto; margin: 0 -16px; padding: 2px 16px 6px;">
+<sc-if value="{{isMe}}" hint-placeholder-val="{{true}}"><button type="button" class="ctile" onClick="{{newColl}}" style="border: 0; background: none; padding: 0; color: #F7F9E9; font: inherit; text-align: center; display: flex; flex-direction: column; gap: 8px; cursor: pointer; min-width: 0;">
+<span class="cstack"><span class="cs cs-flat notch-sm" style="display: grid; place-items: center; box-sizing: border-box; background: rgba(247,249,233,.16);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></span></span>
+<span style="display: block; font-size: 14px; font-weight: 600;">컬렉션 만들기</span>
+</button></sc-if>
+<sc-for list="{{collTiles}}" as="c" hint-placeholder-count="1">
+<button type="button" class="ctile" onClick="{{c.open}}" aria-label="{{c.aria}}" style="border: 0; background: none; padding: 0; color: #F7F9E9; font: inherit; text-align: center; display: flex; flex-direction: column; gap: 8px; cursor: pointer; min-width: 0;">
+<span class="cstack">
+<span class="cs cs-back notch-sm" style="background: {{c.color}};"><sc-if value="{{c.hasCover}}" hint-placeholder-val="{{false}}"><img src="{{c.cover}}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;"></sc-if><sc-if value="{{c.noCover}}" hint-placeholder-val="{{true}}"><span class="logo-mask" style="position: absolute; left: 50%; top: 50%; width: 46%; height: 20%; transform: translate(-50%, -50%); background: #141414; opacity: .85;"></span></sc-if></span>
+<span class="cs cs-front notch-sm" style="background: {{c.color}};">
+<sc-if value="{{c.hasCover}}" hint-placeholder-val="{{false}}"><img src="{{c.cover}}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;"></sc-if>
+<sc-if value="{{c.noCover}}" hint-placeholder-val="{{true}}"><span class="logo-mask" style="position: absolute; left: 50%; top: 50%; width: 46%; height: 20%; transform: translate(-50%, -50%); background: #141414; opacity: .85;"></span></sc-if>
+<sc-if value="{{c.isPrivate}}" hint-placeholder-val="{{false}}"><span style="position: absolute; left: 6px; bottom: 6px; padding: 3px 7px; border-radius: 999px; background: rgba(20,20,20,.78); color: #F7F9E9; font-size: 11px; font-weight: 600;">{{c.lock}}</span></sc-if>
+</span>
+</span>
+<span style="display: flex; justify-content: center; gap: 5px; min-width: 0; font-size: 14px; font-weight: 600;"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{c.title}}</span><span style="flex: none; color: rgba(247,249,233,.72);">• {{c.count}}</span></span>
+</button>
+</sc-for>
+<sc-if value="{{hasMore}}" hint-placeholder-val="{{false}}">
+<button type="button" class="ctile" onClick="{{openAll}}" style="border: 0; background: none; padding: 0; color: #F7F9E9; font: inherit; text-align: center; display: flex; flex-direction: column; gap: 8px; cursor: pointer; min-width: 0;">
+<span class="cstack"><span class="cs cs-flat notch-sm" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; background: rgba(247,249,233,.16);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg><span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; font-variant-numeric: tabular-nums;">+{{moreCount}}</span></span></span>
+<span style="display: block; font-size: 14px; font-weight: 600;">전체 보기</span>
+</button>
+</sc-if>
+</div>
+</section></sc-if>
+<sc-if value="{{notLocked}}" hint-placeholder-val="{{true}}"><section aria-label="기록과 저장 목록" style="margin-top: 32px;">
+<div role="tablist" aria-label="기록 보기" class="seg seg-fit {{recTabsCls}}" style="display: flex; gap: 28px; border-top: 1px solid transparent; border-bottom: 1px solid transparent;">
+<sc-for list="{{recTabs}}" as="t" hint-placeholder-count="2">
+<button type="button" class="ptab" role="tab" aria-selected="{{t.selected}}" onClick="{{t.pick}}" style="margin-bottom: -1px; border: 0; border-bottom: 2px solid {{t.line}}; background: none; color: {{t.fg}}; font: inherit; font-size: 15px; font-weight: 600; padding: 16px 2px 14px; cursor: pointer; display: flex; align-items: baseline; gap: 6px;">{{t.label}}<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; font-weight: 500; font-variant-numeric: tabular-nums;">{{t.count}}</span></button>
+</sc-for>
+</div>
+
+<sc-if value="{{showSaved}}" hint-placeholder-val="{{false}}">
+<div role="tablist" aria-label="저장 목록 종류" class="seg seg-fit" style="display: flex; gap: 8px; margin-top: 24px;">
+<sc-for list="{{savedTabs}}" as="st" hint-placeholder-count="2">
+<button type="button" role="tab" aria-selected="{{st.selected}}" onClick="{{st.pick}}" style="height: 32px; padding: 0 14px; border: 1.5px solid transparent; border-radius: 999px; background: {{st.bg}}; color: {{st.fg}}; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer;">{{st.label}} {{st.count}}</button>
+</sc-for>
+</div>
+</sc-if>
+
+<div style="margin-top: 36px;">
+<sc-if value="{{recEmpty}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 40px 16px; text-align: center; font-size: 14px; color: rgba(247,249,233,.72); border: 1.5px solid transparent; border-radius: 20px; background: rgba(247,249,233,.16);">{{recEmptyText}}</p></sc-if>
+
+<sc-if value="{{showMine}}" hint-placeholder-val="{{true}}">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 44px 12px;">
+<sc-for list="{{myRecords}}" as="m" hint-placeholder-count="4">
+<button type="button" class="notch-sm rtile" onClick="{{m.open}}" aria-label="{{m.aria}} 자세히 보기" style="border: 0; padding: 0; width: 64%; justify-self: center; font: inherit; text-align: left; cursor: pointer; position: relative; background: {{m.color}}; color: #141414; display: flex; flex-direction: column; min-width: 0;">
+<span style="border-radius: 16px; overflow: hidden; display: block; margin: 8px 8px 0; aspect-ratio: 1 / 1; background: rgba(20,20,20,.14);"></span>
+<span class="tear2" aria-hidden="true" style="display: block; margin: 7px 5px 0; border-top: 0; height: 1.6px; background: url('data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%229%22 height=%222%22 viewBox=%220 0 9 2%22&gt;&lt;line x1=%221%22 y1=%221%22 x2=%223%22 y2=%221%22 stroke=%22rgba(20,20,20,.8)%22 stroke-width=%222%22 stroke-linecap=%22round%22/&gt;&lt;/svg&gt;') left center/auto 100% repeat-x;"></span>
+<span style="display: flex; flex-direction: column; gap: 4px; padding: 7px 14px 14px;">
+<span style="display: block; font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">⌖ {{m.place}}</span>
+<span style="display: flex; justify-content: space-between; align-items: center; gap: 6px; padding-top: 4px; border-top: 1px solid transparent; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; font-variant-numeric: tabular-nums;"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{m.meta}}</span><span style="flex: none;">♡ {{m.likes}}</span></span>
+</span>
+
+</button>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{showSavedPosts}}" hint-placeholder-val="{{false}}">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 44px 12px;">
+<sc-for list="{{savedPostTiles}}" as="sp" hint-placeholder-count="4">
+<article class="notch-sm" aria-label="{{sp.aria}}" style="width: 64%; justify-self: center; position: relative; background: {{sp.color}}; color: #141414; display: flex; flex-direction: column; min-width: 0;">
+<span style="border-radius: 16px; overflow: hidden; display: block; margin: 8px 8px 0; aspect-ratio: 1 / 1; background: rgba(20,20,20,.14);"></span>
+<span class="tear2" aria-hidden="true" style="display: block; margin: 7px 5px 0; border-top: 0; height: 1.6px; background: url('data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%229%22 height=%222%22 viewBox=%220 0 9 2%22&gt;&lt;line x1=%221%22 y1=%221%22 x2=%223%22 y2=%221%22 stroke=%22rgba(20,20,20,.8)%22 stroke-width=%222%22 stroke-linecap=%22round%22/&gt;&lt;/svg&gt;') left center/auto 100% repeat-x;"></span>
+<span style="display: flex; flex-direction: column; gap: 4px; padding: 7px 14px 14px;">
+<span style="display: block; font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">⌖ {{sp.place}}</span>
+<span style="display: flex; justify-content: space-between; align-items: center; gap: 6px; padding-top: 4px; border-top: 1px solid transparent; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; font-variant-numeric: tabular-nums;"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{sp.meta}}</span><span style="flex: none;">♡ {{sp.likes}}</span></span>
+</span>
+<button type="button" class="rtile-cover" onClick="{{sp.open}}" aria-label="{{sp.aria}} 자세히 보기" style="position: absolute; inset: 0; border: 0; background: none; padding: 0; cursor: pointer;"></button>
+<button type="button" class="rec-x" onClick="{{sp.unsave}}" aria-label="{{sp.unsaveLabel}}" style="position: absolute; top: 12px; right: 12px; width: 26px; height: 26px; border-radius: 50%; border: 1px solid transparent; background: rgba(247,249,233,.9); display: grid; place-items: center; cursor: pointer; padding: 0;"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 4.5h11v15.2L12 15.6l-5.5 4.1z" fill="#141414" stroke="#141414" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+</article>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{showSavedPlaces}}" hint-placeholder-val="{{false}}">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;">
+<sc-for list="{{placeTiles}}" as="pl" hint-placeholder-count="4">
+<article class="notch-sm pcard-hover" aria-label="{{pl.aria}}" style="position: relative; background: {{pl.color}}; color: #141414; display: flex; flex-direction: column; justify-content: space-between; gap: 18px; min-width: 0; padding: 14px 12px 12px; box-sizing: border-box; min-height: 168px;">
+<span style="display: flex; flex-direction: column; gap: 6px; padding-right: 36px;">
+<span style="font-size: 11px; font-weight: 500; letter-spacing: .08em;">PLACE</span>
+<span style="font-size: 18px; font-weight: 700; letter-spacing: -.02em; line-height: 1.25;">⌖ {{pl.name}}</span>
+<span style="font-size: 12px;">{{pl.region}}</span>
+</span>
+<span style="display: flex; flex-direction: column; gap: 4px; padding-top: 8px; border-top: 1px solid transparent; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; font-variant-numeric: tabular-nums;">
+<span>{{pl.coords}}</span>
+<span>{{pl.count}}</span>
+</span>
+<button type="button" class="pl-open-cover" onClick="{{pl.open}}" aria-label="{{pl.openLabel}}"></button>
+<button type="button" class="rec-x" onClick="{{pl.unsave}}" aria-label="{{pl.unsaveLabel}}" style="position: absolute; z-index: 2; top: 10px; right: 10px; width: 32px; height: 32px; border-radius: 50%; border: 1px solid transparent; background: rgba(247,249,233,.9); display: grid; place-items: center; cursor: pointer; padding: 0;"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 4.5h11v15.2L12 15.6l-5.5 4.1z" fill="#141414" stroke="#141414" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+</article>
+</sc-for>
+</div>
+</sc-if>
+</div>
+</section></sc-if>
+</main>
+<sc-if value="{{dock.open}}" hint-placeholder-val="{{false}}">
+<div onClick="{{dock.close}}" onWheel="{{dock.onWheel}}" onPointerDown="{{dock.onDown}}" onPointerMove="{{dock.onMove}}" onPointerUp="{{dock.onUp}}" onPointerCancel="{{dock.onUp}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 80; background: rgba(0,0,0,.62); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); touch-action: none;"></div>
+<nav aria-label="메뉴" class="dk-arc" style="z-index: {{dock.arcZ}};">
+<sc-for list="{{dock.tabs}}" as="t" hint-placeholder-count="6">
+<a class="dk-t dk-notch" href="{{t.href}}" onClick="{{t.go}}" aria-current="{{t.current}}" aria-label="{{t.label}}" style="background: {{t.bg}}; color: {{t.fg}}; --tear: {{t.tear}}; transition: transform .75s cubic-bezier(.22,1,.36,1), box-shadow .75s ease, background-color .35s ease, color .35s ease; transform: {{t.tf}}; opacity: {{t.op}}; pointer-events: {{t.pe}}; animation-delay: {{t.delay}}s; box-shadow: {{t.shadow}};">
+<span style="font-size: 15px; font-weight: 700; letter-spacing: -.02em; text-align: center;">{{t.label}}</span>
+<span style="display: flex; justify-content: space-between; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; font-variant-numeric: tabular-nums;"><span>{{t.num}}</span><span>{{t.note}}</span></span>
+<span class="tear2" aria-hidden="true" style="display: block; border-top: 0; height: 1.6px; background: url('data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%229%22 height=%222%22 viewBox=%220 0 9 2%22&gt;&lt;line x1=%221%22 y1=%221%22 x2=%223%22 y2=%221%22 stroke=%22rgba(20,20,20,.7)%22 stroke-width=%222%22 stroke-linecap=%22round%22/&gt;&lt;/svg&gt;') left center/auto 100% repeat-x;"></span>
+</a>
+</sc-for>
+</nav>
+</sc-if>
+<div class="dk-disc {{dock.discCls}}" aria-hidden="true" onPointerDown="{{dock.onDown}}" onPointerMove="{{dock.onMove}}" onPointerUp="{{dock.onUp}}" onPointerCancel="{{dock.onUp}}" onWheel="{{dock.onWheel}}"><span style="position: absolute; left: 0; right: 0; top: 22px; text-align: center; color: #F7F9E9; opacity: {{dock.hintOp}}; transition: opacity .3s ease .2s;"><span style="display: block; font-size: 11px; font-weight: 700; letter-spacing: .16em;">MENU</span><span style="display: block; margin-top: 6px; font-size: 12px; color: rgba(247,249,233,.72);">옆으로 쓸어 돌리고 탭해서 이동</span></span></div>
+<a href="{{dock.selHref}}" ref="{{dock.navRef}}" tabindex="-1" aria-hidden="true" style="position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; border-radius: 50%;"></a>
+<button type="button" class="dk-btn" onClick="{{dock.toggle}}" aria-label="{{dock.btnLabel}}" aria-expanded="{{dock.expanded}}" style="background: {{dock.btnBg}}; color: {{dock.btnFg}};">
+<span aria-hidden="true" style="display: flex; flex-direction: column; gap: 4px; align-items: center;"><span class="dk-l1" style="transform: {{dock.l1}};"></span><span class="dk-l1" style="opacity: {{dock.l2}};"></span><span class="dk-l1" style="transform: {{dock.l3}};"></span></span>
+</button>
+
+
+<sc-if value="{{allOpen}}" hint-placeholder-val="{{false}}">
+<div class="modal-back" onClick="{{closeAll}}" style="position: absolute; inset: 0; z-index: 42; background: rgba(0,0,0,.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"></div>
+<div style="position: absolute; inset: 0; z-index: 43; display: grid; place-items: center; pointer-events: none; padding: 12px; box-sizing: border-box;">
+<div role="dialog" aria-modal="true" aria-labelledby="allTitle" class="modal-in gr" style="pointer-events: auto; width: 366px; max-width: 100%; height: 800px; max-height: 100%; border-radius: 28px; overflow: hidden; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); box-shadow: 0 30px 80px rgba(0,0,0,.55); color: #F7F9E9; border: 1px solid transparent; display: flex; flex-direction: column;">
+<div style="flex: none; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 60px; padding: 0 18px; border-bottom: 1px solid transparent;">
+<button type="button" class="cbtn" onClick="{{closeAll}}" style="justify-self: start; border: 0; background: none; color: #F7F9E9; font: inherit; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; padding: 10px 0; cursor: pointer;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>닫기</button>
+<h2 id="allTitle" style="margin: 0; font-size: 13px; font-weight: 700; letter-spacing: .14em;">COLLECTIONS <span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-weight: 500; letter-spacing: 0; font-variant-numeric: tabular-nums;">{{collTotal}}</span></h2>
+<sc-if value="{{isMe}}" hint-placeholder-val="{{true}}"><button type="button" class="cbtn" onClick="{{newColl}}" style="justify-self: end; border: 0; background: none; color: #F7F9E9; font: inherit; font-size: 14px; font-weight: 600; padding: 10px 0; cursor: pointer;">+ 만들기</button></sc-if>
+</div>
+<div style="flex: none; padding: 14px 18px 0; display: flex; flex-direction: column; gap: 10px;">
+<div class="search-pill dark" style="display: flex; align-items: center; gap: 8px; height: 42px; border: 1.5px solid transparent; border-radius: 999px; padding: 0 14px; background: rgba(247,249,233,.16);">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg>
+<input type="search" aria-label="컬렉션 검색" placeholder="컬렉션 이름이나 소개로 검색" value="{{allQuery}}" onChange="{{onAllQuery}}" style="flex: 1; min-width: 0; height: 100%; border: 0; background: none; font: inherit; font-size: 14px; color: #F7F9E9;">
+</div>
+<div role="tablist" aria-label="정렬" class="seg" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid transparent; border-radius: 999px; overflow: hidden; background: rgba(247,249,233,.16);">
+<sc-for list="{{sortTabs}}" as="t" hint-placeholder-count="3">
+<button type="button" role="tab" aria-selected="{{t.selected}}" onClick="{{t.pick}}" style="border-radius: 999px; height: 40px; border: 0; background: {{t.bg}}; color: {{t.fg}}; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer;">{{t.label}}</button>
+</sc-for>
+</div>
+</div>
+<div class="m-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 18px 18px 24px;">
+<sc-if value="{{allEmpty}}" hint-placeholder-val="{{false}}"><p style="margin: 40px 0; text-align: center; font-size: 14px; color: rgba(247,249,233,.72);">{{allEmptyText}}</p></sc-if>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 16px;">
+<sc-for list="{{allTiles}}" as="a" hint-placeholder-count="4">
+<button type="button" class="ctile" onClick="{{a.open}}" aria-label="{{a.aria}}" style="border: 0; background: none; padding: 0; color: #F7F9E9; font: inherit; text-align: center; display: flex; flex-direction: column; gap: 8px; cursor: pointer; min-width: 0;">
+<span class="cstack">
+<span class="cs cs-back notch-sm" style="background: {{a.color}};"><sc-if value="{{a.hasCover}}" hint-placeholder-val="{{false}}"><img src="{{a.cover}}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;"></sc-if><sc-if value="{{a.noCover}}" hint-placeholder-val="{{true}}"><span class="logo-mask" style="position: absolute; left: 50%; top: 50%; width: 46%; height: 20%; transform: translate(-50%, -50%); background: #141414; opacity: .85;"></span></sc-if></span>
+<span class="cs cs-front notch-sm" style="background: {{a.color}};">
+<sc-if value="{{a.hasCover}}" hint-placeholder-val="{{false}}"><img src="{{a.cover}}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;"></sc-if>
+<sc-if value="{{a.noCover}}" hint-placeholder-val="{{true}}"><span class="logo-mask" style="position: absolute; left: 50%; top: 50%; width: 46%; height: 20%; transform: translate(-50%, -50%); background: #141414; opacity: .85;"></span></sc-if>
+<sc-if value="{{a.isPrivate}}" hint-placeholder-val="{{false}}"><span style="position: absolute; left: 6px; bottom: 6px; padding: 3px 7px; border-radius: 999px; background: rgba(20,20,20,.78); color: #F7F9E9; font-size: 11px; font-weight: 600;">{{a.lock}}</span></sc-if>
+</span>
+</span>
+<span style="display: flex; justify-content: center; gap: 5px; min-width: 0; font-size: 14px; font-weight: 600;"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{a.title}}</span><span style="flex: none; color: rgba(247,249,233,.72);">• {{a.count}}</span></span>
+</button>
+</sc-for>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{detailOpen}}" hint-placeholder-val="{{false}}">
+<div class="modal-back" onClick="{{closeDetail}}" style="position: absolute; inset: 0; z-index: 44; background: rgba(0,0,0,.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"></div>
+<div style="position: absolute; inset: 0; z-index: 45; display: grid; place-items: center; pointer-events: none; padding: 12px; box-sizing: border-box;">
+<div role="dialog" aria-modal="true" aria-labelledby="collDetailTitle" class="gl modal-in" style="pointer-events: auto; position: relative; width: 366px; max-width: 100%; height: 800px; max-height: 100%; border-radius: 28px; overflow: hidden; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); color: #F7F9E9; display: flex; flex-direction: column; box-shadow: 0 30px 80px rgba(0,0,0,.45);">
+<div style="flex: none; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 60px; padding: 0 18px; border-bottom: 1px solid transparent;">
+<button type="button" class="cbtn" onClick="{{closeDetail}}" style="justify-self: start; border: 0; background: none; color: #F7F9E9; font: inherit; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; padding: 10px 0; cursor: pointer;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>닫기</button>
+<span style="font-size: 13px; font-weight: 700; letter-spacing: .14em;">COLLECTION</span>
+<sc-if value="{{isMe}}" hint-placeholder-val="{{true}}"><button type="button" class="cbtn" onClick="{{editColl}}" style="justify-self: end; border: 0; background: none; color: #F7F9E9; font: inherit; font-size: 14px; font-weight: 600; padding: 10px 0; cursor: pointer;">편집</button></sc-if>
+</div>
+<div class="m-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding-bottom: 96px;">
+<div style="position: relative; height: 260px; background: {{detail.color}}; color: {{detail.fg}}; display: flex; flex-direction: column; justify-content: flex-end; padding: 22px 18px; box-sizing: border-box; overflow: hidden;">
+<sc-if value="{{detail.hasCover}}" hint-placeholder-val="{{false}}"><img src="{{detail.cover}}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;"><span style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,.72));"></span></sc-if>
+<div style="position: relative; display: flex; align-items: center; gap: 10px;">
+<span style="position: relative; width: 40px; height: 40px; flex: none; border-radius: 50%; overflow: hidden; background: rgba(127,127,127,.2); display: grid; place-items: center; font-size: 15px; font-weight: 700;">
+<sc-if value="{{hasPhoto}}" hint-placeholder-val="{{false}}"><img src="{{p.photo}}" alt="" style="position: absolute; left: 50%; top: 50%; width: 100%; height: 100%; object-fit: cover; transform: translate(calc(-50% + {{p.px}}%), calc(-50% + {{p.py}}%)) scale({{p.zoom}});"></sc-if>
+<sc-if value="{{noPhoto}}" hint-placeholder-val="{{true}}">{{p.initial}}</sc-if>
+</span>
+<span style="font-size: 13px; font-weight: 500;">{{p.dName}} · <span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-variant-numeric: tabular-nums;">@{{p.dId}}</span></span>
+</div>
+<h2 id="collDetailTitle" style="position: relative; margin: 12px 0 0; font-size: 32px; font-weight: 800; letter-spacing: -.03em; line-height: 1.1;">{{detail.title}}</h2>
+<sc-if value="{{detail.hasDesc}}" hint-placeholder-val="{{false}}"><p style="position: relative; margin: 8px 0 0; font-size: 14px; line-height: 1.5;">{{detail.desc}}</p></sc-if>
+<span style="position: relative; margin-top: 12px; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 12px; font-variant-numeric: tabular-nums;">{{detail.count}} · {{detail.vis}}</span>
+</div>
+<sc-if value="{{isMe}}" hint-placeholder-val="{{true}}"><div style="display: flex; justify-content: flex-end; gap: 8px; padding: 16px 18px 0;">
+<sc-if value="{{detail.hasCover}}" hint-placeholder-val="{{false}}"><button type="button" class="line-btn" onClick="{{removeCover}}" style="height: 40px; padding: 0 16px; border: 1px solid transparent; border-radius: 999px; background: rgba(247,249,233,.13); color: #F7F9E9; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;">커버 삭제</button></sc-if>
+<label class="line-btn" style="position: relative; height: 40px; padding: 0 16px; box-sizing: border-box; border: 1px solid transparent; border-radius: 999px; display: inline-flex; align-items: center; font-size: 13px; font-weight: 600; cursor: pointer; background: rgba(247,249,233,.13);">{{detail.coverBtn}}<input type="file" accept="image/*" onChange="{{onCover}}" style="position: absolute; inset: 0; opacity: 0; cursor: pointer;"></label>
+</div></sc-if>
+<sc-if value="{{detail.empty}}" hint-placeholder-val="{{true}}">
+<div style="padding: 56px 20px; display: flex; flex-direction: column; align-items: center; gap: 16px;">
+<p style="margin: 0; font-size: 14px;">컬렉션이 비어 있어요. 내 기록이나 저장한 장소를 담아 보세요.</p>
+<sc-if value="{{isMe}}" hint-placeholder-val="{{true}}"><button type="button" class="line-btn" onClick="{{openPicker}}" style="height: 40px; padding: 0 20px; border: 1px solid transparent; border-radius: 999px; background: rgba(247,249,233,.13); color: #F7F9E9; font: inherit; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>추가</button></sc-if>
+</div>
+</sc-if>
+<sc-if value="{{detail.notEmpty}}" hint-placeholder-val="{{false}}">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; padding: 18px 18px 0;">
+<sc-for list="{{recTiles}}" as="r" hint-placeholder-count="2">
+<article class="notch-sm crec" style="color: #141414; position: relative; background: {{r.color}}; display: flex; flex-direction: column;">
+<sc-if value="{{r.canOpen}}" hint-placeholder-val="{{true}}"><button type="button" class="crec-open" onClick="{{r.open}}" aria-label="{{r.openLabel}}" style="position: absolute; inset: 0; z-index: 1; border: 0; padding: 0; background: transparent; cursor: pointer;"></button></sc-if>
+<span style="border-radius: 16px; overflow: hidden; display: block; margin: 10px 10px 0; aspect-ratio: 4 / 3; background: rgba(20,20,20,.14);"></span>
+<span class="tear2" aria-hidden="true" style="display: block; margin: 10px 6px 0; border-top: 0; height: 2px; background: url('data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%229%22 height=%222%22 viewBox=%220 0 9 2%22&gt;&lt;line x1=%221%22 y1=%221%22 x2=%223%22 y2=%221%22 stroke=%22rgba(20,20,20,.8)%22 stroke-width=%222%22 stroke-linecap=%22round%22/&gt;&lt;/svg&gt;') left center/auto 100% repeat-x;"></span>
+<span style="display: block; padding: 8px 12px 12px;">
+<span style="display: block; font-size: 12px; font-weight: 600;">⌖ {{r.place}}</span>
+<span style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 4px; font-size: 13px; line-height: 1.45;">{{r.caption}}</span>
+<span style="display: block; margin-top: 6px; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; font-variant-numeric: tabular-nums;">{{r.meta}}</span>
+</span>
+<sc-if value="{{isMe}}" hint-placeholder-val="{{true}}"><button type="button" class="rec-x" onClick="{{r.remove}}" aria-label="{{r.removeLabel}}" style="position: absolute; z-index: 2; top: 16px; right: 16px; width: 30px; height: 30px; border-radius: 50%; border: 1px solid transparent; background: rgba(247,249,233,.85); color: #141414; display: grid; place-items: center; cursor: pointer; padding: 0;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></sc-if>
+</article>
+</sc-for>
+</div>
+</sc-if>
+</div>
+<sc-if value="{{isMe}}" hint-placeholder-val="{{true}}"><button type="button" class="ink-btn" onClick="{{openPicker}}" aria-label="컬렉션에 내 기록이나 저장한 장소 추가" style="position: absolute; right: 18px; bottom: 22px; width: 56px; height: 56px; border-radius: 50%; border: 0; background: #F7F9E9; color: #141414; display: grid; place-items: center; cursor: pointer; box-shadow: 0 8px 22px rgba(0,0,0,.3);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button></sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{collFormOpen}}" hint-placeholder-val="{{false}}">
+<div class="modal-back" onClick="{{closeForm}}" style="position: absolute; inset: 0; z-index: 50; background: rgba(0,0,0,.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"></div>
+<div style="position: absolute; inset: 0; z-index: 51; display: grid; place-items: center; pointer-events: none; padding: 12px; box-sizing: border-box;">
+<div role="dialog" aria-modal="true" aria-labelledby="collFormTitle" class="gl modal-in m-scroll" style="pointer-events: auto; width: 366px; max-width: 100%; max-height: 800px; overflow-y: auto; border-radius: 28px; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); color: #F7F9E9; box-shadow: 0 30px 80px rgba(0,0,0,.45);">
+<div style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 60px; padding: 0 18px; border-bottom: 1px solid transparent;">
+<button type="button" class="cbtn" onClick="{{closeForm}}" style="justify-self: start; border: 0; background: none; color: #F7F9E9; font: inherit; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; padding: 10px 0; cursor: pointer;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>닫기</button>
+<h2 id="collFormTitle" style="margin: 0; font-size: 15px; font-weight: 700;">{{form.heading}}</h2>
+<span></span>
+</div>
+<form onSubmit="{{saveForm}}" style="padding: 20px 18px 24px; display: flex; flex-direction: column; gap: 20px;">
+<span style="font-size: 11px; font-weight: 700; letter-spacing: .14em;">BASIC INFO</span>
+<div>
+<label for="collName" class="flbl">컬렉션 제목 · 필수</label>
+<input id="collName" class="field" type="text" maxlength="30" placeholder="예: 바다가 보이는 곳" value="{{form.title}}" onChange="{{onFormTitle}}">
+<p class="hint" style="text-align: right; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-variant-numeric: tabular-nums;">{{form.titleCount}}/30</p>
+</div>
+<div>
+<label for="collDesc" class="flbl">간단한 소개 · 선택</label>
+<textarea id="collDesc" class="field" rows="3" maxlength="80" value="{{form.desc}}" onChange="{{onFormDesc}}"></textarea>
+<p class="hint" style="text-align: right; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-variant-numeric: tabular-nums;">{{form.descCount}}/80</p>
+</div>
+<fieldset style="border: 0; padding: 0; margin: 0;">
+<legend class="flbl">공개 범위</legend>
+<div role="radiogroup" style="display: flex; flex-direction: column; gap: 8px;">
+<sc-for list="{{visOpts}}" as="v" hint-placeholder-count="3">
+<button type="button" class="rbtn" role="radio" aria-checked="{{v.checked}}" onClick="{{v.pick}}" style="height: 48px; border: 1px solid transparent; border-radius: 999px; background: {{v.bg}}; color: #F7F9E9; font: inherit; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; padding: 0 14px; cursor: pointer; text-align: left;">
+<span aria-hidden="true" style="width: 18px; height: 18px; flex: none; border-radius: 50%; border: 1.5px solid #F7F9E9; display: grid; place-items: center;"><span style="width: 9px; height: 9px; border-radius: 50%; background: {{v.dot}};"></span></span>{{v.label}}
+</button>
+</sc-for>
+</div>
+</fieldset>
+<button type="submit" class="ed-act" disabled="{{form.disabled}}" style="height: 56px; border: 1px solid transparent; border-radius: 999px; background: #F7F9E9; color: #141414; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; opacity: {{form.opacity}};">{{form.submit}}</button>
+<sc-if value="{{form.isEdit}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{deleteColl}}" style="align-self: center; border: 0; background: none; color: #F7F9E9; font: inherit; font-size: 13px; font-weight: 600; text-decoration: underline; padding: 8px; cursor: pointer;">컬렉션 삭제</button></sc-if>
+</form>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{pickerOpen}}" hint-placeholder-val="{{false}}">
+<div class="modal-back" onClick="{{closePicker}}" style="position: absolute; inset: 0; z-index: 60; background: rgba(0,0,0,.45);"></div>
+<div style="position: absolute; inset: 0; z-index: 61; display: grid; place-items: center; pointer-events: none; padding: 12px; box-sizing: border-box;">
+<div role="dialog" aria-modal="true" aria-labelledby="pickTitle" class="gl modal-in" style="pointer-events: auto; width: 366px; max-width: 100%; height: 760px; max-height: 100%; border-radius: 28px; overflow: hidden; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); color: #F7F9E9; display: flex; flex-direction: column; box-shadow: 0 30px 80px rgba(0,0,0,.45);">
+<div style="flex: none; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 60px; padding: 0 18px; border-bottom: 1px solid transparent;">
+<button type="button" class="cbtn" onClick="{{closePicker}}" style="justify-self: start; border: 0; background: none; color: #F7F9E9; font: inherit; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; padding: 10px 0; cursor: pointer;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>닫기</button>
+<h2 id="pickTitle" style="margin: 0; font-size: 15px; font-weight: 700;">컬렉션에 추가</h2>
+<span></span>
+</div>
+<div style="flex: none; padding: 14px 18px 0; display: flex; flex-direction: column; gap: 10px;">
+<div class="search-pill" style="display: flex; align-items: center; gap: 8px; height: 42px; border: 1.5px solid transparent; border-radius: 999px; padding: 0 14px; background: rgba(247,249,233,.13);">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg>
+<input type="search" aria-label="내 기록·저장한 장소 검색" placeholder="장소나 문장으로 검색" value="{{pick.query}}" onChange="{{onPickQuery}}" style="flex: 1; min-width: 0; height: 100%; border: 0; background: none; font: inherit; font-size: 14px; color: #F7F9E9;">
+</div>
+<div role="tablist" aria-label="기록 종류" class="seg" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 1px solid transparent; border-radius: 999px; overflow: hidden; background: rgba(247,249,233,.13);">
+<sc-for list="{{pickTabs}}" as="t" hint-placeholder-count="2">
+<button type="button" role="tab" aria-selected="{{t.selected}}" onClick="{{t.pick}}" style="border-radius: 999px; height: 40px; border: 0; background: {{t.bg}}; color: {{t.fg}}; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;">{{t.label}}</button>
+</sc-for>
+</div>
+</div>
+<div class="m-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 8px 18px 12px;">
+<sc-if value="{{pick.empty}}" hint-placeholder-val="{{false}}"><p style="margin: 40px 0; text-align: center; font-size: 14px;">{{pick.emptyText}}</p></sc-if>
+<sc-for list="{{pickItems}}" as="it" hint-placeholder-count="3">
+<button type="button" class="pick-row" role="checkbox" aria-checked="{{it.checked}}" onClick="{{it.toggle}}" style="width: 100%; display: grid; grid-template-columns: 22px 52px minmax(0, 1fr); gap: 12px; align-items: center; padding: 10px 6px; border: 0; border-bottom: 1px dashed rgba(247,249,233,.4); background: none; color: #F7F9E9; font: inherit; text-align: left; cursor: pointer;">
+<span aria-hidden="true" style="width: 20px; height: 20px; border: 1.5px solid #F7F9E9; border-radius: 50%; background: {{it.boxBg}}; display: grid; place-items: center; color: #141414;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="opacity: {{it.checkOpacity}};"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+<span aria-hidden="true" style="color: #141414; width: 52px; height: 52px; border-radius: 50%; background: {{it.color}};"></span>
+<span style="min-width: 0;"><span style="display: block; font-size: 13px; font-weight: 600;">⌖ {{it.place}}</span><span style="display: block; margin-top: 3px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{it.caption}}</span><span style="display: block; margin-top: 3px; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; font-variant-numeric: tabular-nums;">{{it.meta}}</span></span>
+</button>
+</sc-for>
+</div>
+<div style="flex: none; padding: 12px 18px 18px; border-top: 1px solid transparent;">
+<button type="button" class="ink-btn" onClick="{{savePicker}}" style="width: 100%; height: 56px; border: 0; border-radius: 999px; background: #F7F9E9; color: #141414; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer;">{{pick.saveLabel}}</button>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{placeOpen}}" hint-placeholder-val="{{false}}">
+<div class="modal-back" onClick="{{closePlace}}" style="position: absolute; inset: 0; z-index: 46; background: rgba(0,0,0,.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"></div>
+<div style="position: absolute; inset: 0; z-index: 47; display: flex; align-items: flex-end; pointer-events: none;">
+<div role="dialog" aria-modal="true" aria-labelledby="plTitle" class="gl modal-in" style="pointer-events: auto; width: 100%; height: calc(100% - 40px); box-sizing: border-box; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); color: #F7F9E9; display: flex; flex-direction: column; overflow: hidden; border-radius: 28px; box-shadow: 0 30px 80px rgba(0,0,0,.45);">
+<div class="m-scroll" style="flex: 1; min-height: 0; overflow-y: auto;">
+<header style="position: relative; padding: 24px 18px 22px; border-bottom: 1px solid transparent;">
+<button type="button" class="pl-x ic-btn" onClick="{{closePlace}}" aria-label="닫기" style="position: absolute; top: 14px; right: 14px; width: 42px; height: 42px; border-radius: 50%;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+<span style="display: block; font-size: 12px; font-weight: 700; letter-spacing: .2em;">PLACE</span>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-top: 10px; padding-right: 56px;">
+<h2 id="plTitle" style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -.04em; line-height: 1.1;">{{pv.name}}</h2>
+<button type="button" class="pl-save ic-tog sv-btn" onClick="{{pv.toggleSave}}" aria-pressed="{{pv.savePressed}}" aria-label="{{pv.saveLabel}}"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 4.5h11v15.2L12 15.6l-5.5 4.1z" fill="{{pv.saveFill}}" stroke="#F7F9E9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+<a class="pl-map" href="{{pv.mapHref}}" target="_blank" rel="noopener noreferrer" style="border-radius: 999px;">카카오맵 <span aria-hidden="true">↗</span></a>
+</div>
+<p style="margin: 14px 0 0; font-size: 15px; font-weight: 500;">{{pv.category}}</p>
+<p style="margin: 14px 0 0; font-size: 14px; line-height: 1.7; opacity: .7;">{{pv.address}}<br><span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 12px; font-variant-numeric: tabular-nums;">{{pv.coords}}</span></p>
+</header>
+<section aria-labelledby="plPhotos" style="padding: 22px 18px;">
+<h3 id="plPhotos" style="margin: 0 0 16px; font-size: 18px; font-weight: 700;">이 장소의 사진</h3>
+<sc-if value="{{pv.noPhotos}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 18px 0 8px; font-size: 14px; opacity: .7;">아직 이 장소에 등록된 사진이 없어요.</p></sc-if>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px;">
+<sc-for list="{{pv.photos}}" as="ph" hint-placeholder-count="4">
+<button type="button" class="pl-tile" onClick="{{ph.open}}" aria-label="{{ph.aria}}" style="color: #141414; border-radius: 16px; overflow: hidden; display: block; aspect-ratio: 1 / 1; background: {{ph.color}}; position: relative;"><span aria-hidden="true" style="position: absolute; inset: 0; background: rgba(20,20,20,.14);"></span></button>
+</sc-for>
+</div>
+</section>
+<div aria-hidden="true" style="height: 12px; background: rgba(247,249,233,.08); border-top: 1px solid transparent; border-bottom: 1px solid transparent;"></div>
+<section aria-labelledby="plRecs" style="padding: 22px 18px 28px;">
+<h3 id="plRecs" style="margin: 0 0 16px; font-size: 18px; font-weight: 700;">전체 기록 · {{pv.count}}</h3>
+<sc-if value="{{pv.noRecs}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 40px 0; text-align: center; font-size: 14px; opacity: .7;">아직 이 장소에 남겨진 기록이 없어요.</p></sc-if>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;">
+<sc-for list="{{pv.recs}}" as="r" hint-placeholder-count="3">
+<button type="button" class="pl-tile notch-sm" onClick="{{r.open}}" aria-label="{{r.aria}}" style="color: #141414; background: {{r.color}}; display: flex; flex-direction: column; min-width: 0;">
+<span style="border-radius: 16px; overflow: hidden; display: block; margin: 10px 10px 0; aspect-ratio: 1 / 1; background: rgba(20,20,20,.14);"></span>
+<span class="tear2" aria-hidden="true" style="display: block; margin: 10px 6px 0; border-top: 0; height: 2px; background: url('data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%229%22 height=%222%22 viewBox=%220 0 9 2%22&gt;&lt;line x1=%221%22 y1=%221%22 x2=%223%22 y2=%221%22 stroke=%22rgba(20,20,20,.8)%22 stroke-width=%222%22 stroke-linecap=%22round%22/&gt;&lt;/svg&gt;') left center/auto 100% repeat-x;"></span>
+<span style="display: block; padding: 8px 10px 10px;">
+<span style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.9em; font-size: 13px; line-height: 1.45;">{{r.caption}}</span>
+<span style="display: flex; justify-content: space-between; margin-top: 6px; padding-top: 6px; border-top: 1px solid transparent; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; font-variant-numeric: tabular-nums;"><span>@{{r.handle}}</span><span>{{r.date}}</span></span>
+</span>
+</button>
+</sc-for>
+</div>
+</section>
+</div>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{recOpen}}" hint-placeholder-val="{{false}}">
+<div class="modal-back" onClick="{{closeRec}}" style="position: absolute; inset: 0; z-index: 52; background: rgba(0,0,0,.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"></div>
+<div style="position: absolute; inset: 0; z-index: 53; display: grid; place-items: center; pointer-events: none; padding: 16px; box-sizing: border-box;">
+<div role="dialog" aria-modal="true" aria-label="{{rv.dialogLabel}}" class="modal-in m-scroll" style="border-radius: 28px; pointer-events: auto; width: 358px; max-width: 100%; max-height: 800px; overflow-y: auto; background: {{rv.color}}; color: #141414; display: flex; flex-direction: column; box-shadow: 0 30px 80px rgba(0,0,0,.45);">
+
+<div style="display: flex; align-items: center; gap: 12px; padding: 20px 16px 16px;">
+<a href="ProfileMobile.dc.html" aria-label="{{rv.profileLabel}}" style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; color: inherit;">
+<span style="width: 44px; height: 44px; flex: none; border-radius: 50%; border: 1px solid transparent; display: grid; place-items: center; font-size: 15px; font-weight: 700; background: rgba(20,20,20,.13);">{{rv.initial}}</span>
+<span style="display: flex; flex-direction: column; min-width: 0;">
+<strong style="font-size: 15px; font-weight: 700;">{{rv.name}}</strong>
+<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums;">{{rv.meta}}</span>
+</span>
+</a>
+<div style="position: relative; flex: none;"><button class="ic-btn" type="button" onClick="{{rv.toggleMenu}}" aria-label="더보기" aria-haspopup="menu" aria-expanded="{{rv.menuExp}}" style="width: 44px; height: 44px; border: 0; background: none; color: inherit; display: grid; place-items: center; cursor: pointer; border-radius: 50%;"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"></circle><circle cx="12" cy="12" r="1.8"></circle><circle cx="19" cy="12" r="1.8"></circle></svg></button><sc-if value="{{rv.showMenuList}}" hint-placeholder-val="{{false}}"><div class="gl" role="menu" style="border-radius: 28px; position: absolute; right: 0; top: calc(100% + 4px); z-index: 6; width: 160px; padding: 4px 0; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); color: #F7F9E9; box-shadow: 0 12px 26px rgba(0,0,0,.35);"><button type="button" role="menuitem" class="mn-item" onClick="{{rv.share}}">링크 복사</button><button type="button" role="menuitem" class="mn-item" onClick="{{rv.askDelete}}" style="color: #F28B82;">삭제</button></div></sc-if><sc-if value="{{rv.confirmDel}}" hint-placeholder-val="{{false}}"><div class="gl" role="alertdialog" aria-label="기록 삭제 확인" style="border-radius: 28px; position: absolute; right: 0; top: calc(100% + 4px); z-index: 6; width: 230px; padding: 14px; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); color: #F7F9E9; box-shadow: 0 12px 26px rgba(0,0,0,.35);"><p style="margin: 0; font-size: 13px; line-height: 1.5;">이 기록을 삭제할까요?<br><span style="opacity: .65; font-size: 12px;">삭제하면 되돌릴 수 없어요.</span></p><div style="display: flex; justify-content: flex-end; gap: 6px; margin-top: 12px;"><button type="button" onClick="{{rv.cancelDelete}}" style="height: 32px; padding: 0 12px; border: 1px solid transparent; background: rgba(247,249,233,.16); color: #F7F9E9; font: inherit; font-size: 12px; cursor: pointer; border-radius: 999px;">닫기</button><button type="button" onClick="{{rv.doDelete}}" style="height: 32px; padding: 0 12px; border: 0; background: #F28B82; color: #141414; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; border-radius: 999px;">삭제</button></div></div></sc-if></div>
+<button class="ic-btn" type="button" onClick="{{closeRec}}" aria-label="닫기" style="width: 44px; height: 44px; margin-right: -10px; border: 0; background: none; color: #141414; display: grid; place-items: center; border-radius: 50%;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"></path></svg></button>
+</div>
+
+<div style="border-radius: 16px; overflow: hidden; margin: 0 16px; aspect-ratio: {{rv.ratio}}; flex: none; background: rgba(20,20,20,.14); display: flex; align-items: flex-end; justify-content: space-between; padding: 12px 14px; box-sizing: border-box; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; letter-spacing: .06em; font-variant-numeric: tabular-nums;">
+<span></span><span>{{rv.coords}}</span>
+</div>
+
+<div aria-hidden="true" style="margin: 20px 14px 0; display: block; border-top: 0; height: 2px; background: #141414; -webkit-mask: var(--dash); mask: var(--dash); opacity: .8;"></div>
+
+<div style="padding: 16px 16px 0;">
+<span style="display: block; font-size: 11px; font-weight: 500; letter-spacing: .08em;">RECORD</span>
+<p style="margin: 8px 0 0; font-size: 18px; line-height: 1.5; font-weight: 500; letter-spacing: -.02em;">{{rv.caption}}</p>
+</div>
+
+<div style="margin: 18px 16px 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; border-top: 1px solid transparent; border-bottom: 1px solid transparent;">
+<div style="padding: 8px 12px 8px 0; border-right: 1px solid transparent; min-width: 0;"><span style="display: block; font-size: 11px; font-weight: 500; letter-spacing: .08em;">PLACE</span><span style="display: block; margin-top: 3px; font-size: 13px; font-weight: 600;">⌖ {{rv.place}}</span></div>
+<div style="padding: 8px 0 8px 12px;"><span style="display: block; font-size: 11px; font-weight: 500; letter-spacing: .08em;">DATE</span><span style="display: block; margin-top: 3px; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 13px; font-variant-numeric: tabular-nums;">{{rv.date}}</span></div>
+</div>
+
+<div style="margin: 0 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 1px solid transparent;">
+<button type="button" class="ghost ic-tog" onClick="{{rv.toggleLike}}" aria-pressed="{{rv.likePressed}}" aria-label="{{rv.likeLabel}}" style="height: 64px; border: 0; border-right: 1px solid transparent; background: none; color: inherit; font: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer;"><svg class="{{rv.likeAnim}}" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19.6s-7.6-4.5-7.6-10A4.3 4.3 0 0 1 12 7a4.3 4.3 0 0 1 7.6 2.6c0 5.5-7.6 10-7.6 10z" fill="{{rv.heartFill}}" stroke="#141414" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-size: 12px; font-weight: {{rv.likeWeight}};"><span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-variant-numeric: tabular-nums;">{{rv.likes}}</span></span></button>
+<button type="button" class="ghost ic-tog sv-btn" onClick="{{rv.toggleSave}}" aria-pressed="{{rv.savePressed}}" style="height: 64px; border: 0; background: none; color: inherit; font: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer;"><svg class="{{rv.saveAnim}}" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 4.5h11v15.2L12 15.6l-5.5 4.1z" fill="{{rv.saveFill}}" stroke="#141414" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-size: 12px; font-weight: {{rv.saveWeight}};">{{rv.saveText}}</span></button>
+
+</div>
+
+<section aria-label="댓글" style="padding: 20px 16px 0;">
+<div style="display: flex; justify-content: space-between; align-items: baseline;">
+<span style="font-size: 11px; font-weight: 500; letter-spacing: .08em;">COMMENTS</span>
+<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; font-variant-numeric: tabular-nums;">{{rv.commentCount}}</span>
+</div>
+<sc-if value="{{rv.noComments}}" hint-placeholder-val="{{true}}">
+<p style="margin: 12px 0 0; font-size: 14px;">첫 댓글을 남겨보세요.</p>
+</sc-if>
+<sc-for list="{{rv.comments}}" as="c" hint-placeholder-count="0">
+<div style="display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; padding: 10px 0; border-bottom: 1px dashed rgba(20,20,20,.5); font-size: 14px; line-height: 1.5;">
+<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 12px; font-weight: 500; font-variant-numeric: tabular-nums;">@{{c.name}}</span><span style="display: flex; justify-content: space-between; gap: 10px;"><span>{{c.text}}</span><sc-if value="{{c.mine}}" hint-placeholder-val="{{false}}"><button type="button" class="mini-link" onClick="{{c.del}}" aria-label="내 댓글 삭제">삭제</button></sc-if></span>
+</div>
+</sc-for>
+<form onSubmit="{{rv.submitComment}}" style="margin-top: 14px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px;">
+<input type="text" aria-label="댓글 입력" placeholder="댓글 남기기" maxlength="120" value="{{recDraft}}" onChange="{{onRecDraft}}" class="comment-input" style="border-radius: 999px; min-width: 0; height: 48px; border: 1px solid transparent; background: rgba(255,255,255,.25); color: #141414; font: inherit; font-size: 15px; padding: 0 14px;">
+<button type="submit" style="height: 48px; padding: 0 20px; border: 1px solid transparent; background: #141414; color: {{rv.color}}; font-size: 14px; font-weight: 600; border-radius: 999px;">등록</button>
+</form>
+</section>
+
+<div style="margin: 20px 16px 0; padding: 12px 0 22px; border-top: 1px solid transparent; display: flex; justify-content: space-between; font-size: 11px; font-weight: 500;">
+<span>@{{rv.handle}}</span><span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-variant-numeric: tabular-nums;">{{rv.date}}</span>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{svOpen}}" hint-placeholder-val="{{false}}">
+<div class="modal-back" onClick="{{closeSv}}" style="position: absolute; inset: 0; z-index: 52; background: rgba(0,0,0,.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"></div>
+<div style="position: absolute; inset: 0; z-index: 53; display: grid; place-items: center; pointer-events: none; padding: 16px; box-sizing: border-box;">
+<div role="dialog" aria-modal="true" aria-label="{{sv.dialogLabel}}" class="modal-in m-scroll" style="border-radius: 28px; pointer-events: auto; width: 358px; max-width: 100%; max-height: 800px; overflow-y: auto; background: {{sv.color}}; color: #141414; display: flex; flex-direction: column; box-shadow: 0 30px 80px rgba(0,0,0,.45);">
+
+<div style="display: flex; align-items: center; gap: 12px; padding: 20px 16px 16px;">
+<a href="{{sv.profileHref}}" onClick="{{sv.goAuthor}}" aria-label="{{sv.profileLabel}}" style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; color: inherit;">
+<span style="width: 44px; height: 44px; flex: none; border-radius: 50%; border: 1px solid transparent; display: grid; place-items: center; font-size: 15px; font-weight: 700; background: rgba(20,20,20,.13);">{{sv.initial}}</span>
+<span style="display: flex; flex-direction: column; min-width: 0;">
+<strong style="font-size: 15px; font-weight: 700;">{{sv.name}}</strong>
+<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums;">{{sv.meta}}</span>
+</span>
+</a>
+<button type="button" onClick="{{sv.toggleFollow}}" aria-pressed="{{sv.followPressed}}" style="height: 32px; padding: 0 12px; border: 1px solid transparent; background: {{sv.followBg}}; color: {{sv.followFg}}; font-size: 12px; font-weight: 600; border-radius: 999px;">{{sv.followLabel}}</button>
+<button class="ic-btn" type="button" onClick="{{sv.share}}" aria-label="링크 복사" style="flex: none; width: 44px; height: 44px; border: 0; background: none; color: inherit; display: grid; place-items: center; cursor: pointer; border-radius: 50%;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3.5M7.5 8 12 3.5 16.5 8"></path><path d="M5 12.5V20h14v-7.5"></path></svg></button>
+<button class="ic-btn" type="button" onClick="{{closeSv}}" aria-label="닫기" style="width: 44px; height: 44px; margin-right: -10px; border: 0; background: none; color: #141414; display: grid; place-items: center; border-radius: 50%;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"></path></svg></button>
+</div>
+
+<div style="border-radius: 16px; overflow: hidden; margin: 0 16px; aspect-ratio: {{sv.ratio}}; flex: none; background: rgba(20,20,20,.14); display: flex; align-items: flex-end; justify-content: space-between; padding: 12px 14px; box-sizing: border-box; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; letter-spacing: .06em; font-variant-numeric: tabular-nums;">
+<span></span><span>{{sv.coords}}</span>
+</div>
+
+<div aria-hidden="true" style="margin: 20px 14px 0; display: block; border-top: 0; height: 2px; background: #141414; -webkit-mask: var(--dash); mask: var(--dash); opacity: .8;"></div>
+
+<div style="padding: 16px 16px 0;">
+<span style="display: block; font-size: 11px; font-weight: 500; letter-spacing: .08em;">RECORD</span>
+<p style="margin: 8px 0 0; font-size: 18px; line-height: 1.5; font-weight: 500; letter-spacing: -.02em;">{{sv.caption}}</p>
+</div>
+
+<div style="margin: 18px 16px 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; border-top: 1px solid transparent; border-bottom: 1px solid transparent;">
+<div style="padding: 8px 12px 8px 0; border-right: 1px solid transparent; min-width: 0;"><span style="display: block; font-size: 11px; font-weight: 500; letter-spacing: .08em;">PLACE</span><span style="display: block; margin-top: 3px; font-size: 13px; font-weight: 600;">⌖ {{sv.place}}</span></div>
+<div style="padding: 8px 0 8px 12px;"><span style="display: block; font-size: 11px; font-weight: 500; letter-spacing: .08em;">DATE</span><span style="display: block; margin-top: 3px; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 13px; font-variant-numeric: tabular-nums;">{{sv.date}}</span></div>
+</div>
+
+<div style="margin: 0 16px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid transparent;">
+<button type="button" class="ghost ic-tog" onClick="{{sv.toggleLike}}" aria-pressed="{{sv.likePressed}}" aria-label="{{sv.likeLabel}}" style="height: 64px; border: 0; border-right: 1px solid transparent; background: none; color: inherit; font: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer;"><svg class="{{sv.likeAnim}}" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19.6s-7.6-4.5-7.6-10A4.3 4.3 0 0 1 12 7a4.3 4.3 0 0 1 7.6 2.6c0 5.5-7.6 10-7.6 10z" fill="{{sv.heartFill}}" stroke="#141414" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-size: 12px; font-weight: {{sv.likeWeight}};"><span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-variant-numeric: tabular-nums;">{{sv.likes}}</span></span></button>
+<button type="button" class="ghost ic-tog sv-btn" onClick="{{sv.toggleSave}}" aria-pressed="{{sv.savePressed}}" style="height: 64px; border: 0; border-right: 1px solid transparent; background: none; color: inherit; font: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer;"><svg class="{{sv.saveAnim}}" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 4.5h11v15.2L12 15.6l-5.5 4.1z" fill="{{sv.saveFill}}" stroke="#141414" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-size: 12px; font-weight: {{sv.saveWeight}};">{{sv.saveText}}</span></button>
+<button type="button" class="ghost" onClick="{{sv.toggleReport}}" aria-pressed="{{sv.reportPressed}}" style="height: 64px; border: 0; background: none; color: inherit; font: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer;"><svg class="" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.8 16.2v-4.4a5.2 5.2 0 0 1 10.4 0v4.4z" fill="{{sv.reportFill}}" stroke="#141414" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><path d="M4.8 19.6h14.4M12 1.6v1.7M4.7 4l1.2 1.2M19.3 4l-1.2 1.2" fill="none" stroke="#141414" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-size: 12px; font-weight: {{sv.reportWeight}};">{{sv.reportText}}</span></button>
+</div>
+
+<section aria-label="댓글" style="padding: 20px 16px 0;">
+<div style="display: flex; justify-content: space-between; align-items: baseline;">
+<span style="font-size: 11px; font-weight: 500; letter-spacing: .08em;">COMMENTS</span>
+<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; font-variant-numeric: tabular-nums;">{{sv.commentCount}}</span>
+</div>
+<sc-if value="{{sv.noComments}}" hint-placeholder-val="{{true}}">
+<p style="margin: 12px 0 0; font-size: 14px;">첫 댓글을 남겨보세요.</p>
+</sc-if>
+<sc-for list="{{sv.comments}}" as="c" hint-placeholder-count="0">
+<div style="display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; padding: 10px 0; border-bottom: 1px dashed rgba(20,20,20,.5); font-size: 14px; line-height: 1.5;">
+<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 12px; font-weight: 500; font-variant-numeric: tabular-nums;">@{{c.name}}</span><span style="display: flex; justify-content: space-between; gap: 10px;"><span>{{c.text}}</span><sc-if value="{{c.mine}}" hint-placeholder-val="{{false}}"><button type="button" class="mini-link" onClick="{{c.del}}" aria-label="내 댓글 삭제">삭제</button></sc-if></span>
+</div>
+</sc-for>
+<form onSubmit="{{sv.submitComment}}" style="margin-top: 14px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px;">
+<input type="text" aria-label="댓글 입력" placeholder="댓글 남기기" maxlength="120" value="{{svDraft}}" onChange="{{onSvDraft}}" class="comment-input" style="border-radius: 999px; min-width: 0; height: 48px; border: 1px solid transparent; background: rgba(255,255,255,.25); color: #141414; font: inherit; font-size: 15px; padding: 0 14px;">
+<button type="submit" style="height: 48px; padding: 0 20px; border: 1px solid transparent; background: #141414; color: {{sv.color}}; font-size: 14px; font-weight: 600; border-radius: 999px;">등록</button>
+</form>
+</section>
+
+<div style="margin: 20px 16px 0; padding: 12px 0 22px; border-top: 1px solid transparent; display: flex; justify-content: space-between; font-size: 11px; font-weight: 500;">
+<span>@{{sv.handle}}</span><span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-variant-numeric: tabular-nums;">{{sv.date}}</span>
+</div>
+</div>
+</div>
+</sc-if>
+
+
+<sc-if value="{{peopleOpen}}" hint-placeholder-val="{{false}}">
+<div class="modal-back" onClick="{{closePeople}}" style="position: absolute; inset: 0; z-index: 48; background: rgba(0,0,0,.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"></div>
+<div style="position: absolute; inset: 0; z-index: 49; display: grid; place-items: center; pointer-events: none; padding: 12px; box-sizing: border-box;">
+<div role="dialog" aria-modal="true" aria-label="{{peopleTitle}}" class="gl modal-in" style="pointer-events: auto; width: 366px; max-width: 100%; height: 760px; max-height: 100%; border-radius: 28px; overflow: hidden; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); color: #F7F9E9; display: flex; flex-direction: column; box-shadow: 0 30px 80px rgba(0,0,0,.45);">
+<div style="flex: none; display: flex; align-items: stretch; justify-content: space-between; padding: 0 18px; border-bottom: 1px solid transparent;">
+<div role="tablist" aria-label="팔로우 목록" class="seg seg-fit" style="display: flex; gap: 22px;">
+<sc-for list="{{peopleTabs}}" as="t" hint-placeholder-count="2">
+<button type="button" class="ptab" role="tab" aria-selected="{{t.selected}}" onClick="{{t.pick}}" style="margin-bottom: -1px; border: 0; border-bottom: 2px solid {{t.line}}; background: none; color: {{t.fg}}; font: inherit; font-size: 14px; font-weight: 700; padding: 18px 2px 14px; cursor: pointer; display: flex; align-items: baseline; gap: 6px;">{{t.label}}<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; font-weight: 500; font-variant-numeric: tabular-nums;">{{t.count}}</span></button>
+</sc-for>
+</div>
+<button class="ic-btn" type="button" onClick="{{closePeople}}" aria-label="닫기" style="align-self: center; width: 44px; height: 44px; margin-right: -10px; border: 0; background: none; color: #F7F9E9; display: grid; place-items: center; cursor: pointer; border-radius: 50%;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"></path></svg></button>
+</div>
+<div style="flex: none; padding: 14px 18px 4px;">
+<div class="search-pill" style="display: flex; align-items: center; gap: 8px; height: 42px; border: 1.5px solid transparent; border-radius: 999px; padding: 0 14px; background: rgba(247,249,233,.13);">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg>
+<input type="search" aria-label="사용자 검색" placeholder="이름이나 아이디로 검색" value="{{peopleQuery}}" onChange="{{onPeopleQuery}}" style="flex: 1; min-width: 0; height: 100%; border: 0; background: none; font: inherit; font-size: 14px; color: #F7F9E9;">
+</div>
+</div>
+<div class="m-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 6px 18px 18px;">
+<sc-if value="{{peopleEmpty}}" hint-placeholder-val="{{false}}"><p style="margin: 40px 0; text-align: center; font-size: 14px;">{{peopleEmptyText}}</p></sc-if>
+<sc-for list="{{peopleRows}}" as="u" hint-placeholder-count="5">
+<div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px dashed rgba(247,249,233,.35);">
+<a href="{{u.href}}" onClick="{{u.go}}" aria-label="{{u.aria}}" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; color: inherit; text-decoration: none;">
+<span aria-hidden="true" style="color: #141414; width: 44px; height: 44px; flex: none; border-radius: 50%; border: 1px solid transparent; background: {{u.color}}; display: grid; place-items: center; font-size: 15px; font-weight: 700;">{{u.initial}}</span>
+<span style="display: flex; flex-direction: column; min-width: 0;">
+<strong style="font-size: 14px; font-weight: 700;">{{u.name}}</strong>
+<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 12px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums;">@{{u.handle}}{{u.lockTxt}}</span>
+</span>
+</a>
+<sc-if value="{{u.canRemove}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{u.remove}}" aria-label="{{u.name}} 팔로워에서 삭제" style="flex: none; height: 32px; padding: 0 10px; border: 1px solid transparent; background: rgba(247,249,233,.13); color: #F7F9E9; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 999px;">삭제</button></sc-if>
+<button type="button" onClick="{{u.toggle}}" aria-pressed="{{u.pressed}}" style="flex: none; height: 32px; padding: 0 12px; border: 1px solid transparent; background: {{u.bg}}; color: {{u.fg}}; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; border-radius: 999px;">{{u.label}}</button>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}"><div role="status" class="modal-in gr" style="position: absolute; left: 50%; bottom: 96px; transform: translateX(-50%); z-index: 70; max-width: calc(100% - 32px); padding: 12px 18px; border-radius: 999px; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); color: #F7F9E9; font-size: 13px; font-weight: 600; box-shadow: 0 10px 24px rgba(0,0,0,.4); white-space: nowrap;">{{toastText}}</div></sc-if>
+<sc-if value="{{editing}}" hint-placeholder-val="{{false}}">
+<div class="modal-back" onClick="{{closeEdit}}" style="position: absolute; inset: 0; z-index: 40; background: rgba(0,0,0,.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"></div>
+<div style="position: absolute; inset: 0; z-index: 41; display: grid; place-items: center; pointer-events: none; padding: 12px; box-sizing: border-box;">
+<div role="dialog" aria-modal="true" aria-labelledby="editTitle" class="gl modal-in m-scroll" style="pointer-events: auto; width: 366px; max-width: 100%; max-height: 820px; overflow-y: auto; border-radius: 28px; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); color: #F7F9E9; box-shadow: 0 30px 80px rgba(0,0,0,.45);">
+
+<div style="position: sticky; top: 0; z-index: 3; display: flex; justify-content: space-between; align-items: center; padding: 18px 18px 14px; background: {{d.color}}; color: #141414; border-bottom: 1px solid transparent;">
+<div>
+<span style="display: block; font-size: 11px; font-weight: 700; letter-spacing: .14em;">EDIT PROFILE</span>
+<h2 id="editTitle" style="margin: 4px 0 0; font-size: 28px; font-weight: 800; letter-spacing: -.03em;">프로필 편집</h2>
+</div>
+<button class="ic-btn" type="button" onClick="{{closeEdit}}" aria-label="닫기" style="width: 44px; height: 44px; margin-right: -10px; border: 0; background: none; color: #141414; display: grid; place-items: center; cursor: pointer; border-radius: 50%;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"></path></svg></button>
+</div>
+
+<form onSubmit="{{save}}" style="padding: 20px 18px 24px; display: flex; flex-direction: column; gap: 22px;">
+
+<div role="group" aria-labelledby="photoLbl">
+<span id="photoLbl" class="flbl">프로필 사진</span>
+<div style="border: 1px solid transparent; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 14px; background: rgba(247,249,233,.13);">
+<label class="pick-photo ed-act" style="position: relative; width: 100%; box-sizing: border-box; height: 46px; border: 1px solid transparent; border-radius: 999px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; font-weight: 600; cursor: pointer; background: rgba(247,249,233,.13);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5A2.5 2.5 0 0 1 6 6h1.8l1.6-2.2h5.2L16.2 6H18a2.5 2.5 0 0 1 2.5 2.5v9A2.5 2.5 0 0 1 18 20H6a2.5 2.5 0 0 1-2.5-2.5z"></path><circle cx="12" cy="12.8" r="3.6"></circle></svg>사진 선택<input type="file" accept="image/*" onChange="{{onFile}}" style="position: absolute; inset: 0; opacity: 0; cursor: pointer;"></label>
+<div onPointerDown="{{dragStart}}" onPointerMove="{{dragMove}}" onPointerUp="{{dragEnd}}" onPointerCancel="{{dragEnd}}" style="position: relative; width: 200px; height: 200px; max-width: 100%; border-radius: 50%; overflow: hidden; background: rgba(247,249,233,.14); touch-action: none; cursor: {{d.cursor}};">
+<sc-if value="{{d.hasPhoto}}" hint-placeholder-val="{{false}}"><img src="{{d.photo}}" alt="자르기 미리보기" draggable="false" style="position: absolute; left: 50%; top: 50%; width: 100%; height: 100%; object-fit: cover; transform: translate(calc(-50% + {{d.px}}%), calc(-50% + {{d.py}}%)) scale({{d.zoom}}); pointer-events: none; user-select: none;"></sc-if>
+<sc-if value="{{d.noPhoto}}" hint-placeholder-val="{{true}}"><span style="position: absolute; inset: 0; display: grid; place-items: center; font-size: 13px;">사진을 선택해주세요</span></sc-if>
+</div>
+<div style="width: 100%; display: grid; grid-template-columns: 32px minmax(0, 1fr) 32px; align-items: center; gap: 6px;">
+<button type="button" onClick="{{zoomOut}}" aria-label="사진 축소" disabled="{{d.noPhoto}}" style="height: 32px; border: 0; background: none; color: #F7F9E9; font-size: 18px; font-weight: 700; cursor: pointer;">−</button>
+<input type="range" class="zoom" min="1" max="3" step="0.01" value="{{d.zoom}}" onChange="{{onZoom}}" aria-label="사진 크기" disabled="{{d.noPhoto}}">
+<button type="button" onClick="{{zoomIn}}" aria-label="사진 확대" disabled="{{d.noPhoto}}" style="height: 32px; border: 0; background: none; color: #F7F9E9; font-size: 18px; font-weight: 700; cursor: pointer;">+</button>
+</div>
+<p class="hint" style="margin: 0; text-align: center;">사진을 드래그해 위치를 맞추고 슬라이더로 크기를 조정하세요.</p>
+<sc-if value="{{d.hasPhoto}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{removePhoto}}" style="border: 0; background: none; color: #F7F9E9; font-size: 12px; font-weight: 600; text-decoration: underline; cursor: pointer; padding: 6px;">프로필 사진 삭제</button></sc-if>
+</div>
+</div>
+
+<div>
+<label for="editName" class="flbl">이름</label>
+<input id="editName" class="field" type="text" placeholder="이름을 입력하세요" maxlength="20" value="{{d.name}}" onChange="{{onName}}">
+</div>
+
+<div>
+<label for="editId" class="flbl">사용자 아이디</label>
+<div class="field" style="display: flex; align-items: center; gap: 8px; border-color: {{idBorder}};">
+<span aria-hidden="true" style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 18px; font-variant-numeric: tabular-nums;">@</span>
+<input id="editId" type="text" placeholder="아이디" maxlength="20" autocomplete="off" value="{{d.id}}" onChange="{{onId}}" aria-describedby="idHint" aria-invalid="{{idInvalid}}" style="flex: 1; min-width: 0; height: 100%; border: 0; background: none; color: #F7F9E9; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 15px; font-variant-numeric: tabular-nums;">
+</div>
+<p id="idHint" class="hint" aria-live="polite" style="font-weight: {{idWeight}}; color: {{idColor}};">{{idMsg}}</p>
+</div>
+
+<div>
+<label for="editStatus" class="flbl">상태 메시지</label>
+<textarea id="editStatus" class="field" rows="2" maxlength="60" value="{{d.status}}" onChange="{{onStatus}}"></textarea>
+<p class="hint" style="text-align: right; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-variant-numeric: tabular-nums;">{{d.statusCount}}/60</p>
+</div>
+
+<fieldset style="border: 0; padding: 0; margin: 0;">
+<legend class="flbl">관심사 · 여러 개 선택 가능</legend>
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;">
+<sc-for list="{{interestOpts}}" as="o" hint-placeholder-count="10">
+<button type="button" class="pill pill-btn" aria-pressed="{{o.pressed}}" onClick="{{o.toggle}}" style="background: {{o.bg}}; color: {{o.fg}};">{{o.label}}</button>
+</sc-for>
+</div>
+<div class="custom-pill" style="margin-top: 10px; display: flex; align-items: center; gap: 6px; height: 36px; border: 1.5px solid transparent; border-radius: 999px; padding: 0 4px 0 14px; box-sizing: border-box; background: rgba(247,249,233,.13);">
+<input type="text" aria-label="관심사 직접 입력" placeholder="직접 입력..." maxlength="10" value="{{d.customText}}" onChange="{{onCustom}}" onKeyDown="{{onCustomKey}}" style="flex: 1; min-width: 0; height: 100%; border: 0; background: none; font: inherit; font-size: 13px; font-weight: 600; color: #F7F9E9;">
+<button type="button" class="ed-act" onClick="{{addCustom}}" aria-label="관심사 추가" disabled="{{customEmpty}}" style="height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: #F7F9E9; color: #141414; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; opacity: {{customOpacity}};">추가</button>
+</div>
+</fieldset>
+
+
+<fieldset style="border: 0; padding: 0; margin: 0;">
+<legend class="flbl">계정 공개 설정</legend>
+<div role="radiogroup" class="seg seg-tint" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
+<sc-for list="{{privacyOpts}}" as="r" hint-placeholder-count="2">
+<button type="button" class="rbtn" role="radio" aria-checked="{{r.checked}}" onClick="{{r.pick}}" style="height: 56px; border: 1px solid transparent; border-radius: 999px; background: {{r.bg}}; color: #F7F9E9; font: inherit; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; padding: 0 14px; cursor: pointer; text-align: left;">
+<span aria-hidden="true" style="width: 18px; height: 18px; flex: none; border-radius: 50%; border: 1.5px solid #F7F9E9; display: grid; place-items: center;"><span style="width: 9px; height: 9px; border-radius: 50%; background: {{r.dot}};"></span></span>{{r.label}}
+</button>
+</sc-for>
+</div>
+</fieldset>
+
+<button type="submit" class="ed-act" disabled="{{saveDisabled}}" style="height: 56px; border: 1px solid transparent; border-radius: 999px; background: #F7F9E9; color: #141414; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; opacity: {{saveOpacity}};">변경사항 저장</button>
+</form>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{noticeOpen}}" hint-placeholder-val="{{false}}">
+<div onClick="{{closeNotice}}" style="position: absolute; inset: 0; z-index: 78; background: rgba(0,0,0,.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);"></div>
+<div style="position: absolute; inset: 0; z-index: 79; display: grid; place-items: center; pointer-events: none; padding: 20px; box-sizing: border-box;">
+<div role="dialog" aria-modal="true" aria-labelledby="ntTitleM" class="gr" style="pointer-events: auto; width: 100%; max-height: 100%; box-sizing: border-box; display: flex; flex-direction: column; border-radius: 28px; border: 1px solid transparent; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); box-shadow: 0 30px 80px rgba(0,0,0,.55); color: #F7F9E9; font-family: 'Pretendard Variable', Pretendard, sans-serif; overflow: hidden;">
+<div style="flex: none; padding: 22px 22px 14px; border-bottom: 1px solid transparent;">
+<span style="display: block; font-size: 11px; font-weight: 700; letter-spacing: .14em; color: rgba(247,249,233,.72);">NOTICE</span>
+<h2 id="ntTitleM" style="margin: 6px 0 0; font-size: 22px; font-weight: 700;">공지</h2>
+</div>
+<div class="m-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 4px 22px 8px;">
+<sc-for list="{{notices}}" as="n" hint-placeholder-count="3">
+<div style="padding: 16px 0; border-bottom: 1px solid transparent;">
+<span style="display: flex; align-items: center; gap: 8px;"><span style="font-size: 15px; font-weight: 700;">{{n.title}}</span><sc-if value="{{n.isNew}}" hint-placeholder-val="{{false}}"><span style="flex: none; padding: 2px 7px; border-radius: 999px; background: #F7F9E9; color: #141414; font-size: 11px; font-weight: 700; letter-spacing: .04em;">NEW</span></sc-if></span>
+<p style="margin: 6px 0 0; font-size: 13px; line-height: 1.6; color: rgba(247,249,233,.72);">{{n.body}}</p>
+<span style="display: block; margin-top: 6px; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; color: rgba(247,249,233,.72); font-variant-numeric: tabular-nums;">{{n.date}}</span>
+</div>
+</sc-for>
+</div>
+<div style="flex: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px 18px 22px; border-top: 1px solid transparent;">
+<label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer;"><input type="checkbox" checked="{{noticeHide}}" onChange="{{onNoticeHide}}" style="width: 18px; height: 18px; margin: 0; accent-color: #F7F9E9;">다시 보지 않기</label>
+<button type="button" onClick="{{closeNotice}}" style="height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #F7F9E9; color: #141414; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer;">닫기</button>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{notifOpen}}" hint-placeholder-val="{{false}}">
+<div role="dialog" aria-modal="true" aria-label="알림" class="gl nt-in" style="position: absolute; inset: 0; z-index: 70; display: flex; flex-direction: column; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); box-shadow: 0 20px 50px rgba(0,0,0,.55); color: #F7F9E9; font-family: 'Pretendard Variable', Pretendard, sans-serif;">
+<div style="flex: none; height: 58px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 12px; border-bottom: 1px solid transparent;">
+<button type="button" class="nt-top" onClick="{{closeNotif}}" aria-label="닫기" style="justify-self: start; display: flex; align-items: center; gap: 4px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>뒤로</button>
+<h2 style="margin: 0; font-size: 18px; font-weight: 700;">알림</h2>
+<button type="button" class="nt-top" onClick="{{readAll}}" disabled="{{noUnread}}" style="justify-self: end;">모두 읽음</button>
+</div>
+<div class="m-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 4px 4px 24px;">
+<sc-for list="{{notifs}}" as="n" hint-placeholder-count="5">
+<sc-if value="{{n.first}}" hint-placeholder-val="{{false}}"><h3 style="margin: 14px 16px 6px; font-size: 12px; font-weight: 700; letter-spacing: .06em; color: rgba(247,249,233,.72);">{{n.group}}</h3></sc-if>
+<div class="{{n.cls}}">
+<a class="nt-link" href="{{n.href}}" onClick="{{n.go}}" aria-label="{{n.aria}}"></a>
+<span aria-hidden="true" style="flex: none; width: 40px; height: 40px; border-radius: 50%; background: {{n.color}}; color: #141414; display: grid; place-items: center; font-size: 15px; font-weight: 700;">{{n.initial}}</span>
+<span style="flex: 1; min-width: 0;">
+<span style="display: block; font-size: 14px; line-height: 1.45;"><b style="font-weight: 700;">{{n.who}}</b>{{n.msg}}</span>
+<span style="display: block; margin-top: 3px; font-size: 12px; color: rgba(247,249,233,.72); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{n.sub}}</span>
+<span style="display: block; margin-top: 3px; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; color: rgba(247,249,233,.72); font-variant-numeric: tabular-nums;">{{n.time}}</span>
+<sc-if value="{{n.isReq}}" hint-placeholder-val="{{false}}"><span style="display: flex; gap: 6px; margin-top: 10px;"><button type="button" class="nt-act" onClick="{{n.accept}}" style="border: 0; background: #F7F9E9; color: #141414;">수락</button><button type="button" class="nt-act" onClick="{{n.decline}}" style="border: 1px solid transparent; background: rgba(247,249,233,.16); color: #F7F9E9;">거절</button></span></sc-if>
+<sc-if value="{{n.reqDone}}" hint-placeholder-val="{{false}}"><span style="display: block; margin-top: 8px; font-size: 12px; font-weight: 600;">{{n.reqText}}</span></sc-if>
+</span>
+<sc-if value="{{n.hasThumb}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" class="notch-xs" style="flex: none; width: 44px; height: 44px; background: {{n.thumb}};"></span></sc-if>
+<sc-if value="{{n.isFollow}}" hint-placeholder-val="{{false}}"><button type="button" class="nt-act" onClick="{{n.toggleBack}}" aria-pressed="{{n.backPressed}}" style="flex: none; align-self: center; border: 1px solid transparent; background: {{n.backBg}}; color: {{n.backFg}};">{{n.backLabel}}</button></sc-if>
+<sc-if value="{{n.unread}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="color: #141414; position: absolute; left: 5px; top: 50%; width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: #C8FF42;"></span></sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<button type="button" class="{{topClass}} ic-btn" onClick="{{toTop}}" aria-label="맨 위로" aria-hidden="{{topHidden}}" tabIndex="{{topTab}}" style="position: absolute; left: 50%; bottom: 90px; width: 48px; height: 48px; border-radius: 50%; border: 1px solid transparent; background: #F7F9E9; color: #141414; display: grid; place-items: center; z-index: 25; box-shadow: 0 8px 22px rgba(0,0,0,.45);">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M12 19V5M5.5 11.5 12 5l6.5 6.5"></path></svg>
+</button>
+<sc-if value="{{rpOpen}}" hint-placeholder-val="{{false}}">
+<div onClick="{{rpClose}}" style="position: absolute; inset: 0; z-index: 95; background: rgba(0,0,0,.5); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);"></div>
+<div style="position: absolute; inset: 0; z-index: 96; display: grid; place-items: center; pointer-events: none; padding: 16px; box-sizing: border-box;">
+<div role="dialog" aria-modal="true" aria-labelledby="rpTitle" class="gl gr modal-in" style="pointer-events: auto; width: 360px; max-width: 100%; box-sizing: border-box; padding: 24px 20px 20px; border-radius: 28px; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); box-shadow: 0 20px 50px rgba(0,0,0,.55); color: #F7F9E9;">
+<sc-if value="{{rpForm}}" hint-placeholder-val="{{true}}">
+<h2 id="rpTitle" style="margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -.02em;">{{rpHead}}</h2>
+<p style="margin: 8px 0 16px; font-size: 13px; line-height: 1.6; color: rgba(247,249,233,.72);">신고 사유를 골라 주세요. 신고한 사실은 상대에게 알려지지 않아요.</p>
+<div role="radiogroup" aria-label="신고 사유" style="display: flex; flex-direction: column; gap: 6px;">
+<sc-for list="{{rpReasons}}" as="r" hint-placeholder-count="6"><button type="button" class="rp-opt" role="radio" aria-checked="{{r.checked}}" onClick="{{r.pick}}"><span class="rp-dot" aria-hidden="true"></span>{{r.label}}</button></sc-for>
+</div>
+<textarea class="rp-note" rows="2" maxlength="200" aria-label="자세한 내용" placeholder="자세한 내용 (선택)" value="{{rpNote}}" onChange="{{rpOnNote}}"></textarea>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px;">
+<button type="button" class="rp-cancel" onClick="{{rpClose}}">닫기</button>
+<button type="button" class="rp-submit ed-act" disabled="{{rpDisabled}}" onClick="{{rpSubmit}}">신고하기</button>
+</div>
+</sc-if>
+<sc-if value="{{rpDone}}" hint-placeholder-val="{{false}}">
+<h2 id="rpTitle" style="margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -.02em;">신고가 접수됐어요</h2>
+<p style="margin: 8px 0 20px; font-size: 13px; line-height: 1.6; color: rgba(247,249,233,.72);">검토한 뒤 운영 정책에 따라 처리할게요.<br>처리 결과는 설정 › 신고 내역에서 볼 수 있어요.</p>
+<button type="button" class="rp-submit ed-act" onClick="{{rpClose}}" style="width: 100%;">확인</button>
+</sc-if>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{bkOpen}}" hint-placeholder-val="{{false}}">
+<div onClick="{{bkClose}}" style="position: absolute; inset: 0; z-index: 95; background: rgba(0,0,0,.5); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);"></div>
+<div style="position: absolute; inset: 0; z-index: 96; display: grid; place-items: center; pointer-events: none; padding: 16px; box-sizing: border-box;">
+<div role="alertdialog" aria-modal="true" aria-labelledby="bkTitle" class="gl gr modal-in" style="pointer-events: auto; width: 340px; max-width: 100%; box-sizing: border-box; padding: 24px 20px 20px; border-radius: 28px; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); box-shadow: 0 20px 50px rgba(0,0,0,.55); color: #F7F9E9;">
+<h2 id="bkTitle" style="margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -.02em;">{{bkHead}}</h2>
+<p style="margin: 8px 0 20px; font-size: 13px; line-height: 1.6; color: rgba(247,249,233,.72);">차단하면 서로의 기록과 프로필을 볼 수 없고, 팔로우도 끊겨요.<br>차단 목록은 설정 › 차단한 계정에서 관리할 수 있어요.</p>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+<button type="button" class="rp-cancel" onClick="{{bkClose}}">닫기</button>
+<button type="button" class="rp-submit rp-danger" onClick="{{bkConfirm}}">차단하기</button>
+</div>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"other":{"editor":"boolean","default":false},"otherPrivate":{"editor":"boolean","default":false},"myRecordCount":{"editor":"range","default":9,"min":0,"max":30,"step":1},"demoCollections":{"editor":"boolean","default":true},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.colors = ['#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42'];
+    this.colorNames = ['하늘', '머스터드', '블루', '핑크', '올리브', '오렌지', '퍼플', '코발트'];
+    this.interests = ['차', '맛집', '카페', '음악', '산책', '사진', '책', '건축', '바다'];
+    const profile = props.other && props.otherPrivate ? {
+      name: '하린', id: 'harin.k', status: '오래 기억하고 싶은 담장들.',
+      interests: ['건축', '산책'], color: '#C8FF42',
+      photo: null, px: 0, py: 0, zoom: 1, isPrivate: true, customs: []
+    } : props.other ? {
+      name: '도윤', id: 'doyoon_sea', status: '파도 소리가 들리는 곳을 모읍니다.',
+      interests: ['바다', '사진', '산책'], color: '#C8FF42',
+      photo: null, px: 0, py: 0, zoom: 1, isPrivate: false, customs: []
+    } : {
+      name: '', id: '', status: '지나온 장소에서 느낀 것을 모읍니다.',
+      interests: ['카페', '산책', '사진'],
+      color: this.colors[Math.floor(Math.random() * this.colors.length)],
+      photo: null, px: 0, py: 0, zoom: 1, isPrivate: false, customs: []
+    };
+    if (!props.other) {
+      // profile set up right after signing up
+      try {
+        const sp = JSON.parse(localStorage.getItem('arch.profile') || 'null');
+        if (sp) {
+          if (sp.name) profile.name = sp.name;
+          if (sp.id) profile.id = sp.id;
+          if (Array.isArray(sp.interests) && sp.interests.length) profile.interests = sp.interests;
+        }
+      } catch (e) {}
+    }
+    if (props.other) {
+      let vu = null;
+      try { vu = sessionStorage.getItem('arch.viewUser'); } catch (e) {}
+      const pp = vu && this.otherProfiles()[vu];
+      if (pp && !!pp.isPrivate === !!props.otherPrivate) Object.assign(profile, pp, { id: vu });
+    }
+    this.places = [
+      { name: '북촌', region: '서울', coords: '37° 34′ N, 126° 59′ E', records: 12, category: '여행 > 관광,명소 > 한옥마을', address: '서울 종로구 계동' },
+      { name: '영도', region: '부산', coords: '35° 05′ N, 129° 04′ E', records: 8, category: '여행 > 관광,명소 > 섬', address: '부산 영도구' },
+      { name: '황남동', region: '경주', coords: '35° 50′ N, 129° 13′ E', records: 5, category: '여행 > 관광,명소 > 문화유적', address: '경북 경주시 황남동' },
+      { name: '남부시장', region: '전주', coords: '35° 49′ N, 127° 08′ E', records: 9, category: '쇼핑 > 전통시장', address: '전북 전주시 완산구 전동' },
+      { name: '주문진', region: '강릉', coords: '37° 54′ N, 128° 49′ E', records: 6, category: '여행 > 관광,명소 > 항구', address: '강원 강릉시 주문진읍' }
+    ];
+    this.people = [
+      { name: '민서', handle: 'minseo.walk', priv: false },
+      { name: '도윤', handle: 'doyoon_sea', priv: false },
+      { name: '하린', handle: 'harin.k', priv: true },
+      { name: '지우', handle: 'jiwoo_', priv: false },
+      { name: '유나', handle: 'yuna_', priv: false },
+      { name: '서준', handle: 'seojun.nite', priv: false }
+    ];
+    this.posts = [
+      { name: '민서', handle: 'minseo.walk', caption: '바람이 불 때마다 나뭇잎 사이로 빛이 흔들렸다.', place: '서울 · 북촌' },
+      { name: '도윤', handle: 'doyoon_sea', caption: '오늘은 바다가 유난히 가까이 느껴지는 오후.', place: '부산 · 영도' },
+      { name: '하린', handle: 'harin.k', caption: '길을 잘못 들어서 만난 조용한 담장. 오래 기억하고 싶다.', place: '경주 · 황남동' },
+      { name: '지우', handle: 'jiwoo_', caption: '시장 문이 열리기 전, 가장 고요한 골목의 온도.', place: '전주 · 남부시장' },
+      { name: '유나', handle: 'yuna_', caption: '창가에 앉아 아무것도 하지 않았던 한 시간.', place: '강릉 · 주문진' }
+    ];
+    this.state = {
+      profile: profile, draft: null,
+      collections: props.other ? this.seedOther() : this.seedCollections(props.demoCollections !== false),
+      svOpen: null, svDraft: '', svLiked: {}, svSaved: {}, svReported: {}, svComments: {}, svFollow: {}, svJust: null, followOther: props.other ? this.relOf(profile.id) : false,
+      peopleOpen: null, peopleQuery: '', peopleFollow: {}, toast: null,
+      openColl: null, collForm: null, picker: null, allOpen: false, allQuery: '', allSort: 'recent',
+      recOpen: null, recDraft: '', recLiked: {}, recSaved: {}, recComments: {}, recJust: null,
+      placeOpen: null,
+      recTab: 'mine', savedSub: 'posts', savedPosts: [0, 2, 3], savedPlaces: [0, 1, 4]
+    };
+    this.drag = null;
+  }
+  tick() {
+    this.clock = Math.max((this.clock || 0) + 1, Date.now());
+    return this.clock;
+  }
+  seedCollections(many) {
+    const now = Date.now();
+    const base = [
+      ['바다 가는 길', '파도 소리가 들리던 곳들.', ['m1', 'p4'], '#C8FF42', 'public'],
+      ['골목의 온도', '', ['m3', 'm2'], '#C8FF42', 'public'],
+      ['창가 자리', '오래 앉아 있고 싶은 곳.', ['m4'], '#C8FF42', 'followers'],
+      ['오래된 담장', '', ['m2', 'p0'], '#C8FF42', 'public'],
+      ['아침 시장', '', ['m3'], '#C8FF42', 'private'],
+      ['빛이 흔들리는 곳', '', ['m0'], '#C8FF42', 'public'],
+      ['다시 갈 곳', '', ['p1', 'm1', 'p4'], '#C8FF42', 'public'],
+      ['느린 오후', '', [], '#C8FF42', 'public']
+    ];
+    const list = many ? base : base.slice(0, 1);
+    this.clock = now;
+    return list.map((b, k) => ({ id: 'c' + (k + 1), title: b[0], desc: b[1], records: b[2], color: b[3], vis: b[4], cover: null, updated: now - k * 3600000 }));
+  }
+  recordVals() {
+    const n = this.myRecordTotal();
+    const pad = (x) => String(x).padStart(2, '0');
+    const list = [];
+    for (let k = 0; k < n; k++) {
+      if ((this.state.recDeleted || {})[k]) continue;
+      const b = this.posts[k % this.posts.length];
+      const d = new Date(Date.now() - k * 2 * 86400000);
+      list.push({
+        place: b.place, caption: (this.state.recEdits || {})[k] ?? b.caption,
+        color: '#C8FF42',
+        date: d.getFullYear() + '/' + pad(d.getMonth() + 1) + '/' + pad(d.getDate()),
+        likes: 3 + (k * 7) % 19,
+        meta: d.getFullYear() + '/' + pad(d.getMonth() + 1) + '/' + pad(d.getDate()),
+        aria: b.place + '에서 남긴 기록',
+        open: (() => { const kk = k; return () => (this.props.other ? this.setState({ svOpen: { kind: 'other', k: kk }, svDraft: '' }) : this.setState({ recOpen: kk, recDraft: '' })); })()
+      });
+    }
+    const s = this.state;
+    const tab = s.recTab;
+    const sub = s.savedSub;
+    const savedPosts = s.savedPosts.map((i) => {
+      const b = this.posts[i];
+      return {
+        place: b.place, caption: b.caption, meta: (() => { const d = new Date(Date.now() - (i + 1) * 3 * 86400000); return d.getFullYear() + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + String(d.getDate()).padStart(2, '0'); })(), likes: 5 + (i * 11) % 31,
+        color: '#C8FF42', aria: b.name + '의 기록, ' + b.place,
+        unsaveLabel: b.place + ' 기록 저장 취소',
+        open: () => this.setState({ svOpen: { kind: 'saved', i: i }, svDraft: '' }),
+        unsave: () => this.setState({ savedPosts: this.state.savedPosts.filter((x) => x !== i) })
+      };
+    });
+    const placeTiles = s.savedPlaces.map((i) => {
+      const pl = this.places[i];
+      return {
+        name: pl.name, region: pl.region, coords: pl.coords, count: '기록 ' + pl.records + '개',
+        color: '#C8FF42', aria: pl.region + ' ' + pl.name + ' 장소',
+        unsaveLabel: pl.name + ' 장소 저장 취소',
+        openLabel: pl.region + ' ' + pl.name + ' 장소 자세히 보기',
+        open: () => this.setState({ placeOpen: i }),
+        unsave: () => this.setState({ savedPlaces: this.state.savedPlaces.filter((x) => x !== i) })
+      };
+    });
+    const savedTotal = savedPosts.length + placeTiles.length;
+    let emptyText = '';
+    if (tab === 'mine' && n === 0) emptyText = '아직 남긴 기록이 없어요. 지금 있는 곳을 기록해 보세요.';
+    if (tab === 'saved' && sub === 'posts' && !savedPosts.length) emptyText = '저장한 게시물이 없어요. 피드에서 마음에 드는 기록을 저장해 보세요.';
+    if (tab === 'saved' && sub === 'places' && !placeTiles.length) emptyText = '저장한 장소가 없어요.';
+    const tabOf = (id, label, count) => ({
+      label: label, count: String(count), selected: tab === id ? 'true' : 'false',
+      fg: tab === id ? '#F7F9E9' : 'rgba(247,249,233,.72)', line: tab === id ? '#F7F9E9' : 'transparent',
+      pick: () => this.setState({ recTab: id })
+    });
+    const subOf = (id, label, count) => ({
+      label: label, count: String(count), selected: sub === id ? 'true' : 'false',
+      bg: sub === id ? '#F7F9E9' : 'rgba(247,249,233,.18)', fg: sub === id ? '#141414' : '#F7F9E9',
+      pick: () => this.setState({ savedSub: id })
+    });
+    return {
+      myRecords: list, recordCount: String(list.length),
+      recTabsCls: this.props.other ? 'rt-solo' : '',
+      recTabs: this.props.other ? [tabOf('mine', '게시물', n)] : [tabOf('mine', '게시물', n), tabOf('saved', '저장 목록', savedTotal)],
+      savedTabs: [subOf('posts', '게시물', savedPosts.length), subOf('places', '장소', placeTiles.length)],
+      showSaved: tab === 'saved',
+      showMine: tab === 'mine' && n > 0,
+      showSavedPosts: tab === 'saved' && sub === 'posts' && savedPosts.length > 0,
+      showSavedPlaces: tab === 'saved' && sub === 'places' && placeTiles.length > 0,
+      savedPostTiles: savedPosts, placeTiles: placeTiles,
+      recEmpty: !!emptyText, recEmptyText: emptyText
+    };
+  }
+  recFit(k) {
+    const r = [0.8, 1, 0.75, 4 / 3, 1.25][k % 5];
+    return r <= 1 ? { w: Math.round(820 * r), h: 820 } : { w: 780, h: Math.round(780 / r) };
+  }
+  recVals(p) {
+    const s = this.state;
+    const k = s.recOpen;
+    const out = { recOpen: k !== null && k !== undefined, closeRec: () => this.setState({ recOpen: null, recDraft: '', recMenu: null, recEditing: false }), recDraft: s.recDraft, onRecDraft: (e) => this.setState({ recDraft: e.target.value }), rv: {} };
+    if (!out.recOpen) return out;
+    const b = this.posts[k % this.posts.length];
+    const pl = this.places[k % this.places.length];
+    const pad = (x) => String(x).padStart(2, '0');
+    const d = new Date(Date.now() - k * 2 * 86400000);
+    const liked = !!s.recLiked[k];
+    const saved = !!s.recSaved[k];
+    const comments = s.recComments[k] || [];
+    const fit = this.recFit(k);
+    const likes = 3 + (k * 7) % 19 + (liked ? 1 : 0);
+    out.rv = {
+      menuExp: s.recMenu ? 'true' : 'false', showMenuList: s.recMenu === 'menu', confirmDel: s.recMenu === 'del',
+      toggleMenu: () => this.setState({ recMenu: this.state.recMenu ? null : 'menu' }),
+      askDelete: () => this.setState({ recMenu: 'del' }),
+      cancelDelete: () => this.setState({ recMenu: null }),
+      doDelete: () => {
+        this.setState({ recMenu: null, recOpen: null, recEditing: false, recDeleted: { ...(this.state.recDeleted || {}), [k]: true } });
+        this.showToast('기록을 삭제했어요');
+      },
+      share: () => { this.setState({ recMenu: null }); this.shareLink('record/' + k); },
+      dialogLabel: '내 기록, ' + b.place,
+      color: '#C8FF42',
+      initial: p.initial, name: p.dName, handle: p.dId,
+      time: k === 0 ? '오늘' : (k * 2) + '일 전',
+      meta: (k === 0 ? '오늘' : (k * 2) + '일 전') + ' · ' + b.place,
+      profileLabel: '내 프로필',
+      ratio: ['4 / 5', '1 / 1', '3 / 4', '4 / 3', '5 / 4'][k % 5],
+      photoW: fit.w, photoH: fit.h, dialogW: fit.w + 400,
+      coords: pl.coords, caption: (s.recEdits || {})[k] ?? b.caption, place: b.place,
+      date: d.getFullYear() + '/' + pad(d.getMonth() + 1) + '/' + pad(d.getDate()),
+      likes: likes,
+      heartFill: liked ? '#141414' : 'none', likePressed: liked ? 'true' : 'false',
+      likeLabel: liked ? '좋아요 취소' : '좋아요', likeAnim: s.recJust === 'l' + k ? 'pop' : '', likeWeight: liked ? 700 : 400,
+      toggleLike: () => this.setState({ recLiked: { ...this.state.recLiked, [k]: !liked }, recJust: liked ? null : 'l' + k }),
+      saveFill: saved ? '#141414' : 'none', savePressed: saved ? 'true' : 'false',
+      saveText: saved ? '저장됨' : '저장', saveAnim: s.recJust === 's' + k ? 'pop' : '', saveWeight: saved ? 700 : 400,
+      toggleSave: () => this.setState({ recSaved: { ...this.state.recSaved, [k]: !saved }, recJust: saved ? null : 's' + k }),
+      comments: comments.map((c, ci) => ({ ...c, mine: true, del: () => this.setState({ recComments: { ...this.state.recComments, [k]: (this.state.recComments[k] || []).filter((_, j) => j !== ci) } }) })), noComments: comments.length === 0, commentCount: '댓글 ' + comments.length,
+      submitComment: (e) => {
+        e.preventDefault();
+        const t = (this.state.recDraft || '').trim();
+        if (!t) return;
+        const list = (this.state.recComments[k] || []).concat([{ name: p.dId, text: t }]);
+        this.setState({ recComments: { ...this.state.recComments, [k]: list }, recDraft: '' });
+      }
+    };
+    return out;
+  }
+  svVals(p) {
+    const s = this.state;
+    const o = s.svOpen;
+    const out = { svOpen: !!o, closeSv: () => this.setState({ svOpen: null, svDraft: '' }), svDraft: s.svDraft, onSvDraft: (e) => this.setState({ svDraft: e.target.value }), sv: {} };
+    if (!o) return out;
+    const other = o.kind === 'other';
+    const k = other ? o.k : o.i;
+    const post = this.posts[k % this.posts.length];
+    const pl = this.places[k % this.places.length];
+    const name = other ? p.dName : post.name;
+    const handle = other ? p.dId : post.handle;
+    const key = o.kind + k;
+    const pad = (x) => String(x).padStart(2, '0');
+    const days = other ? k * 2 : k + 1;
+    const d = new Date(Date.now() - days * 86400000);
+    const following = other ? s.followOther === true : !!s.svFollow[handle];
+    const liked = !!s.svLiked[key];
+    const saved = other ? !!s.svSaved[key] : s.svSaved[key] !== false;
+    const reported = !!s.svReported[key];
+    const comments = s.svComments[key] || [];
+    const color = '#C8FF42';
+    const fit = this.recFit(k);
+    out.sv = {
+      dialogLabel: name + '의 기록', color: color,
+      initial: (name || '?')[0], name: name, handle: handle,
+      time: days + '일 전', meta: days + '일 전 · ' + post.place,
+      profileLabel: name + ' 프로필 보기',
+      share: () => this.shareLink('record/' + key),
+      profileHref: handle === 'harin.k' ? 'OtherProfilePrivateMobile.dc.html' : 'OtherProfileMobile.dc.html',
+      goAuthor: () => { this.setViewUser(handle); this.setFrom(this.navFrom()); },
+      followLabel: following ? '팔로잉' : '팔로우', followPressed: following ? 'true' : 'false',
+      followBg: following ? 'rgba(20,20,20,.13)' : '#141414', followFg: following ? '#141414' : '#C8FF42',
+      toggleFollow: () => {
+        if (other) this.toggleOtherFollow();
+        else this.setState({ svFollow: { ...this.state.svFollow, [handle]: !following } });
+      },
+      ratio: ['4 / 5', '1 / 1', '3 / 4', '4 / 3', '5 / 4'][k % 5],
+      photoW: fit.w, photoH: fit.h, dialogW: fit.w + 400,
+      coords: pl.coords, caption: post.caption, place: post.place,
+      date: d.getFullYear() + '/' + pad(d.getMonth() + 1) + '/' + pad(d.getDate()),
+      likes: 5 + (k * 11) % 31 + (liked ? 1 : 0),
+      heartFill: liked ? '#141414' : 'none', likePressed: liked ? 'true' : 'false',
+      likeLabel: liked ? '좋아요 취소' : '좋아요', likeAnim: s.svJust === 'l' + key ? 'pop' : '', likeWeight: liked ? 700 : 400,
+      toggleLike: () => this.setState({ svLiked: { ...this.state.svLiked, [key]: !liked }, svJust: liked ? null : 'l' + key }),
+      saveFill: saved ? '#141414' : 'none', savePressed: saved ? 'true' : 'false',
+      saveText: saved ? '저장됨' : '저장', saveAnim: s.svJust === 's' + key ? 'pop' : '', saveWeight: saved ? 700 : 400,
+      toggleSave: () => this.setState({ svSaved: { ...this.state.svSaved, [key]: !saved }, svJust: saved ? null : 's' + key }),
+      reportFill: reported ? '#141414' : 'none', reportPressed: reported ? 'true' : 'false',
+      reportText: reported ? '신고됨' : '신고', reportWeight: reported ? 700 : 400,
+      toggleReport: () => { if (!reported) this.setState({ rp: { reason: '', note: '', done: () => this.setState({ svReported: { ...this.state.svReported, [key]: true } }) } }); },
+      comments: comments.map((c, ci) => ({ ...c, mine: c.name === '나', del: () => this.setState({ svComments: { ...this.state.svComments, [key]: (this.state.svComments[key] || []).filter((_, j) => j !== ci) } }) })), noComments: comments.length === 0, commentCount: '댓글 ' + comments.length,
+      submitComment: (e) => {
+        e.preventDefault();
+        const t = (this.state.svDraft || '').trim();
+        if (!t) return;
+        const list = (this.state.svComments[key] || []).concat([{ name: '나', text: t }]);
+        this.setState({ svComments: { ...this.state.svComments, [key]: list }, svDraft: '' });
+      }
+    };
+    return out;
+  }
+  seedOther() {
+    const now = Date.now();
+    this.clock = now;
+    return [
+      ['바다 가는 길', '파도 소리가 들리던 곳들.', ['m1', 'm4'], '#C8FF42', 'public'],
+      ['영도의 오후', '', ['m1'], '#C8FF42', 'public'],
+      ['다시 갈 곳', '', ['m1', 'm2', 'm4'], '#C8FF42', 'public']
+    ].map((b, k) => ({ id: 'o' + (k + 1), title: b[0], desc: b[1], records: b[2], color: b[3], vis: b[4], cover: null, updated: now - k * 3600000 }));
+  }
+  otherFollowState() {
+    return this.state.followOther;
+  }
+  toggleOtherFollow() {
+    const cur = this.state.followOther;
+    const priv = !!this.state.profile.isPrivate;
+    const next = cur === true || cur === 'requested' ? false : (priv ? 'requested' : true);
+    this.setState({ followOther: next });
+    this.setRel(this.state.profile.id, next);
+    if (next === 'requested') this.showToast('팔로우 요청을 보냈어요');
+  }
+  shareLink(path, label) {
+    const url = 'https://arch.example/' + path;
+    try { if (navigator.clipboard) navigator.clipboard.writeText(url); } catch (e) {}
+    this.showToast((label || '링크') + '를 복사했어요');
+  }
+  blockedList() {
+    try { return JSON.parse(localStorage.getItem('arch.blocked') || '[]') || []; } catch (e) { return []; }
+  }
+  setBlocked(list) {
+    try { localStorage.setItem('arch.blocked', JSON.stringify(list)); } catch (e) {}
+    this.setState({ blockTick: (this.state.blockTick || 0) + 1 });
+  }
+  showToast(text) {
+    if (this.toastTimer) clearTimeout(this.toastTimer);
+    this.setState({ toast: text });
+    this.toastTimer = setTimeout(() => this.setState({ toast: null }), 2600);
+  }
+  componentWillUnmount() {
+    if (this.reqTimer) clearTimeout(this.reqTimer);
+    if (this.toastTimer) clearTimeout(this.toastTimer);
+  }
+  peopleVals(p, locked) {
+    const s = this.state;
+    const self = s.profile.id;
+    const pool = this.people.filter((u) => u.handle !== self);
+    const removed = this.state.removedFollowers || {};
+    const followers = pool.filter((u) => !removed[u.handle]);
+    const following = pool.filter((u, i) => i % 2 === 0);
+    const pk = s.peopleOpen;
+    const out = {
+      followers: String(followers.length + (this.props.other && s.followOther === true ? 1 : 0)),
+      following: String(following.length),
+      peopleCursor: locked ? 'default' : 'pointer',
+      openFollowers: () => { if (!locked) this.setState({ peopleOpen: 'followers', peopleQuery: '' }); },
+      openFollowing: () => { if (!locked) this.setState({ peopleOpen: 'following', peopleQuery: '' }); },
+      peopleOpen: !!pk, closePeople: () => this.setState({ peopleOpen: null, peopleQuery: '' }),
+      peopleQuery: s.peopleQuery, onPeopleQuery: (e) => this.setState({ peopleQuery: e.target.value }),
+      peopleTabs: [], peopleRows: [], peopleTitle: '', peopleEmpty: false, peopleEmptyText: '',
+      toastOn: !!s.toast, toastText: s.toast || ''
+    };
+    if (!pk) return out;
+    const q = s.peopleQuery.trim().toLowerCase();
+    const list = (pk === 'followers' ? followers : following).filter((u) => !q || (u.name + u.handle).toLowerCase().includes(q));
+    out.peopleTitle = pk === 'followers' ? '팔로워' : '팔로잉';
+    out.peopleTabs = [['followers', '팔로워', followers.length], ['following', '팔로잉', following.length]].map(([id, label, n]) => ({
+      label: label, count: String(n), selected: pk === id ? 'true' : 'false',
+      fg: pk === id ? '#F7F9E9' : 'rgba(247,249,233,.5)', line: pk === id ? '#F7F9E9' : 'transparent',
+      pick: () => this.setState({ peopleOpen: id })
+    }));
+    out.peopleRows = list.map((u, i) => {
+      const st = s.peopleFollow[u.handle] !== undefined ? s.peopleFollow[u.handle] : this.relOf(u.handle, u.handle === 'minseo.walk');
+      const label = st === true ? '팔로잉' : st === 'requested' ? '요청됨' : (u.priv ? '팔로우 요청' : this.followsMe(u.handle) ? '맞팔로우' : '팔로우');
+      const on = st === true || st === 'requested';
+      return {
+        name: u.name, handle: u.handle, initial: u.name[0], lockTxt: u.priv ? ' · 비공개' : '',
+        color: this.colors[(this.people.indexOf(u) * 3 + 1) % this.colors.length],
+        href: u.priv ? 'OtherProfilePrivateMobile.dc.html' : 'OtherProfileMobile.dc.html', aria: u.name + ' 프로필로 이동', go: () => { this.setViewUser(u.handle); this.setFrom(this.navFrom()); },
+        label: label, pressed: on ? 'true' : 'false',
+        bg: on ? 'rgba(247,249,233,.08)' : 'rgba(247,249,233,.14)', fg: on ? '#F7F9E9' : '#C8FF42',
+        toggle: () => {
+          const next = on ? false : (u.priv ? 'requested' : true);
+          this.setState({ peopleFollow: { ...this.state.peopleFollow, [u.handle]: next } });
+          this.setRel(u.handle, next);
+          if (next === 'requested') this.showToast('@' + u.handle + ' 님에게 팔로우 요청을 보냈어요');
+        },
+        canRemove: !this.props.other && pk === 'followers',
+        remove: () => {
+          this.setState({ removedFollowers: { ...(this.state.removedFollowers || {}), [u.handle]: true } });
+          this.showToast('@' + u.handle + ' 님을 팔로워에서 삭제했어요');
+        }
+      };
+    });
+    out.peopleEmpty = list.length === 0;
+    out.peopleEmptyText = q ? '‘' + q + '’에 맞는 사용자가 없어요.' : '아직 아무도 없어요.';
+    return out;
+  }
+  myRecordTotal() {
+    return Math.max(0, Math.min(30, this.props.myRecordCount ?? 9));
+  }
+  collItem(key, handle) {
+    const n = +key.slice(1);
+    if (key[0] === 'm') {
+      if (!(n < this.myRecordTotal()) || (this.state.recDeleted || {})[n]) return null;
+      const b = this.posts[n % this.posts.length];
+      return { key: key, place: b.place, caption: (this.state.recEdits || {})[n] ?? b.caption, meta: '@' + handle, color: '#C8FF42' };
+    }
+    const pl = this.places[n];
+    if (!pl) return null;
+    return { key: key, place: pl.region + ' · ' + pl.name, caption: '저장한 장소 · 기록 ' + pl.records + '개', meta: pl.coords, color: '#C8FF42' };
+  }
+  collItems(c, handle) {
+    return c.records.map((key) => this.collItem(key, handle)).filter(Boolean);
+  }
+  navVals() {
+    const from = this.navFrom();
+    return { navFeed: from === 'feed', navProfile: from !== 'feed', keepFrom: () => this.setFrom(this.navFrom()) };
+  }
+  navFrom() {
+    if (!this.props.other) return 'profile';
+    try { return sessionStorage.getItem('arch.from') === 'profile' ? 'profile' : 'feed'; } catch (e) { return 'feed'; }
+  }
+  setFrom(v) {
+    try { sessionStorage.setItem('arch.from', v); } catch (e) {}
+  }
+  placeVals(p) {
+    const s = this.state;
+    const i = s.placeOpen;
+    const pl = i === null || i === undefined ? null : this.places[i];
+    if (!pl) return { placeOpen: false, pv: {} };
+    const full = pl.region + ' · ' + pl.name;
+    const pad = (x) => String(x).padStart(2, '0');
+    const fmt = (d) => d.getFullYear() + '/' + pad(d.getMonth() + 1) + '/' + pad(d.getDate());
+    const recs = [];
+    const n = this.myRecordTotal();
+    for (let k = 0; k < n; k++) {
+      const b = this.posts[k % this.posts.length];
+      if (b.place !== full) continue;
+      recs.push({
+        caption: b.caption, handle: p.id || '아이디',
+        color: '#C8FF42', date: fmt(new Date(Date.now() - k * 2 * 86400000)),
+        aria: (this.props.other ? p.name + '의 기록 열기, ' : '내 기록 열기, ') + b.caption,
+        open: () => (this.props.other ? this.setState({ svOpen: { kind: 'other', k: k }, svDraft: '' }) : this.setState({ recOpen: k, recDraft: '' }))
+      });
+    }
+    this.posts.forEach((b, j) => {
+      if (b.place !== full || (this.props.other && b.handle === p.id)) return;
+      recs.push({
+        caption: b.caption, handle: b.handle, color: '#C8FF42',
+        date: fmt(new Date(Date.now() - (j + 1) * 3 * 86400000)), aria: b.name + '의 기록 열기, ' + b.caption,
+        open: () => this.setState({ svOpen: { kind: 'saved', i: j }, svDraft: '' })
+      });
+    });
+    const saved = s.savedPlaces.includes(i);
+    return {
+      placeOpen: true,
+      closePlace: () => this.setState({ placeOpen: null }),
+      pv: {
+        name: pl.name, category: pl.category, address: pl.address, coords: pl.coords,
+        mapHref: 'https://map.kakao.com/?q=' + encodeURIComponent(pl.region + ' ' + pl.name),
+        saveFill: saved ? '#141414' : 'none', savePressed: saved ? 'true' : 'false',
+        saveLabel: saved ? pl.name + ' 저장 취소' : pl.name + ' 저장',
+        toggleSave: () => {
+          const cur = this.state.savedPlaces;
+          if (cur.includes(i)) { this.setState({ savedPlaces: cur.filter((x) => x !== i) }); this.showToast('저장한 장소에서 뺐어요'); }
+          else { this.setState({ savedPlaces: cur.concat([i]) }); this.showToast('저장한 장소에 추가했어요'); }
+        },
+        count: recs.length, noRecs: recs.length === 0, recs: recs,
+        noPhotos: recs.length === 0,
+        photos: recs.map((r, k) => ({ color: r.color, open: r.open, aria: pl.name + ' 사진 ' + (k + 1) + ' · 기록 열기' }))
+      }
+    };
+  }
+  setForm(patch) {
+    this.setState({ collForm: { ...this.state.collForm, ...patch } });
+  }
+  updateColl(id, patch) {
+    this.setState({ collections: this.state.collections.map((c) => (c.id === id ? { ...c, ...patch, updated: this.tick() } : c)) });
+  }
+  collVals(p) {
+    const s = this.state;
+    const hid = p.id || '아이디';
+    const visL = { public: '전체 공개', followers: '팔로워에게만 공개', private: '나만 보기' };
+    const cur = s.collections.find((c) => c.id === s.openColl) || null;
+    const form = s.collForm;
+    const pk = s.picker;
+    const sorted = s.collections.slice().sort((a, b) => b.updated - a.updated);
+    const mkTile = (c) => ({
+      title: c.title, color: c.color, cover: c.cover, hasCover: !!c.cover, noCover: !c.cover,
+      count: this.collItems(c, hid).length + '개', lock: c.vis === 'private' ? '나만 보기' : '', isPrivate: c.vis === 'private',
+      aria: c.title + ' 컬렉션 열기',
+      open: () => this.setState({ openColl: c.id })
+    });
+    const aq = s.allQuery.trim();
+    const allList = s.collections
+      .filter((c) => !aq || (c.title + c.desc).includes(aq))
+      .sort((a, b) => s.allSort === 'name' ? a.title.localeCompare(b.title, 'ko') : s.allSort === 'count' ? (this.collItems(b, hid).length - this.collItems(a, hid).length) || (b.updated - a.updated) : b.updated - a.updated);
+    const out = {
+      collTotal: String(s.collections.length),
+      collTiles: sorted.slice(0, 6).map(mkTile),
+      hasMore: s.collections.length > 6,
+      moreCount: Math.max(0, s.collections.length - 6),
+      allOpen: !!s.allOpen,
+      allTiles: allList.map(mkTile),
+      allQuery: s.allQuery,
+      allEmpty: allList.length === 0,
+      allEmptyText: aq ? '‘' + aq + '’에 맞는 컬렉션이 없어요.' : '아직 컬렉션이 없어요.',
+      onAllQuery: (e) => this.setState({ allQuery: e.target.value }),
+      openAll: () => this.setState({ allOpen: true }),
+      closeAll: () => this.setState({ allOpen: false, allQuery: '' }),
+      sortTabs: [['recent', '최근 수정순'], ['name', '이름순'], ['count', '기록 많은 순']].map(([id, label]) => ({
+        label: label, selected: s.allSort === id ? 'true' : 'false',
+        bg: s.allSort === id ? '#F7F9E9' : 'rgba(247,249,233,.18)', fg: s.allSort === id ? '#141414' : '#F7F9E9',
+        pick: () => this.setState({ allSort: id })
+      })),
+      newColl: () => this.setState({ collForm: { mode: 'create', title: '', desc: '', vis: 'public' } }),
+      collFormOpen: !!form,
+      detailOpen: !!cur,
+      pickerOpen: !!(pk && cur),
+      form: {}, visOpts: [], detail: {}, recTiles: [], pick: {}, pickTabs: [], pickItems: []
+    };
+    if (form) {
+      const ok = form.title.trim().length > 0;
+      out.form = {
+        heading: form.mode === 'create' ? '새 컬렉션 만들기' : '컬렉션 편집',
+        submit: form.mode === 'create' ? '만들기' : '저장',
+        title: form.title, desc: form.desc, isEdit: form.mode === 'edit',
+        titleCount: form.title.length, descCount: form.desc.length,
+        disabled: !ok, opacity: ok ? 1 : 0.4
+      };
+      out.visOpts = ['public', 'followers', 'private'].map((v) => ({
+        label: visL[v], checked: form.vis === v ? 'true' : 'false',
+        bg: form.vis === v ? 'rgba(247,249,233,.16)' : 'transparent',
+        dot: form.vis === v ? '#C8FF42' : 'transparent',
+        pick: () => this.setForm({ vis: v })
+      }));
+      out.onFormTitle = (e) => this.setForm({ title: e.target.value.slice(0, 30) });
+      out.onFormDesc = (e) => this.setForm({ desc: e.target.value.slice(0, 80) });
+      out.closeForm = () => this.setState({ collForm: null });
+      out.saveForm = (e) => {
+        e.preventDefault();
+        const f = this.state.collForm;
+        const title = f.title.trim();
+        if (!title) return;
+        if (f.mode === 'create') {
+          const id = 'c' + Date.now();
+          const color = '#C8FF42';
+          this.setState({
+            collections: this.state.collections.concat([{ id: id, title: title, desc: f.desc.trim(), vis: f.vis, cover: null, color: color, records: [], updated: this.tick() }]),
+            collForm: null, openColl: id
+          });
+        } else {
+          this.updateColl(f.id, { title: title, desc: f.desc.trim(), vis: f.vis });
+          this.setState({ collForm: null });
+        }
+      };
+      out.deleteColl = () => {
+        const f = this.state.collForm;
+        this.setState({ collections: this.state.collections.filter((c) => c.id !== f.id), collForm: null, openColl: null, picker: null });
+      };
+    }
+    const curItems = cur ? this.collItems(cur, hid) : [];
+    if (cur) {
+      out.detail = {
+        title: cur.title, desc: cur.desc, hasDesc: !!cur.desc, color: cur.color,
+        cover: cur.cover, hasCover: !!cur.cover, noCover: !cur.cover,
+        fg: cur.cover ? '#F7F9E9' : '#141414',
+        count: curItems.length + '개', vis: visL[cur.vis],
+        empty: curItems.length === 0, notEmpty: curItems.length > 0,
+        coverBtn: cur.cover ? '커버 이미지 변경' : '커버 이미지 추가'
+      };
+      out.recTiles = curItems.map((it) => ({
+        ...it,
+        removeLabel: it.place + '을(를) 컬렉션에서 빼기',
+        isPost: it.key[0] === 'm', canOpen: true, openLabel: it.place + (it.key[0] === 'm' ? ' 기록' : ' 장소') + ' 자세히 보기',
+        open: () => {
+          const k = +it.key.slice(1);
+          if (it.key[0] === 'p') { this.setState({ placeOpen: k }); return; }
+          if (this.props.other) this.setState({ svOpen: { kind: 'other', k: k }, svDraft: '' });
+          else this.setState({ recOpen: k, recDraft: '' });
+        },
+        remove: () => this.updateColl(cur.id, { records: cur.records.filter((x) => x !== it.key) })
+      }));
+      out.closeDetail = () => this.setState({ openColl: null, picker: null });
+      out.editColl = () => this.setState({ collForm: { mode: 'edit', id: cur.id, title: cur.title, desc: cur.desc, vis: cur.vis } });
+      out.openPicker = () => this.setState({ picker: { tab: 'mine', query: '', sel: cur.records.slice() } });
+      out.onCover = (e) => {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        this.updateColl(cur.id, { cover: URL.createObjectURL(f) });
+        e.target.value = '';
+      };
+      out.removeCover = () => this.updateColl(cur.id, { cover: null });
+    }
+    if (pk && cur) {
+      const q = pk.query.trim();
+      const keys = pk.tab === 'mine' ? Array.from({ length: this.myRecordTotal() }, (_, k) => 'm' + k) : s.savedPlaces.map((i) => 'p' + i);
+      const list = keys.map((key) => this.collItem(key, hid)).filter((it) => it && (!q || (it.place + it.caption).includes(q)));
+      let emptyText = '';
+      if (!list.length) emptyText = q ? '‘' + q + '’에 맞는 항목이 없어요.' : pk.tab === 'mine' ? '아직 남긴 기록이 없어요.' : '저장한 장소가 없어요.';
+      out.pick = { query: pk.query, empty: list.length === 0, emptyText: emptyText, saveLabel: '저장 · ' + pk.sel.length + '개' };
+      out.pickTabs = [['mine', '내 기록'], ['places', '저장한 장소']].map(([id, label]) => ({
+        label: label, selected: pk.tab === id ? 'true' : 'false',
+        bg: pk.tab === id ? '#F7F9E9' : 'rgba(247,249,233,.13)', fg: pk.tab === id ? '#141414' : '#F7F9E9',
+        pick: () => this.setState({ picker: { ...this.state.picker, tab: id } })
+      }));
+      out.pickItems = list.map((it) => {
+        const i = it.key;
+        const on = pk.sel.includes(i);
+        return {
+          ...it,
+          checked: on ? 'true' : 'false', boxBg: on ? '#F7F9E9' : 'rgba(247,249,233,.13)', checkOpacity: on ? 1 : 0,
+          toggle: () => {
+            const sel = this.state.picker.sel;
+            this.setState({ picker: { ...this.state.picker, sel: sel.includes(i) ? sel.filter((x) => x !== i) : sel.concat([i]) } });
+          }
+        };
+      });
+      out.onPickQuery = (e) => this.setState({ picker: { ...this.state.picker, query: e.target.value } });
+      out.closePicker = () => this.setState({ picker: null });
+      out.savePicker = () => {
+        const sel = this.state.picker.sel.slice();
+        this.updateColl(cur.id, { records: sel });
+        this.setState({ picker: null });
+      };
+    }
+    return out;
+  }
+  setDraft(patch) {
+    this.setState({ draft: { ...this.state.draft, ...patch } });
+  }
+  clampPan(v, zoom) {
+    const lim = 50 * (zoom - 1);
+    return Math.max(-lim, Math.min(lim, v));
+  }
+  setZoom(z) {
+    const d = this.state.draft;
+    const zoom = Math.max(1, Math.min(3, z));
+    this.setDraft({ zoom: zoom, px: this.clampPan(d.px, zoom), py: this.clampPan(d.py, zoom) });
+  }
+  addCustom() {
+    const d = this.state.draft;
+    const t = (d.customText || '').trim().slice(0, 10);
+    if (!t) return;
+    const exists = this.interests.includes(t) || d.customs.includes(t);
+    const customs = exists ? d.customs : d.customs.concat([t]);
+    const all = this.interests.concat(customs);
+    const picked = d.interests.includes(t) ? d.interests : d.interests.concat([t]);
+    this.setDraft({ customs: customs, interests: all.filter((y) => picked.includes(y)), customText: '' });
+  }
+  idTaken(id) {
+    const taken = ['minseo.walk', 'doyoon_sea', 'harin.k', 'jiwoo_', 'yuna_', 'seojun.nite'];
+    return this.idValid(id) && id !== this.state.profile.id && taken.includes(id);
+  }
+  idValid(id) {
+    return /^[a-z][a-z0-9._]{2,19}$/.test(id);
+  }
+  noticeList() {
+    return [
+      { id: 'n3', date: '2026/10/26', title: '장소 팝업이 새로 생겼어요', body: '저장한 장소, 컬렉션 속 장소, 검색 결과의 장소를 누르면 장소 정보와 그곳에 남겨진 기록을 한눈에 볼 수 있어요.' },
+      { id: 'n2', date: '2026/10/25', title: '이제 모바일에서 바로 기록할 수 있어요', body: '메뉴 버튼의 기록하기에서 사진을 찍고, 비율과 장소를 고르면 바로 피드에 올라가요.' },
+      { id: 'n1', date: '2026/10/24', title: '피드 검색이 더 편해졌어요', body: '기록, 장소, 사용자, 컬렉션을 한 번에 찾고 최근 검색어도 다시 볼 수 있어요.' }
+    ];
+  }
+  initNotice() {
+    let show = false;
+    try {
+      const fromHome = sessionStorage.getItem('arch.fromHome') === '1';
+      const seen = sessionStorage.getItem('arch.noticeSeen') === '1';
+      const hide = localStorage.getItem('arch.noticeHide') === '1';
+      if (fromHome) sessionStorage.removeItem('arch.fromHome');
+      show = fromHome && !seen && !hide;
+      if (show) sessionStorage.setItem('arch.noticeSeen', '1');
+    } catch (e) {}
+    this.state.noticeOpen = show;
+    return show;
+  }
+  noticeVals() {
+    const open = this.state.noticeOpen === undefined ? this.initNotice() : !!this.state.noticeOpen;
+    const hide = !!this.state.noticeHide;
+    return {
+      noticeOpen: open,
+      noticeHide: hide,
+      onNoticeHide: (e) => this.setState({ noticeHide: !!e.target.checked }),
+      closeNotice: () => {
+        if (this.state.noticeHide) { try { localStorage.setItem('arch.noticeHide', '1'); } catch (e) {} }
+        this.setState({ noticeOpen: false });
+      },
+      notices: this.noticeList().map((n, k) => ({ ...n, isNew: k === 0 }))
+    };
+  }
+  relOf(h, dflt) {
+    let m = null;
+    try { m = JSON.parse(localStorage.getItem('arch.rel') || 'null'); } catch (e) {}
+    const v = m && m[h];
+    if (v === 'following') return true;
+    if (v === 'requested') return 'requested';
+    if (v === 'none') return false;
+    return dflt === undefined ? false : dflt;
+  }
+  setRel(h, v) {
+    try {
+      const m = JSON.parse(localStorage.getItem('arch.rel') || '{}') || {};
+      m[h] = v === true ? 'following' : v === 'requested' ? 'requested' : 'none';
+      localStorage.setItem('arch.rel', JSON.stringify(m));
+    } catch (e) {}
+  }
+  followsMe(h) {
+    return h === 'jiwoo_' || (h === 'seojun.nite' && this.notifStore('arch.notifReq') === 'accepted');
+  }
+  setViewUser(h) {
+    try { sessionStorage.setItem('arch.viewUser', h); } catch (e) {}
+  }
+  openRecHere(k) {
+    if (this.props.other) return false;
+    this.setState({ recOpen: k, recDraft: '', notifOpen: false });
+    return true;
+  }
+  otherProfiles() {
+    const base = { photo: null, px: 0, py: 0, zoom: 1, customs: [] };
+    return {
+      'minseo.walk': { ...base, name: '민서', status: '바람과 빛을 따라 걷습니다.', interests: ['산책', '사진'], color: '#C8FF42', isPrivate: false },
+      'doyoon_sea': { ...base, name: '도윤', status: '파도 소리가 들리는 곳을 모읍니다.', interests: ['바다', '사진', '산책'], color: '#C8FF42', isPrivate: false },
+      'harin.k': { ...base, name: '하린', status: '오래 기억하고 싶은 담장들.', interests: ['건축', '산책'], color: '#C8FF42', isPrivate: true },
+      'jiwoo_': { ...base, name: '지우', status: '시장과 골목의 아침을 좋아해요.', interests: ['맛집', '산책'], color: '#C8FF42', isPrivate: false },
+      'yuna_': { ...base, name: '유나', status: '창가 자리를 수집합니다.', interests: ['카페', '책'], color: '#C8FF42', isPrivate: false },
+      'seojun.nite': { ...base, name: '서준', status: '밤 산책 기록.', interests: ['음악', '산책'], color: '#C8FF42', isPrivate: false }
+    };
+  }
+  notifData() {
+    return [
+      { id: 'a1', group: '오늘', type: 'like', who: '도윤', handle: 'doyoon_sea', time: '5분 전', rec: 1, place: '부산 · 영도', color: '#C8FF42' },
+      { id: 'a2', group: '오늘', type: 'comment', who: '민서', handle: 'minseo.walk', time: '32분 전', rec: 0, place: '서울 · 북촌', text: '빛이 정말 예쁘게 들어오네요. 저도 가 볼래요!', color: '#C8FF42' },
+      { id: 'a3', group: '오늘', type: 'request', who: '서준', handle: 'seojun.nite', time: '1시간 전', color: '#C8FF42' },
+      { id: 'a4', group: '오늘', type: 'follow', who: '지우', handle: 'jiwoo_', time: '3시간 전', color: '#C8FF42' },
+      { id: 'a5', group: '이번 주', type: 'like', who: '유나', handle: 'yuna_', others: 2, time: '2일 전', rec: 4, place: '강릉 · 주문진', color: '#C8FF42' },
+      { id: 'a6', group: '이번 주', type: 'comment', who: '하린', handle: 'harin.k', time: '4일 전', rec: 3, place: '전주 · 남부시장', text: '여기 아침 공기가 진짜 좋죠.', color: '#C8FF42' }
+    ];
+  }
+  notifStore(key, val) {
+    try {
+      if (val === undefined) return JSON.parse(localStorage.getItem(key) || 'null');
+      localStorage.setItem(key, JSON.stringify(val));
+    } catch (e) {}
+    return null;
+  }
+  notifVals() {
+    const s = this.state;
+    if (!this.props.other) {
+      try {
+        const k = sessionStorage.getItem('arch.openRec');
+        if (k !== null) { sessionStorage.removeItem('arch.openRec'); this.state.recOpen = +k; this.state.recDraft = ''; }
+      } catch (e) {}
+    }
+    if (this.notifRead === undefined) {
+      this.notifRead = this.notifStore('arch.notifRead') || [];
+      this.notifReq = this.notifStore('arch.notifReq') || '';
+      try {
+        const k = sessionStorage.getItem('arch.openRec');
+        if (k !== null && !this.props.other) { sessionStorage.removeItem('arch.openRec'); this.state.recOpen = +k; this.state.recDraft = ''; }
+      } catch (e) {}
+    }
+    const read = this.notifRead;
+    const data = this.notifData();
+    const recColor = (k) => this.notifColors[(k * 5 + 1) % 8];
+    const unreadN = data.filter((n) => !read.includes(n.id)).length;
+    const mark = (id) => {
+      if (this.notifRead.includes(id)) return;
+      this.notifRead = this.notifRead.concat([id]);
+      this.notifStore('arch.notifRead', this.notifRead);
+      this.setState({ notifTick: (this.state.notifTick || 0) + 1 });
+    };
+    const profileHref = (h) => (h === 'harin.k' ? 'OtherProfilePrivateMobile.dc.html' : 'OtherProfileMobile.dc.html');
+    const rows = data.map((n, k) => {
+      const unread = !read.includes(n.id);
+      const isRec = n.type === 'like' || n.type === 'comment';
+      const msg = n.type === 'like' ? (n.others ? '님 외 ' + n.others + '명이 내 기록을 좋아해요.' : '님이 내 기록을 좋아해요.')
+        : n.type === 'comment' ? '님이 내 기록에 댓글을 남겼어요.'
+        : n.type === 'follow' ? '님이 나를 팔로우하기 시작했어요.'
+        : '님이 팔로우를 요청했어요.';
+      const req = n.type === 'request' ? this.notifReq : '';
+      return {
+        ...n, msg: msg, cls: unread ? 'nt-row unread' : 'nt-row', unread: unread, initial: n.who[0],
+        first: k === 0 || data[k - 1].group !== n.group,
+        sub: n.type === 'comment' ? '“' + n.text + '”' : isRec ? '⌖ ' + n.place : '@' + n.handle,
+        hasThumb: isRec, thumb: isRec ? recColor(n.rec) : '',
+        href: isRec ? 'ProfileMobile.dc.html' : profileHref(n.handle),
+        aria: n.who + msg + ' ' + n.time,
+        go: (e) => {
+          mark(n.id);
+          if (isRec && this.openRecHere && this.openRecHere(n.rec)) { if (e && e.preventDefault) e.preventDefault(); return; }
+          try {
+            if (isRec) sessionStorage.setItem('arch.openRec', String(n.rec));
+            else { sessionStorage.setItem('arch.from', 'profile'); sessionStorage.setItem('arch.viewUser', n.handle); }
+          } catch (e2) {}
+          this.setState({ notifOpen: false });
+        },
+        isFollow: n.type === 'follow', isReq: n.type === 'request' && !req, reqDone: n.type === 'request' && !!req,
+        reqText: req === 'accepted' ? '요청을 수락했어요' : '요청을 거절했어요',
+        backLabel: this.relOf('jiwoo_') === true ? '팔로잉' : '맞팔로우',
+        backBg: this.relOf('jiwoo_') === true ? 'rgba(247,249,233,.18)' : '#141414', backFg: this.relOf('jiwoo_') === true ? '#F7F9E9' : '#C8FF42',
+        backPressed: this.relOf('jiwoo_') === true ? 'true' : 'false',
+        toggleBack: () => { this.setRel('jiwoo_', this.relOf('jiwoo_') !== true); mark(n.id); },
+        accept: () => { this.notifReq = 'accepted'; this.notifStore('arch.notifReq', 'accepted'); this.setRel('seojun.nite', this.relOf('seojun.nite')); mark(n.id); },
+        decline: () => { this.notifReq = 'declined'; this.notifStore('arch.notifReq', 'declined'); mark(n.id); }
+      };
+    });
+    const open = !!s.notifOpen;
+    return {
+      notifOpen: open, notifExpanded: open ? 'true' : 'false',
+      notifUnread: unreadN > 0, notifCount: unreadN,
+      notifLabel: unreadN ? '알림, 안 읽은 알림 ' + unreadN + '개' : '알림',
+      notifBellBg: open ? '#C8FF42' : 'none', notifBellFg: open ? '#141414' : '#F7F9E9',
+      toggleNotif: () => this.setState({ notifOpen: !this.state.notifOpen }),
+      closeNotif: () => this.setState({ notifOpen: false }),
+      readAll: () => {
+        this.notifRead = data.map((n) => n.id);
+        this.notifStore('arch.notifRead', this.notifRead);
+        this.setState({ notifTick: (this.state.notifTick || 0) + 1 });
+      },
+      noUnread: unreadN === 0,
+      notifs: rows
+    };
+  }
+  topVals() {
+    const show = !!this.state.showTop;
+    return {
+      topRef: (el) => { this.topScroller = el; },
+      onTopScroll: (e) => {
+        const v = e.currentTarget.scrollTop > 400;
+        if (v !== !!this.state.showTop) this.setState({ showTop: v });
+      },
+      toTop: () => {
+        if (!this.topScroller) return;
+        const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        this.topScroller.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+      },
+      topClass: show ? 'to-top show' : 'to-top',
+      topHidden: show ? 'false' : 'true',
+      topTab: show ? 0 : -1
+    };
+  }
+  dockVals() {
+    const s = this.state;
+    const open = !!s.dockOpen;
+    const cur = this.props.other && this.navFrom() === 'feed' ? 'feed' : 'profile';
+    const tabs = [
+      ['home', '홈', 'TicketMobileIn.dc.html', '#C8FF42', false],
+      ['feed', '피드', 'FeedMobile.dc.html', '#C8FF42', false],
+      ['record', '기록하기', 'RecordMobile.dc.html', '#C8FF42', true],
+      ['curation', '큐레이션', 'CurationMobile.dc.html', '#C8FF42', false],
+      ['store', '스토어', 'StoreMobile.dc.html', '#C8FF42', false],
+      ['profile', '프로필', 'ProfileMobile.dc.html', '#C8FF42', true]
+    ];
+    // six wide tickets spread over the whole top half, so the rim is full down to the bottom edge
+    const step = 33;
+    const span = step * (tabs.length - 1);
+    const lim = 18;
+    const rot = Math.max(-lim, Math.min(lim, s.dockRot || 0));
+    const anySel = !!s.dockSel;
+    const guest = this.isGuest ? this.isGuest() : false;
+    const close = () => this.setState({ dockOpen: false });
+    const clampRot = (x) => Math.max(-lim, Math.min(lim, x));
+    return {
+      dock: {
+        arcZ: 81, selHref: (tabs.find((t) => t[0] === s.dockSel) || [])[2] || '#',
+        navRef: (el) => { this.dockNavEl = el; },
+        open: open, expanded: open ? 'true' : 'false', discCls: open ? 'on' : '', hintOp: open ? 1 : 0,
+        btnBg: open ? '#141414' : '#C8FF42', btnFg: open ? '#F7F9E9' : '#141414', btnLabel: open ? '메뉴 닫기' : '메뉴 열기',
+        l1: open ? 'translateY(6px) rotate(45deg)' : 'none', l2: open ? 0 : 1, l3: open ? 'translateY(-6px) rotate(-45deg)' : 'none',
+        toggle: () => this.setState({ dockOpen: !this.state.dockOpen, dockSel: null, dockRot: 0 }),
+        close: () => { if (this.dockMoved) { this.dockMoved = false; return; } close(); },
+        onWheel: (e) => this.setState({ dockRot: clampRot((this.state.dockRot || 0) - (e.deltaX || e.deltaY || 0) * 0.15) }),
+        onDown: (e) => { this.dockPtr = { x: e.clientX, rot: rot }; this.dockMoved = false; },
+        onMove: (e) => {
+          const p = this.dockPtr;
+          if (!p) return;
+          const dx = e.clientX - p.x;
+          if (Math.abs(dx) > 5) this.dockMoved = true;
+          this.setState({ dockRot: clampRot(p.rot + dx * 0.3) });
+        },
+        onUp: () => { this.dockPtr = null; },
+        tabs: tabs.map(([id, label, href, color, member], i) => {
+          const deg = -span / 2 + i * step + rot;
+          const here = id === cur;
+          const sel = s.dockSel === id;
+          return {
+            label: label, href: href, num: String(i + 1).padStart(2, '0'),
+            bg: (sel || (here && !s.dockSel)) ? '#C8FF42' : 'rgba(30,30,28,.72)', fg: (sel || (here && !s.dockSel)) ? '#141414' : '#F7F9E9', tear: (sel || (here && !s.dockSel)) ? 'rgba(20,20,20,.7)' : 'rgba(247,249,233,.45)', note: here ? '지금 여기' : '',
+            current: here ? 'page' : 'false', deg: deg.toFixed(1),
+            tf: 'rotate(' + deg.toFixed(1) + 'deg) translateY(calc(' + (sel ? -180 : -122) + 'px + var(--lift, 0px)))',
+            op: 1, pe: anySel ? 'none' : 'auto',
+            shadow: sel ? '0 -10px 26px rgba(0,0,0,.4)' : '0 -4px 14px rgba(0,0,0,.25)',
+            delay: (Math.abs(deg) / 400).toFixed(2),
+            go: (e) => {
+              if (here) { if (e && e.preventDefault) e.preventDefault(); close(); return; }
+              if (guest && member) { if (e && e.preventDefault) e.preventDefault(); this.setState({ dockOpen: false, guestPrompt: true }); return; }
+              if (e && e.preventDefault) e.preventDefault();
+              this.setState({ dockSel: id });
+              setTimeout(() => {
+                if (this.dockNavEl) this.dockNavEl.click();
+                this.setState({ dockOpen: false, dockSel: null });
+              }, 760);
+            }
+          };
+        })
+      }
+    };
+  }
+  reportVals() {
+    const r = this.state.rp;
+    const b = this.state.bk;
+    const bkv = { bkOpen: !!b, bkHead: b ? b.head : '', bkClose: () => this.setState({ bk: null }), bkConfirm: () => { const cur = this.state.bk; this.setState({ bk: null }); if (cur && cur.done) cur.done(); } };
+    if (!r) return { ...bkv, rpOpen: false, rpForm: false, rpDone: false, rpReasons: [] };
+    const reasons = ['스팸·광고', '부적절한 사진', '혐오·괴롭힘', '사실과 다른 장소 정보', '저작권 침해', '기타'];
+    const patch = (p) => this.setState({ rp: { ...this.state.rp, ...p } });
+    return {
+      rpOpen: true, rpForm: !r.sent, rpDone: !!r.sent, rpHead: r.head || '이 기록을 신고할까요?',
+      rpReasons: reasons.map((label) => ({ label: label, checked: r.reason === label ? 'true' : 'false', pick: () => patch({ reason: label }) })),
+      rpNote: r.note || '', rpOnNote: (e) => patch({ note: e.target.value.slice(0, 200) }),
+      rpDisabled: !r.reason,
+      rpSubmit: () => {
+        const cur = this.state.rp;
+        if (!cur || !cur.reason) return;
+        const next = { ...cur, sent: true };
+        if (cur.done) cur.done();
+        this.setState({ rp: next });
+      },
+      rpClose: () => this.setState({ rp: null }),
+      ...bkv
+    };
+  }
+  renderVals() {
+    this.notifColors = ['#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42'];
+    const nv = this.notifVals();
+    return { ...this.renderValsBase(), ...this.noticeVals(), ...nv, ...this.dockVals(), ...this.topVals(), ...this.reportVals() };
+  }
+  renderValsBase() {
+    const s = this.state;
+    const p = s.profile;
+    const d = s.draft;
+    const dd = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    const blocked = !!this.props.other && this.blockedList().some((x) => x.handle === p.id);
+    const locked = blocked || (!!this.props.other && !!p.isPrivate && this.state.followOther !== true);
+    const vals = {
+      color: '#C8FF42',
+      issued: dd.getFullYear() + '/' + pad(dd.getMonth() + 1) + '/' + pad(dd.getDate()),
+      p: { ...p, dName: p.name || '이름', dId: p.id || '아이디', initial: (p.name || '나').trim()[0] || '나' },
+      cardInterests: p.interests.map((x) => ({ label: x })),
+      noInterests: p.interests.length === 0,
+      hasPhoto: !!p.photo,
+      noPhoto: !p.photo,
+      privateTag: p.isPrivate ? '· PRIVATE' : '',
+      ...this.collVals(p),
+      ...this.placeVals(p),
+      ...this.navVals(),
+      ...this.recordVals(),
+      ...this.svVals({ dName: p.name || '이름', dId: p.id || '아이디' }),
+      isMe: !this.props.other,
+      isOther: !!this.props.other,
+      reqBanner: !!this.props.other && p.id === 'seojun.nite' && !this.notifStore('arch.notifReq'),
+      acceptReq: () => { this.notifReq = 'accepted'; this.notifStore('arch.notifReq', 'accepted'); this.showToast('@' + p.id + ' 님의 팔로우 요청을 수락했어요'); },
+      declineReq: () => { this.notifReq = 'declined'; this.notifStore('arch.notifReq', 'declined'); this.showToast('@' + p.id + ' 님의 팔로우 요청을 거절했어요'); },
+      ...this.peopleVals(p, locked),
+      locked: locked, notLocked: !locked,
+      lockTitle: blocked ? '차단한 계정이에요' : '비공개 계정이에요',
+      lockText: blocked ? '차단을 해제하면 @' + p.id + ' 님의 게시물과 컬렉션을 다시 볼 수 있어요.' : '팔로우 요청이 수락되면 @' + p.id + ' 님의 게시물과 컬렉션을 볼 수 있어요.',
+      otherMenuOpen: !!this.state.otherMenu, otherMenuExp: this.state.otherMenu ? 'true' : 'false',
+      otherMenuToggle: () => this.setState({ otherMenu: !this.state.otherMenu }),
+      shareProfile: () => { this.setState({ otherMenu: false }); this.shareLink('@' + p.id, '프로필 링크'); },
+      reportUser: () => { this.setState({ otherMenu: false, rp: { reason: '', note: '', head: '@' + p.id + ' 님을 신고할까요?', done: () => {} } }); },
+      blockLabel: blocked ? '차단 해제' : '차단하기',
+      toggleBlock: () => {
+        const list = this.blockedList();
+        this.setState({ otherMenu: false });
+        if (blocked) { this.setBlocked(list.filter((x) => x.handle !== p.id)); this.showToast('차단을 해제했어요'); }
+        else { this.setState({ bk: { head: '@' + p.id + ' 님을 차단할까요?', done: () => { this.setBlocked(this.blockedList().concat([{ handle: p.id, name: p.name || p.id }])); this.setRel(p.id, false); this.setState({ followOther: false }); this.showToast('@' + p.id + ' 님을 차단했어요'); } } }); }
+      },
+      followOtherLabel: this.state.followOther === true ? '팔로잉' : this.state.followOther === 'requested' ? '요청됨' : (p.isPrivate ? '팔로우 요청' : this.followsMe(p.id) ? '맞팔로우' : '팔로우'),
+      followOtherPressed: this.state.followOther ? 'true' : 'false',
+      followOtherBg: this.state.followOther ? 'rgba(20,20,20,.13)' : '#141414',
+      followOtherFg: this.state.followOther ? '#141414' : '#C8FF42',
+      toggleFollowOther: () => this.toggleOtherFollow(),
+      ...this.recVals({ initial: (p.name || '나').trim()[0] || '나', dName: p.name || '이름', dId: p.id || '아이디' }),
+      editing: !!d,
+      openEdit: () => this.setState({ draft: { ...this.state.profile, customText: '' } }),
+      closeEdit: () => this.setState({ draft: null })
+    };
+    if (!d) return { ...vals, d: {}, interestOpts: [], swatches: [], privacyOpts: [] };
+    const idDup = this.idTaken(d.id);
+    const valid = this.idValid(d.id) && !idDup;
+    const allOpts = this.interests.concat(d.customs);
+    const customTrim = (d.customText || '').trim();
+    const nameOk = d.name.trim().length > 0;
+    return {
+      ...vals,
+      d: { ...d, hasPhoto: !!d.photo, noPhoto: !d.photo, statusCount: d.status.length, cursor: d.photo ? 'grab' : 'default' },
+      idMsg: idDup ? '이미 있는 아이디예요' : valid ? '✓ 사용할 수 있는 형식이에요.' : '영문 소문자로 시작해 숫자, 마침표, 밑줄을 사용할 수 있습니다. 3–20자.',
+      idWeight: valid || idDup ? 600 : 400,
+      idColor: idDup ? '#F28B82' : 'inherit', idBorder: idDup ? '#F28B82' : 'transparent', idInvalid: idDup ? 'true' : 'false',
+      saveDisabled: !(valid && nameOk),
+      saveOpacity: valid && nameOk ? 1 : 0.4,
+      onName: (e) => this.setDraft({ name: e.target.value }),
+      onId: (e) => this.setDraft({ id: e.target.value.toLowerCase().replace(/^@/, '').replace(/[^a-z0-9._]/g, '').slice(0, 20) }),
+      onStatus: (e) => this.setDraft({ status: e.target.value.slice(0, 60) }),
+      onFile: (e) => {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        this.setDraft({ photo: URL.createObjectURL(f), px: 0, py: 0, zoom: 1 });
+        e.target.value = '';
+      },
+      removePhoto: () => this.setDraft({ photo: null, px: 0, py: 0, zoom: 1 }),
+      onZoom: (e) => this.setZoom(parseFloat(e.target.value)),
+      zoomIn: () => this.setZoom(d.zoom + 0.2),
+      zoomOut: () => this.setZoom(d.zoom - 0.2),
+      dragStart: (e) => {
+        if (!this.state.draft.photo) return;
+        const r = e.currentTarget.getBoundingClientRect();
+        this.drag = { x: e.clientX, y: e.clientY, px: this.state.draft.px, py: this.state.draft.py, w: r.width };
+        try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {}
+      },
+      dragMove: (e) => {
+        if (!this.drag) return;
+        const z = this.state.draft.zoom;
+        const g = this.drag;
+        this.setDraft({ px: this.clampPan(g.px + (e.clientX - g.x) / g.w * 100, z), py: this.clampPan(g.py + (e.clientY - g.y) / g.w * 100, z) });
+      },
+      dragEnd: () => { this.drag = null; },
+      onCustom: (e) => this.setDraft({ customText: e.target.value.slice(0, 10) }),
+      onCustomKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); this.addCustom(); } },
+      addCustom: () => this.addCustom(),
+      customEmpty: !customTrim,
+      customOpacity: customTrim ? 1 : 0.4,
+      interestOpts: allOpts.map((x) => {
+        const on = d.interests.includes(x);
+        return {
+          label: x, pressed: on ? 'true' : 'false',
+          bg: on ? '#C8FF42' : 'rgba(247,249,233,.13)', fg: on ? '#141414' : '#F7F9E9',
+          toggle: () => {
+            const cur = this.state.draft.interests;
+            const all = this.interests.concat(this.state.draft.customs);
+            this.setDraft({ interests: cur.includes(x) ? cur.filter((y) => y !== x) : all.filter((y) => y === x || cur.includes(y)) });
+          }
+        };
+      }),
+      swatches: this.colors.map((c, i) => ({
+        hex: c, label: '카드 색 ' + this.colorNames[i], selected: d.color === c,
+        pressed: d.color === c ? 'true' : 'false',
+        ring: d.color === c ? '0 0 0 3px rgba(255,255,255,.7), 0 0 0 4.5px #141414' : 'none',
+        pick: () => this.setDraft({ color: c })
+      })),
+      privacyOpts: [false, true].map((v) => ({
+        label: v ? '비공개 계정' : '공개 계정',
+        checked: d.isPrivate === v ? 'true' : 'false',
+        bg: d.isPrivate === v ? 'rgba(247,249,233,.16)' : 'transparent',
+        dot: d.isPrivate === v ? '#C8FF42' : 'transparent',
+        pick: () => this.setDraft({ isPrivate: v })
+      })),
+      save: (e) => {
+        e.preventDefault();
+        const dr = this.state.draft;
+        if (!this.idValid(dr.id) || this.idTaken(dr.id) || !dr.name.trim()) return;
+        const { customText, ...rest } = dr;
+        this.setState({ profile: { ...rest, name: dr.name.trim(), status: dr.status.trim() }, draft: null });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>arch; 첫 화면 티켓 · 모바일</title>
+<meta name="viewport" content="width=390">
+<script src="./shell.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@font-face{font-family:'Pretendard Variable';font-weight:45 920;font-style:normal;font-display:swap;src:url('assets/blob/f9299b363a48d37a9d320e5eaf3254f6.woff2') format('woff2-variations'),url('assets/blob/f9299b363a48d37a9d320e5eaf3254f6.woff2') format('woff2')}
+body{margin:0}
+a{color:inherit}a:hover{opacity:.7}
+button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.cell:hover{background:rgba(0,0,0,.05)}
+.cell:focus-visible{outline:2px solid currentColor;outline-offset:-4px}
+.check-path{stroke-dasharray:60;stroke-dashoffset:60;animation:draw .28s cubic-bezier(.7,0,.3,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.ticket-in{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.jolt{animation:jolt .5s cubic-bezier(.3,.6,.3,1)}
+@keyframes jolt{0%{transform:none}25%{transform:translateY(-3px)}60%{transform:translateY(1px)}100%{transform:none}}
+.tear{transform-origin:100% 0;animation:tear .95s cubic-bezier(.55,0,.8,.3) forwards}
+@keyframes tear{0%{transform:none}16%{transform:rotate(-1.4deg) translateY(2px)}34%{transform:rotate(-3deg) translate(-2px,7px)}100%{transform:translate(-40px,560px) rotate(-16deg);opacity:0}}
+.dest-in{animation:fade .45s ease both}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.paper{transition:background-color .45s ease}
+.spinning{animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.auth-card{-webkit-mask:radial-gradient(circle 14px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 14px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 14px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 14px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat;mask:radial-gradient(circle 14px at 0 0,#0000 98%,#000) top left/51% 51% no-repeat,radial-gradient(circle 14px at 100% 0,#0000 98%,#000) top right/51% 51% no-repeat,radial-gradient(circle 14px at 0 100%,#0000 98%,#000) bottom left/51% 51% no-repeat,radial-gradient(circle 14px at 100% 100%,#0000 98%,#000) bottom right/51% 51% no-repeat}
+.auth-in{animation:authIn .35s cubic-bezier(.2,.8,.2,1) both}
+@keyframes authIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.auth-field{width:100%;box-sizing:border-box;height:48px;border:1px solid transparent;background:rgba(20,20,20,.13);padding:0 14px;font:inherit;font-size:14px;color:#141414;border-radius:16px}
+.auth-field::placeholder{color:rgba(20,20,20,.55)}
+.auth-field:focus{outline:2px solid #141414;outline-offset:-1px}
+.auth-btn:disabled{opacity:.35;cursor:not-allowed}
+.auth-tab:focus-visible,.auth-btn:focus-visible,.auth-x:focus-visible{outline:2px solid #141414;outline-offset:2px}
+.ticker{display:flex;width:max-content;animation:ticker 26s linear infinite}
+.ticker span{white-space:pre}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion: reduce){.ticker{animation:none}}
+.store-cell{transition:background .2s ease;border-radius:14px}
+.store-cell:hover{background:rgba(0,0,0,.06);opacity:1}
+.store-cell:focus-visible{outline:2px solid currentColor;outline-offset:-4px}
+.doc-scroll{scrollbar-width:thin}
+.doc-sheet{animation:docUp .35s cubic-bezier(.22,1,.36,1) both}
+@keyframes docUp{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+
+button{transition:scale .15s ease,background-color .2s ease,opacity .2s ease}
+button:not(:disabled):active{scale:.97}
+button,a{-webkit-tap-highlight-color:transparent}
+
+/* icon buttons: one 44px round hit area, 24px icons, soft line ends */
+button svg,a svg,button svg *,a svg *{stroke-linecap:round!important;stroke-linejoin:round!important}
+.ic-btn{width:44px!important;height:44px!important;min-width:44px;border-radius:50%!important;padding:0!important;display:grid!important;place-items:center!important;box-sizing:border-box}
+.ic-btn>svg,.ic-tog>svg{width:24px!important;height:24px!important;flex:none}
+/* pressed save / like: neon icon on a dark round chip, readable on any background */
+.ic-tog>svg{box-sizing:content-box;padding:7px;margin:-7px;border-radius:50%;transition:background-color .2s ease}
+.ic-tog[aria-pressed="true"]>svg{background:#141414}
+.ic-tog[aria-pressed="true"]>svg path{fill:#C8FF42!important;stroke:#C8FF42!important}
+
+/* popups, sheets and menus: one translucent glass panel like the notification panel */
+.gl .auth-tab:focus-visible,.gl .auth-btn:focus-visible,.gl .auth-x:focus-visible{outline:2px solid #F7F9E9;outline-offset:2px}
+.gl .auth-field{width:100%;box-sizing:border-box;height:48px;border:1px solid transparent;background:rgba(247,249,233,.13);padding:0 14px;font:inherit;font-size:14px;color:#F7F9E9;border-radius:16px}
+.gl .auth-field::placeholder{color:rgba(247,249,233,.55)}
+.gl .auth-field:focus{outline:2px solid #F7F9E9;outline-offset:-1px}
+.gl .auth-card,.auth-card.gl{-webkit-mask:none!important;mask:none!important;border-radius:28px}
+.gl.view-menu .view-opt[aria-checked="true"],.gl .view-opt[aria-current="true"]{color:#C8FF42}
+.gl .tear2::before,.gl .tear2::after{display:none}
+
+/* atmosphere: faint light behind the glass and a film grain over the ground */
+:root{--grain:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+.amb{background-image:var(--grain),radial-gradient(60% 45% at 100% 0%,rgba(200,255,66,.10),transparent 70%),radial-gradient(55% 40% at 0% 100%,rgba(247,249,233,.06),transparent 70%)!important;background-repeat:repeat,no-repeat,no-repeat!important;background-size:160px 160px,100% 100%,100% 100%!important}
+.amb.amb-home{background-image:var(--grain),radial-gradient(42% 32% at 50% 56%,rgba(200,255,66,.22),transparent 72%),radial-gradient(30% 24% at 22% 18%,rgba(247,249,233,.10),transparent 70%)!important}
+.gl,.gr,.dk-disc{background-image:var(--grain)!important;background-size:160px 160px!important}
+/* a soft neon bloom behind the login card and the open menu wheel */
+.auth-card{box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 140px 20px rgba(200,255,66,.16)!important}
+.dk-disc.on{box-shadow:0 -10px 40px rgba(0,0,0,.45),0 0 120px 30px rgba(200,255,66,.18)}
+/* curation ring: focus on the lifted cover, the rest falls out of focus */
+.cr-face{transition:filter .35s ease}
+.cr-stage:has(.cr-pop) .cr-face{filter:blur(4px) brightness(.5)}
+.cr-stage:has(.cr-pop) .cr-back{filter:blur(4px) brightness(.3)}
+
+/* login / sign-up: one cream highlight that slides between the two tabs */
+.auth-seg{position:relative;isolation:isolate}
+.auth-seg::before{content:"";position:absolute;z-index:-1;top:4px;bottom:4px;left:4px;width:calc(50% - 6px);border-radius:999px;background:#F7F9E9;transform:translateX(calc(var(--seg,0) * (100% + 4px)));transition:transform .45s cubic-bezier(.22,1,.36,1)}
+.auth-seg .auth-tab{background:transparent!important;transition:color .3s ease}
+
+/* destinations: four separate soft tiles; the picked one fills in ink with a neon check */
+.dest-tiles .cell{border-right:0!important;border-radius:10px;background:rgba(20,20,20,.08)!important;transition:background-color .25s ease,color .25s ease,scale .15s ease}
+.dest-tiles .cell:hover{background:rgba(20,20,20,.13)!important}
+.dest-tiles .cell[aria-pressed="true"]{background:#141414!important;color:#F7F9E9!important}
+.dest-tiles .cell[aria-pressed="true"] .check-path{stroke:#C8FF42}
+
+/* solid = printed paper: every ticket and card shares one fine paper grain and one soft shadow */
+:root{--paper:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .11 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+:where(.paper,.pcard,.st-cell){position:relative}
+.paper::after,.notch::after,.notch-sm::after,.notch-xs::after,.notch4::after,.pcard::after,.st-cell::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:var(--paper);background-size:140px 140px;z-index:1}
+.pcard{background-image:none!important;box-shadow:0 12px 28px rgba(0,0,0,.35)!important}
+.st-cell{box-shadow:0 12px 28px rgba(0,0,0,.35)}
+
+/* ticket cards inside glass panels keep their side notches, tinted like the panel behind them */
+.gl{--bite-bg:#262624}
+.gl .tear2::before,.gl .tear2::after{display:block;background:var(--bite-bg) var(--grain,none);background-size:160px 160px}
+
+/* segmented selectors: one highlight that springs over to the picked option (iOS-like) */
+.seg{position:relative;isolation:isolate;--n:2;--i:0;--P:4px;--G:4px;display:grid!important;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);grid-template-columns:none!important;padding:var(--P)!important;gap:var(--G)!important;border-radius:999px!important;background:rgba(247,249,233,.10)!important;overflow:visible!important;border:0!important}
+.seg::before{content:"";position:absolute;z-index:-1;top:var(--P);bottom:var(--P);left:var(--P);width:calc((100% - 2 * var(--P) - (var(--n) - 1) * var(--G)) / var(--n));border-radius:999px;background:var(--seg-c,#F7F9E9);box-shadow:0 4px 14px rgba(0,0,0,.25);transform:translateX(calc(var(--i) * (100% + var(--G))));transition:transform .4s cubic-bezier(.3,1.15,.5,1);transition:transform .45s linear(0, 0.1 5%, 0.42 13%, 0.76 23%, 0.95 33%, 1.03 43%, 1.035 50%, 1.012 64%, 1.002 78%, 1)}
+.seg :is(button,a):is([aria-selected],[aria-pressed],[aria-checked]){background:transparent!important;border:0!important;border-radius:999px!important;transition:color .25s ease .05s}
+.seg:not(.seg-tint) :is(button,a):is([aria-selected="true"],[aria-pressed="true"],[aria-checked="true"]){color:#141414!important}
+.seg-fit{display:grid!important;width:max-content;max-width:100%}
+.seg-fit :is(button,a){padding:9px 18px!important;justify-content:center}
+.seg-tint{--P:0px;--G:8px;--seg-c:rgba(247,249,233,.16);background:none!important}
+.seg-tint::before{box-shadow:none}
+.rt-solo.seg{background:none!important;padding:0!important}.rt-solo.seg::before{display:none}.rt-solo.seg .ptab.ptab.ptab{color:#F7F9E9!important;padding-left:0!important}
+.seg:has(:is(button,a):nth-of-type(2):last-of-type){--n:2}
+.seg:has(:is(button,a):nth-of-type(3):last-of-type){--n:3}
+.seg:has(:is(button,a):nth-of-type(4):last-of-type){--n:4}
+.seg:has(:is(button,a):nth-of-type(5):last-of-type){--n:5}
+.seg:has(:is(button,a):nth-of-type(2):is([aria-selected="true"],[aria-pressed="true"],[aria-checked="true"])){--i:1}
+.seg:has(:is(button,a):nth-of-type(3):is([aria-selected="true"],[aria-pressed="true"],[aria-checked="true"])){--i:2}
+.seg:has(:is(button,a):nth-of-type(4):is([aria-selected="true"],[aria-pressed="true"],[aria-checked="true"])){--i:3}
+.seg:has(:is(button,a):nth-of-type(5):is([aria-selected="true"],[aria-pressed="true"],[aria-checked="true"])){--i:4}
+
+/* the other sliders share the same spring */
+.auth-seg::before,.g-slide::before{transition:transform .4s cubic-bezier(.3,1.15,.5,1);transition:transform .45s linear(0, 0.1 5%, 0.42 13%, 0.76 23%, 0.95 33%, 1.03 43%, 1.035 50%, 1.012 64%, 1.002 78%, 1)}
+.navlink[aria-current="page"]::before{animation-duration:.5s;animation-timing-function:cubic-bezier(.3,1.15,.5,1);animation-timing-function:linear(0, 0.1 5%, 0.42 13%, 0.76 23%, 0.95 33%, 1.03 43%, 1.035 50%, 1.012 64%, 1.002 78%, 1)}
+
+/* tear lines: short round-capped dashes with a little more air between them */
+:root{--dash:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='9' height='2' viewBox='0 0 9 2'><line x1='1' y1='1' x2='3' y2='1' stroke='black' stroke-width='2' stroke-linecap='round'/></svg>") left center/auto 100% repeat-x}
+.dk-t .tear2{border-top:0!important;background:var(--tear,rgba(247,249,233,.45))!important}
+
+/* header bell sits a hair higher so it lines up with the settings gear */
+/* bookmark drawn at the heart's visual height */
+
+/* account menu: inset rows so nothing hugs the rounded corners, no divider lines */
+.acct-menu{padding:8px;box-sizing:border-box}
+.acct-menu>span[aria-hidden="true"]{display:none!important}
+.acct-menu>span:first-child{padding:10px 14px 8px!important;opacity:.72}
+.acct-menu>a{border-radius:20px!important;padding:0 14px!important;transition:background-color .2s ease}
+.acct-menu>a:hover{background:rgba(247,249,233,.08);opacity:1}
+
+/* liked / saved: the icon itself fills in, no chip behind it (heart matches the bookmark) */
+.ic-tog.ic-tog[aria-pressed="true"]>svg{background:none!important}
+.ic-tog.ic-tog[aria-pressed="true"]>svg path{fill:currentColor!important;stroke:currentColor!important}
+</style>
+</helmet>
+<div class="amb amb-home" onPointerDown="{{onDown}}" onPointerMove="{{onMove}}" onPointerUp="{{onUp}}" onPointerCancel="{{onUp}}" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: {{ground}}; font-family: 'Pretendard Variable', Pretendard, sans-serif; color: {{ink}}; touch-action: none; user-select: none;">
+
+<sc-if value="{{showSpinner}}" hint-placeholder-val="{{false}}">
+<div role="status" aria-label="{{spinnerLabel}}" style="position: absolute; left: 50%; top: 0; width: 40px; height: 40px; margin-left: -20px; border-radius: 50%; background: #F7F9E9; display: grid; place-items: center; z-index: 3; box-shadow: 0 4px 14px rgba(0,0,0,.35); transform: translateY({{spinnerY}}px); opacity: {{spinnerOpacity}}; transition: {{spinnerTrans}};">
+<svg class="{{spinnerClass}}" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" style="transform: rotate({{spinnerRot}}deg);"><circle cx="12" cy="12" r="9" fill="none" stroke="{{ink}}" stroke-width="2.2" stroke-linecap="round" pathLength="100" stroke-dasharray="{{arcDash}} 100"></circle></svg>
+</div>
+</sc-if>
+
+<sc-if value="{{showTicket}}" hint-placeholder-val="{{true}}">
+<div style="position: absolute; inset: 0; display: grid; place-items: center; transform: translateY({{pull}}px); transition: {{pullTrans}};">
+<div class="ticket-in" style="width: 340px; height: 744px; position: relative; display: flex; flex-direction: column;">
+
+<div class="paper {{upperClass}}" style="height: 466px; flex: none; position: relative; background: {{paper}}; border-radius: 26px 26px 0 0; overflow: hidden;">
+<svg aria-hidden="true" width="100%" height="100%" style="position: absolute; inset: 0; pointer-events: none; opacity: .18; mix-blend-mode: multiply;"><filter id="paperM"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"></feTurbulence><feColorMatrix values="0 0 0 0 .35  0 0 0 0 .32  0 0 0 0 .28  0 0 0 .55 0"></feColorMatrix></filter><rect width="100%" height="100%" filter="url(#paperM)"></rect></svg>
+<section style="height: 100%; box-sizing: border-box; padding: 30px 26px 26px; display: flex; flex-direction: column; position: relative;">
+<span style="font-family: &quot;Pretendard Variable&quot;; font-size: 11px; letter-spacing: .12em; font-weight: 700">ARCH YOUR VIEW</span>
+<p style="font-size: 12px; line-height: 1.65; margin: 8px 0 0; max-width: 220px; width: 259px">취향으로 발견하고, 그 자리에서 기록하세요. <br>지나온 장소와 순간을 모으는 공간 아카이빙.</p>
+<h1 style="font-weight: 400; font-size: 40px; line-height: 1.16; letter-spacing: -.04em; margin: 34px 0 0; text-align: right">취향이<br>도착하는 곳,</h1>
+<div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: flex-end;">
+<span style="font-family: &quot;Pretendard Variable&quot;; font-size: 64px; line-height: 1.02; letter-spacing: -.01em; font-weight: 900">arch;</span>
+<span style="font-family: &quot;Pretendard Variable&quot;; font-size: 15px; line-height: 1.45; text-align: right">37° 34′ N<br>126° 58′ E</span>
+</div>
+<div style="margin-top: auto; display: flex;">
+<div style="display: flex; flex-direction: column; gap: 8px; width: 156px">
+<a href="AboutMobile.dc.html" onClick="{{goAbout}}" style="height: 48px; border: 1px solid transparent; background: rgba(20,20,20,.08); text-decoration: none; box-sizing: border-box; color: {{ink}}; padding: 0 14px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 600; letter-spacing: .06em; border-radius: 999px;">ABOUT arch;<span aria-hidden="true">→</span></a>
+<sc-if value="{{signedOut}}" hint-placeholder-val="{{true}}">
+<button type="button" onClick="{{openAuth}}" aria-haspopup="dialog" style="box-sizing: border-box; height: 48px; border: 1px solid transparent; background: {{ink}}; color: {{paper}}; padding: 0 14px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 600; border-radius: 999px;">로그인/회원가입<span aria-hidden="true">→</span></button>
+</sc-if>
+<sc-if value="{{signedIn}}" hint-placeholder-val="{{false}}">
+<div data-acct="1" style="position: relative;">
+<button type="button" data-acct="1" onClick="{{toggleAcct}}" aria-haspopup="menu" aria-expanded="{{acctExpanded}}" aria-label="계정 메뉴" style="width: 100%; box-sizing: border-box; height: 48px; border: 1px solid transparent; background: {{ink}}; color: {{paper}}; padding: 0 14px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 600; border-radius: 999px;">@아이디<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true" style="transform: rotate({{acctChevron}}deg); transition: transform .2s ease;"><path d="M6 15l6-6 6 6"></path></svg></button>
+<sc-if value="{{acctOpen}}" hint-placeholder-val="{{false}}">
+<div role="menu" data-acct="1" class="gl acct-menu" aria-label="계정" style="border-radius: 28px; position: absolute; left: 0; bottom: calc(100% + 8px); width: 220px; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); color: #F7F9E9; z-index: 20; box-shadow: 0 14px 30px rgba(0,0,0,.35); display: flex; flex-direction: column;">
+<span style="display: block; padding: 12px 14px 10px; font-size: 11px; font-weight: 500; letter-spacing: .08em;">ACCOUNT · @아이디</span>
+<span aria-hidden="true" style="display: block; height: 1px; background: currentColor; opacity: .35;"></span>
+<a onClick="{{leave}}" role="menuitem" href="ProfileMobile.dc.html" style="height: 48px; padding: 0 14px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 500; text-decoration: none; border-radius: 999px;">프로필<span aria-hidden="true">→</span></a>
+<span aria-hidden="true" style="display: block; height: 1px; background: currentColor; opacity: .35;"></span>
+<a onClick="{{leave}}" role="menuitem" href="SettingsMobile.dc.html" style="height: 48px; padding: 0 14px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 500; text-decoration: none; border-radius: 999px;">설정<span aria-hidden="true">→</span></a>
+<span aria-hidden="true" style="display: block; height: 1px; background: currentColor; opacity: .35;"></span>
+<a onClick="{{leave}}" role="menuitem" href="TicketMobile.dc.html" style="height: 48px; padding: 0 14px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 500; text-decoration: none; border-radius: 999px;">로그아웃<span aria-hidden="true">→</span></a>
+</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</div>
+</section>
+</div>
+
+<div class="paper {{stubClass}}" style="flex: 1; position: relative; background: {{paper}}; display: flex; flex-direction: column; border-radius: 0 0 26px 26px; overflow: hidden;">
+<svg aria-hidden="true" width="100%" height="100%" style="position: absolute; inset: 0; pointer-events: none; opacity: .18; mix-blend-mode: multiply;"><filter id="paperM2"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" stitchTiles="stitch"></feTurbulence><feColorMatrix values="0 0 0 0 .35  0 0 0 0 .32  0 0 0 0 .28  0 0 0 .55 0"></feColorMatrix></filter><rect width="100%" height="100%" filter="url(#paperM2)"></rect></svg>
+<div aria-hidden="true" style="margin: 0 18px; display: block; border-top: 0; height: 2px; background: {{ink}}; -webkit-mask: var(--dash); mask: var(--dash); opacity: .8; position: relative;"></div>
+<section aria-labelledby="destLabelM" style="flex: 1; box-sizing: border-box; padding: 16px 18px 18px; display: flex; flex-direction: column; position: relative;">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 1px solid transparent;">
+<div style="padding: 6px 0 8px; border-right: 1px solid transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center;">
+<span style="display: block; font-size: 11px; font-weight: 500; letter-spacing: .08em;">DATE</span>
+<span style="display: block; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 15px; margin-top: 0; font-variant-numeric: tabular-nums;">{{today}}</span>
+</div>
+<a href="StoreMobile.dc.html" onClick="{{leave}}" class="store-cell" style="padding: 6px 0 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: inherit; text-decoration: none;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12.5H6z"></path><path d="M9 8V6.5a3 3 0 0 1 6 0V8"></path></svg><span style="font-size: 11px; font-weight: 600; letter-spacing: .04em;">스토어</span></a>
+</div>
+<span id="destLabelM" style="display: block; font-size: 11px; font-weight: 500; letter-spacing: .08em; padding: 12px 0 8px;">향하고 싶은 곳에 체크하세요.</span>
+<div class="dest-tiles" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px;">
+<sc-for list="{{tabs}}" as="tab" hint-placeholder-count="4">
+<button type="button" class="cell" aria-pressed="{{tab.pressed}}" onClick="{{tab.pick}}" style="position: relative; height: 82px; border: 0; border-right: {{tab.divider}}; background: transparent; color: {{ink}}; padding: 8px 4px 10px; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 11px; align-self: flex-start; padding-left: 2px; font-variant-numeric: tabular-nums;">{{tab.num}}</span>
+<span style="font-size: 12px; font-weight: 500; letter-spacing: -.01em;">{{tab.label}}</span>
+<sc-if value="{{tab.checked}}" hint-placeholder-val="{{false}}">
+<svg aria-hidden="true" viewBox="0 0 44 40" width="40" height="36" style="position: absolute; left: 50%; top: 50%; transform: translate(-46%, -60%); overflow: visible;"><path class="check-path" d="M6 21 L16 31 L39 6" fill="none" stroke="{{ink}}" stroke-width="2" stroke-linecap="butt" stroke-linejoin="miter"></path></svg>
+</sc-if>
+</button>
+</sc-for>
+</div>
+<div role="marquee" aria-label="안 읽은 알림" style="border-radius: 999px; display: flex; align-items: center; height: 22px; margin-top: 10px; background: {{ink}}; overflow: hidden;"><div class="ticker" aria-hidden="true" style="color: {{paper}}; font-size: 11px; font-weight: 600; letter-spacing: .04em;"><span>{{noticeText}}</span><span>{{noticeText}}</span></div><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">{{noticeText}}</span></div>
+<div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid transparent; padding-top: 10px">
+<span style="font-family: &quot;Pretendard Variable&quot;; font-size: 13px; font-weight: 500; letter-spacing: .02em">@archyourview</span>
+<span style="font-family: &quot;Pretendard Variable&quot;; font-size: 11px; font-weight: 500; text-align: right; line-height: 1.5;">공간의 감각을 선명히 담는 곳</span>
+</div>
+</section>
+</div>
+
+<span style="position: absolute; top: 452px; left: -14px; width: 28px; height: 28px; border-radius: 50%; background: {{ground}}; z-index: 2;"></span>
+<span style="position: absolute; top: 452px; right: -14px; width: 28px; height: 28px; border-radius: 50%; background: {{ground}}; z-index: 2;"></span>
+</div>
+</div>
+</sc-if>
+
+<a href="FeedMobile.dc.html" ref="{{feedLinkRef}}" tabindex="-1" aria-hidden="true" style="position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; border-radius: 50%;"></a>
+<a href="ProfileMobile.dc.html" ref="{{profileLinkRef}}" tabindex="-1" aria-hidden="true" style="position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; border-radius: 50%;"></a>
+<a href="CurationMobile.dc.html" ref="{{curationLinkRef}}" tabindex="-1" aria-hidden="true" style="position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; border-radius: 50%;"></a>
+<a href="RecordMobile.dc.html" ref="{{recordLinkRef}}" tabindex="-1" aria-hidden="true" style="position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; border-radius: 50%;"></a>
+
+<sc-if value="{{arrived}}" hint-placeholder-val="{{false}}">
+<div class="dest-in" style="position: absolute; inset: 0; background: {{paper}}; color: {{ink}}; display: flex; flex-direction: column; padding: 18px 22px 28px; box-sizing: border-box; z-index: 4;">
+<button type="button" onClick="{{back}}" style="align-self: flex-start; border: 0; background: none; color: {{ink}}; padding: 12px 0; font-size: 13px;">← 티켓으로</button>
+<span style="font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 12px; margin-top: 40px; font-variant-numeric: tabular-nums;">{{destNum}}</span>
+<h2 style="font-weight: 400; font-size: 44px; letter-spacing: -.04em; margin: 8px 0 0;">{{destLabel}}</h2>
+<p style="font-size: 13px; line-height: 1.6; margin: 14px 0 0; border-top: 1px solid transparent; padding-top: 14px;">[{{destLabel}} 화면 · 다음 단계에서 설계]</p>
+<sc-if value="{{showFeedLink}}" hint-placeholder-val="{{false}}">
+<a href="{{destHref}}" style="margin-top: 20px; height: 48px; padding: 0 16px; border: 1px solid transparent; background: {{ink}}; color: {{paper}}; display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: 600; border-radius: 999px;">{{destLabel}} 열기<span aria-hidden="true">→</span></a>
+</sc-if>
+</div>
+</sc-if>
+
+
+<sc-if value="{{authOpen}}" hint-placeholder-val="{{false}}">
+<div onClick="{{closeAuth}}" style="position: absolute; inset: 0; z-index: 30; background: rgba(0,0,0,.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"></div>
+<div style="position: absolute; inset: 0; z-index: 31; display: grid; place-items: center; pointer-events: none; user-select: text;">
+<div role="dialog" aria-modal="true" aria-labelledby="authTitle" class="gl auth-card auth-in" style="border-radius: 28px; pointer-events: auto; width: 340px; box-sizing: border-box; padding: 22px 22px 24px; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); color: #F7F9E9; font-family: 'Pretendard Variable', Pretendard, sans-serif; display: flex; flex-direction: column; box-shadow: 0 30px 80px rgba(0,0,0,.45);">
+<div style="display: flex; justify-content: space-between; align-items: center;">
+<span style="font-size: 11px; font-weight: 700; letter-spacing: .14em;">arch; ACCOUNT</span>
+<button type="button" class="auth-x ic-btn" onClick="{{closeAuth}}" aria-label="닫기" style="width: 36px; height: 36px; margin-right: -8px; border: 0; background: none; color: #F7F9E9; display: grid; place-items: center; padding: 0; border-radius: 50%;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<h2 id="authTitle" style="margin: 22px 0 6px; font-size: 32px; font-weight: 800; letter-spacing: -.04em; text-align: center;">{{auth.title}}</h2>
+<sc-if value="{{auth.showTabs}}" hint-placeholder-val="{{true}}">
+<div role="tablist" aria-label="계정" class="auth-seg" style="--seg: {{authSeg}}; border-radius: 999px; padding: 4px; gap: 4px; margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; border: 1px solid transparent; background: rgba(247,249,233,.13);">
+<sc-for list="{{authTabs}}" as="t" hint-placeholder-count="2">
+<button type="button" role="tab" class="auth-tab" aria-selected="{{t.selected}}" onClick="{{t.pick}}" style="border-radius: 999px; height: 40px; border: 0; background: {{t.bg}}; color: {{t.fg}}; font-size: 14px; font-weight: 600;">{{t.label}}</button>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{auth.isLogin}}" hint-placeholder-val="{{true}}">
+<form onSubmit="{{submitLogin}}" style="margin: 18px 0 0; display: flex; flex-direction: column; gap: 10px;">
+<input class="auth-field" type="text" autocomplete="username" aria-label="이메일 또는 아이디" placeholder="이메일 또는 @아이디" value="{{auth.id}}" onChange="{{onAuthId}}">
+<input class="auth-field" type="password" autocomplete="current-password" aria-label="비밀번호" placeholder="비밀번호 (6자 이상)" value="{{auth.pw}}" onChange="{{onAuthPw}}">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2px;">
+<label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer;"><input type="checkbox" checked="{{auth.auto}}" onChange="{{onAuthAuto}}" style="width: 18px; height: 18px; margin: 0; accent-color: #F7F9E9;">자동 로그인</label>
+<button type="button" onClick="{{findPw}}" style="border: 0; background: none; color: #F7F9E9; font-size: 12px; text-decoration: underline; padding: 6px 0;">비밀번호 찾기</button>
+</div>
+<button type="submit" class="auth-btn" disabled="{{auth.loginDisabled}}" style="border-radius: 999px; margin-top: 6px; height: 56px; border: 0; background: #F7F9E9; color: #141414; font-size: 15px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; padding: 0 18px;">로그인<span aria-hidden="true">→</span></button>
+</form>
+</sc-if>
+
+<sc-if value="{{auth.isSignup}}" hint-placeholder-val="{{false}}">
+<form onSubmit="{{submitSignup}}" style="margin: 18px 0 0; display: flex; flex-direction: column; gap: 10px;">
+<div>
+<input class="auth-field" type="email" autocomplete="email" aria-label="이메일" aria-invalid="{{auth.emailInvalid}}" aria-describedby="emailDup" placeholder="이메일" value="{{auth.email}}" onChange="{{onAuthEmail}}" style="border-color: {{auth.emailBorder}};">
+<sc-if value="{{auth.emailDup}}" hint-placeholder-val="{{false}}"><p id="emailDup" role="alert" style="margin: 6px 0 0; font-size: 12px; font-weight: 600; color: #F28B82;">이미 가입된 이메일이에요</p></sc-if>
+</div>
+<div>
+<input class="auth-field" type="text" autocomplete="username" aria-label="아이디" aria-invalid="{{auth.sidInvalid}}" aria-describedby="sidDup" placeholder="@아이디 (영문·숫자·._)" value="{{auth.sid}}" onChange="{{onAuthSid}}" style="border-color: {{auth.sidBorder}};">
+<sc-if value="{{auth.dup}}" hint-placeholder-val="{{false}}"><p id="sidDup" role="alert" style="margin: 6px 0 0; font-size: 12px; font-weight: 600; color: #F28B82;">이미 있는 아이디예요</p></sc-if>
+</div>
+<input class="auth-field" type="password" autocomplete="new-password" aria-label="비밀번호" placeholder="비밀번호 (6자 이상)" value="{{auth.spw}}" onChange="{{onAuthSpw}}">
+<input class="auth-field" type="password" autocomplete="new-password" aria-label="비밀번호 확인" placeholder="비밀번호 확인" value="{{auth.spw2}}" onChange="{{onAuthSpw2}}">
+<sc-if value="{{auth.hasHint}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; font-size: 12px; font-weight: 600;">{{auth.hint}}</p></sc-if>
+<button type="submit" class="auth-btn" disabled="{{auth.signupDisabled}}" style="border-radius: 999px; margin-top: 6px; height: 56px; border: 0; background: #F7F9E9; color: #141414; font-size: 15px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; padding: 0 18px;">가입하기<span aria-hidden="true">→</span></button>
+<p style="margin: 4px 0 0; font-size: 11px; line-height: 1.6; text-align: center;">가입하면 <button type="button" onClick="{{openTerms}}" style="border: 0; background: none; padding: 0; color: inherit; font: inherit; text-decoration: underline; cursor: pointer;">이용약관</button>과 <button type="button" onClick="{{openPrivacy}}" style="border: 0; background: none; padding: 0; color: inherit; font: inherit; text-decoration: underline; cursor: pointer;">개인정보 처리방침</button>에 동의하게 돼요.</p>
+</form>
+</sc-if>
+
+
+<sc-if value="{{auth.isReset}}" hint-placeholder-val="{{false}}">
+<sc-if value="{{auth.resetNotSent}}" hint-placeholder-val="{{true}}">
+<form onSubmit="{{submitReset}}" style="margin: 14px 0 0; display: flex; flex-direction: column; gap: 10px;">
+<p style="margin: 0; font-size: 13px; line-height: 1.6;">가입한 이메일을 적어 주시면 비밀번호를 다시 정할 수 있는 링크를 보내 드려요.</p>
+<input class="auth-field" type="email" autocomplete="email" aria-label="가입한 이메일" placeholder="가입한 이메일" value="{{auth.resetEmail}}" onChange="{{onResetEmail}}">
+<button type="submit" class="auth-btn" disabled="{{auth.resetDisabled}}" style="border-radius: 999px; margin-top: 4px; height: 56px; border: 0; background: #F7F9E9; color: #141414; font-size: 15px; font-weight: 700;">재설정 링크 보내기</button>
+</form>
+</sc-if>
+<sc-if value="{{auth.resetSent}}" hint-placeholder-val="{{false}}">
+<div role="status" style="border-radius: 16px; margin-top: 14px; padding: 16px; border: 1.5px solid transparent; font-size: 13px; line-height: 1.6; background: rgba(247,249,233,.13); box-shadow: 0 14px 34px rgba(0,0,0,.35);"><b>{{auth.resetEmail}}</b>로 재설정 링크를 보냈어요.<br>메일함을 확인해 주세요.</div>
+</sc-if>
+<button type="button" onClick="{{backToLogin}}" style="margin-top: 12px; border: 0; background: none; color: #F7F9E9; font: inherit; font-size: 13px; font-weight: 600; text-decoration: underline; padding: 6px 0; cursor: pointer;">← 로그인으로 돌아가기</button>
+</sc-if>
+
+<sc-if value="{{auth.isSetup}}" hint-placeholder-val="{{false}}">
+<form onSubmit="{{submitSetup}}" style="margin: 14px 0 0; display: flex; flex-direction: column; gap: 10px;">
+<p style="margin: 0; font-size: 13px; line-height: 1.6;">가입을 축하해요! 프로필 카드에 들어갈 정보를 정해 주세요.</p>
+<input class="auth-field" type="text" aria-label="이름" placeholder="이름 (프로필에 보여요)" maxlength="12" value="{{auth.setupName}}" onChange="{{onSetupName}}">
+<div style="border-radius: 16px; display: flex; align-items: center; gap: 8px; height: 46px; padding: 0 14px; border: 1px solid transparent; box-sizing: border-box; font-family: 'Pretendard Variable', Pretendard, sans-serif; font-size: 14px; background: rgba(247,249,233,.13); font-variant-numeric: tabular-nums;">@{{auth.setupId}}</div>
+<span style="font-size: 12px; font-weight: 700; margin-top: 4px;">관심사 (3개까지)</span>
+<div role="group" aria-label="관심사" style="display: flex; flex-wrap: wrap; gap: 6px;">
+<sc-for list="{{auth.setupInterests}}" as="it" hint-placeholder-count="6">
+<button type="button" aria-pressed="{{it.pressed}}" onClick="{{it.toggle}}" style="height: 32px; padding: 0 12px; border: 1px solid transparent; border-radius: 999px; background: {{it.bg}}; color: {{it.fg}}; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer;">{{it.label}}</button>
+</sc-for>
+</div>
+<button type="submit" class="auth-btn" disabled="{{auth.setupDisabled}}" style="border-radius: 999px; margin-top: 8px; height: 56px; border: 0; background: #F7F9E9; color: #141414; font-size: 15px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; padding: 0 18px;">아치 시작하기<span aria-hidden="true">→</span></button>
+<button type="button" onClick="{{skipSetup}}" style="align-self: center; border: 0; background: none; color: #F7F9E9; font: inherit; font-size: 12px; text-decoration: underline; padding: 6px 0; cursor: pointer;">나중에 할게요</button>
+</form>
+</sc-if>
+<sc-if value="{{auth.showSocial}}" hint-placeholder-val="{{true}}">
+<div aria-hidden="true" style="display: flex; align-items: center; gap: 10px; margin: 16px 0 12px; font-size: 11px; font-weight: 500; letter-spacing: .08em;"><span style="flex: 1; display: block; border-top: 0; height: 2px; background: #F7F9E9; -webkit-mask: var(--dash); mask: var(--dash); opacity: .6;"></span>또는<span style="flex: 1; display: block; border-top: 0; height: 2px; background: #F7F9E9; -webkit-mask: var(--dash); mask: var(--dash); opacity: .6;"></span></div>
+<button type="button" class="auth-btn" onClick="{{kakao}}" style="border-radius: 999px; height: 56px; border: 0; background: #FEE500; color: #191919; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4C7 4 3 7.1 3 11c0 2.5 1.7 4.7 4.2 6l-.9 3.4c-.1.3.3.5.5.3l4-2.7h1.2c5 0 9-3.1 9-7s-4-7-9-7z" fill="#191919"></path></svg>카카오로 계속하기</button>
+</sc-if>
+<sc-if value="{{auth.hasNote}}" hint-placeholder-val="{{false}}"><p role="status" style="margin: 10px 0 0; text-align: center; font-size: 12px; box-shadow: 0 14px 34px rgba(0,0,0,.35);">{{auth.note}}</p></sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{docOpen}}" hint-placeholder-val="{{false}}">
+<div onClick="{{closeDoc}}" style="position: absolute; inset: 0; z-index: 90; background: rgba(0,0,0,.6);"></div>
+<div style="position: absolute; inset: 0; z-index: 91; display: flex; flex-direction: column; box-sizing: border-box;">
+<div role="dialog" aria-modal="true" aria-labelledby="docTitle" class="doc-sheet gr" style="border-radius: 28px 28px 0 0; overflow: hidden; flex: 1; min-height: 0; width: 100%; display: flex; flex-direction: column; border: 0; background: rgba(30,30,28,.8); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); box-shadow: 0 30px 80px rgba(0,0,0,.55); color: #F7F9E9; font-family: 'Pretendard Variable', Pretendard, sans-serif; overflow: hidden;">
+<div style="flex: none; display: flex; justify-content: space-between; align-items: center; padding: 14px 8px 12px 20px; border-bottom: 1px solid transparent;">
+<h2 id="docTitle" style="margin: 0; font-size: 18px; font-weight: 700;">{{doc.title}}</h2>
+<button class="ic-btn" type="button" onClick="{{closeDoc}}" aria-label="닫기" style="width: 40px; height: 40px; border: 0; background: none; color: #F7F9E9; display: grid; place-items: center; cursor: pointer; border-radius: 50%;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<div class="doc-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 4px 20px 32px; -webkit-overflow-scrolling: touch;">
+<sc-for list="{{doc.sections}}" as="d" hint-placeholder-count="3">
+<section style="padding: 14px 0; border-bottom: 1px solid transparent;"><h3 style="margin: 0; font-size: 14px; font-weight: 700;">{{d.h}}</h3><p style="margin: 6px 0 0; font-size: 13px; line-height: 1.7; color: rgba(247,249,233,.72);">{{d.b}}</p></section>
+</sc-for>
+<p style="margin: 16px 0 0; font-size: 11px; color: rgba(247,249,233,.72);">시행일 2026.11.01 · 초안</p>
+</div>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"ground":{"editor":"color","default":"#111111","options":["#111111","#2B3F7A","#5A5A55"]},"ink":{"editor":"color","default":"#141414","options":["#141414","#2B44A0"]},"signedIn":{"editor":"boolean","default":false},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.colors = ['#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42', '#C8FF42'];
+    this.threshold = 72;
+    this.state = {
+      color: Math.floor(Math.random() * this.colors.length),
+      pull: 0, dragging: false, refreshing: false,
+      picked: null, tearing: false, arrived: false
+    };
+    this.timers = [];
+    this.startY = null;
+    this.captured = false;
+  }
+  componentWillUnmount() {
+    this.timers.forEach((t) => clearTimeout(t));
+  }
+  nextColor() {
+    const n = this.colors.length;
+    const step = 1 + Math.floor(Math.random() * (n - 1));
+    return (this.state.color + step) % n;
+  }
+  down(e) {
+    if (this.state.acctOpen && !(e.target && e.target.closest && e.target.closest('[data-acct]'))) this.setState({ acctOpen: false });
+    if (this.state.auth || this.state.picked || this.state.refreshing || this.state.arrived) return;
+    this.startY = e.clientY;
+    this.captured = false;
+  }
+  move(e) {
+    if (this.startY === null) return;
+    const dy = e.clientY - this.startY;
+    if (dy <= 0) {
+      if (this.state.pull) this.setState({ pull: 0 });
+      return;
+    }
+    if (!this.captured && dy > 6) {
+      this.captured = true;
+      try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {}
+    }
+    if (this.captured) this.setState({ dragging: true, pull: Math.min(dy * 0.5, 150) });
+  }
+  up() {
+    if (this.startY === null) return;
+    this.startY = null;
+    this.captured = false;
+    if (this.state.pull >= this.threshold) {
+      this.setState({ dragging: false, refreshing: true, pull: this.threshold });
+      this.timers.push(setTimeout(() => {
+        this.setState({ color: this.nextColor(), refreshing: false, pull: 0 });
+      }, 900));
+    } else {
+      this.setState({ dragging: false, pull: 0 });
+    }
+  }
+  pick(id) {
+    if (this.state.picked || this.state.pull) return;
+    if (!this.props.signedIn && (id === 'mine' || id === 'record')) { this.openAuth('login'); this.setState({ auth: { ...this.state.auth, note: '로그인하고 이용해 주세요.' } }); return; }
+    try { if (this.props.signedIn) sessionStorage.removeItem('arch.guest'); else sessionStorage.setItem('arch.guest', '1'); } catch (e) {}
+    this.setState({ picked: id });
+    this.timers.push(setTimeout(() => this.setState({ tearing: true }), 520));
+    this.timers.push(setTimeout(() => {
+      const link = id === 'recommend' ? this.feedLink : id === 'mine' ? this.profileLink : id === 'record' ? this.recordLink : id === 'curation' ? this.curationLink : null;
+      if (link) this.markFromHome();
+      if (link) {
+        link.click();
+        // came back to home: show the untouched ticket, not the interim screen
+        this.setState({ picked: null, tearing: false, arrived: false });
+        return;
+      }
+      this.setState({ arrived: true });
+    }, 1550));
+  }
+  setAuth(patch) {
+    this.setState({ auth: { ...this.state.auth, ...patch, note: '' } });
+  }
+  openAuth(tab) {
+    this.setState({ acctOpen: false, auth: { tab: tab || 'login', id: '', pw: '', auto: true, email: '', sid: '', spw: '', spw2: '', note: '' } });
+  }
+  markFromHome() {
+    try { sessionStorage.setItem('arch.fromHome', '1'); } catch (e) {}
+  }
+  enterFeed() {
+    this.markFromHome();
+    try { sessionStorage.removeItem('arch.guest'); } catch (e) {}
+    if (this.feedLink) this.feedLink.click();
+    this.setState({ auth: null });
+    this.setState({ picked: null, tearing: false, arrived: false, acctOpen: false });
+  }
+  authVals() {
+    const a = this.state.auth;
+    if (!a) return { authOpen: false, auth: {}, authTabs: [] };
+    const isLogin = a.tab === 'login';
+    const interestPool = ['차', '맛집', '카페', '음악', '산책', '사진', '책', '건축', '바다'];
+    const picked = a.interests || [];
+    const resetOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((a.resetEmail || '').trim());
+    const idOk = /^[a-z0-9._]{2,20}$/i.test(a.sid.replace(/^@/, ''));
+    const taken = ['minseo.walk', 'doyoon_sea', 'harin.k', 'jiwoo_', 'yuna_', 'seojun.nite'];
+    const dup = idOk && taken.includes(a.sid.replace(/^@/, '').toLowerCase());
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(a.email.trim());
+    const takenEmails = ['me@archyourview.kr', 'minseo@example.com', 'doyoon@example.com', 'harin@example.com', 'jiwoo@example.com', 'yuna@example.com'];
+    const emailDup = emailOk && takenEmails.includes(a.email.trim().toLowerCase());
+    let hint = '';
+    if (a.sid && !idOk) hint = '아이디는 영문·숫자·._ 2–20자로 만들어 주세요.';
+    else if (a.spw && a.spw.length < 6) hint = '비밀번호는 6자 이상이어야 해요.';
+    else if (a.spw2 && a.spw !== a.spw2) hint = '비밀번호가 서로 달라요.';
+    const val = (k) => (e) => this.setAuth({ [k]: e.target.value });
+    const chk = (k) => (e) => this.setAuth({ [k]: e.target.checked });
+    return {
+      authOpen: true,
+      auth: {
+        ...a, isLogin: isLogin, isSignup: a.tab === 'signup', isReset: a.tab === 'reset', isSetup: a.tab === 'setup',
+        title: { login: '로그인', signup: '회원가입', reset: '비밀번호 찾기', setup: '프로필 설정' }[a.tab],
+        showTabs: isLogin || a.tab === 'signup', showSocial: isLogin || a.tab === 'signup',
+        resetEmail: a.resetEmail || '', resetSent: !!a.resetSent, resetNotSent: !a.resetSent, resetDisabled: !resetOk,
+        setupName: a.setupName || '', setupId: a.sid ? a.sid.replace(/^@/, '').toLowerCase() : '', setupDisabled: !(a.setupName || '').trim(),
+        setupInterests: interestPool.map((t) => ({
+          label: t, pressed: picked.includes(t) ? 'true' : 'false', bg: picked.includes(t) ? '#F7F9E9' : 'rgba(247,249,233,.13)', fg: picked.includes(t) ? '#141414' : '#F7F9E9',
+          toggle: () => {
+            const cur = this.state.auth.interests || [];
+            const next = cur.includes(t) ? cur.filter((x) => x !== t) : cur.length < 3 ? cur.concat([t]) : cur;
+            this.setAuth({ interests: next });
+          }
+        })),
+        loginDisabled: !(a.id.trim() && a.pw.length >= 6),
+        signupDisabled: !(emailOk && !emailDup && idOk && !dup && a.spw.length >= 6 && a.spw === a.spw2),
+        emailDup: emailDup, emailInvalid: emailDup ? 'true' : 'false', emailBorder: emailDup ? '#F28B82' : 'transparent',
+        dup: dup, sidInvalid: dup ? 'true' : 'false', sidBorder: dup ? '#F28B82' : 'transparent',
+        hint: hint, hasHint: !!hint, hasNote: !!a.note
+      },
+      authSeg: a.tab === 'signup' ? 1 : 0,
+      authTabs: [['login', '로그인'], ['signup', '회원가입']].map(([id, label]) => ({
+        label: label, selected: a.tab === id ? 'true' : 'false',
+        bg: a.tab === id ? '#F7F9E9' : 'rgba(247,249,233,.13)', fg: a.tab === id ? '#141414' : '#F7F9E9',
+        pick: () => this.setAuth({ tab: id })
+      })),
+      closeAuth: () => this.setState({ auth: null }),
+      onAuthId: val('id'), onAuthPw: val('pw'), onAuthAuto: chk('auto'),
+      onAuthEmail: val('email'), onAuthSid: val('sid'), onAuthSpw: val('spw'), onAuthSpw2: val('spw2'),
+      submitLogin: (e) => { e.preventDefault(); const b = this.state.auth; if (b.id.trim() && b.pw.length >= 6) this.enterFeed(); },
+      submitSignup: (e) => { e.preventDefault(); if (!this.authVals().auth.signupDisabled) this.setAuth({ tab: 'setup', setupName: '', interests: [] }); },
+      submitSetup: (e) => {
+        e.preventDefault();
+        const b = this.state.auth;
+        if (!(b.setupName || '').trim()) return;
+        try { localStorage.setItem('arch.profile', JSON.stringify({ name: b.setupName.trim(), id: b.sid.replace(/^@/, '').toLowerCase(), interests: b.interests || [] })); } catch (err) {}
+        this.enterFeed();
+      },
+      skipSetup: () => {
+        const b = this.state.auth;
+        try { localStorage.setItem('arch.profile', JSON.stringify({ name: '', id: b.sid.replace(/^@/, '').toLowerCase(), interests: [] })); } catch (err) {}
+        this.enterFeed();
+      },
+      onSetupName: (e) => this.setAuth({ setupName: e.target.value.slice(0, 12) }),
+      onResetEmail: (e) => this.setAuth({ resetEmail: e.target.value }),
+      submitReset: (e) => { e.preventDefault(); if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((this.state.auth.resetEmail || '').trim())) this.setAuth({ resetSent: true }); },
+      backToLogin: () => this.setAuth({ tab: 'login', resetSent: false }),
+      findPw: () => this.setAuth({ tab: 'reset', resetEmail: '', resetSent: false }),
+      kakao: () => this.setState({ auth: { ...this.state.auth, note: '카카오 로그인은 곧 연결될 예정이에요.' } })
+    };
+  }
+  unreadTicker() {
+    if (!this.props.signedIn) return '로그인하면 새 알림을 여기서 볼 수 있어요     •     ';
+    let read = [];
+    try { read = JSON.parse(localStorage.getItem('arch.notifRead') || '[]') || []; } catch (e) {}
+    const items = [
+      ['a1', '도윤님이 내 기록을 좋아해요 · 부산 · 영도'],
+      ['a2', '민서님이 댓글을 남겼어요 “빛이 정말 예쁘게 들어오네요.”'],
+      ['a3', '서준님이 팔로우를 요청했어요'],
+      ['a4', '지우님이 나를 팔로우하기 시작했어요'],
+      ['a5', '유나님 외 2명이 내 기록을 좋아해요 · 강릉 · 주문진'],
+      ['a6', '하린님이 댓글을 남겼어요 “여기 아침 공기가 진짜 좋죠.”']
+    ].filter(([id]) => !read.includes(id));
+    if (!items.length) return '새 알림이 없어요     •     ';
+    return items.map(([, t]) => t).join('     •     ') + '     •     ';
+  }
+  legalDoc(kind) {
+    const terms = [
+      ['제1조 (목적)', '이 약관은 아치(arch;)가 제공하는 공간 기록 서비스의 이용 조건과 절차, 이용자와 아치의 권리·의무를 정하는 것을 목적으로 합니다.'],
+      ['제2조 (계정)', '이용자는 정확한 정보로 계정을 만들어야 하며, 계정과 비밀번호를 안전하게 관리할 책임이 있습니다.'],
+      ['제3조 (게시물)', '이용자가 올린 기록의 권리는 이용자에게 있습니다. 다른 사람의 권리를 침해하거나 법령에 어긋나는 게시물은 별도의 통지 없이 숨겨질 수 있습니다.'],
+      ['제4조 (서비스 변경과 중단)', '아치는 더 나은 서비스를 위해 기능을 바꾸거나 점검으로 잠시 중단할 수 있으며, 중요한 변경은 공지를 통해 미리 알려 드립니다.'],
+      ['제5조 (탈퇴)', '이용자는 설정에서 언제든 탈퇴할 수 있고, 탈퇴하면 기록과 컬렉션은 삭제됩니다.']
+    ];
+    const privacy = [
+      ['수집하는 정보', '이메일, 아이디, 비밀번호(암호화), 프로필 정보, 이용자가 올린 사진과 장소 정보를 수집합니다.'],
+      ['이용 목적', '계정 관리, 기록 저장과 공유, 알림 제공, 서비스 개선을 위해서만 사용합니다.'],
+      ['위치 정보', '기록할 때 근처 장소를 찾기 위해서만 위치를 사용하고, 정확한 위치는 다른 사람에게 공개하지 않습니다.'],
+      ['보관 기간', '탈퇴 시 지체 없이 삭제합니다. 다만 법령에 따라 보관해야 하는 정보는 정해진 기간 동안 보관합니다.'],
+      ['문의', '개인정보 관련 문의는 설정 > 문의하기를 통해 접수하실 수 있습니다.']
+    ];
+    return kind === 'privacy'
+      ? { title: '개인정보 처리방침', sections: privacy.map(([h, b]) => ({ h, b })) }
+      : { title: '이용약관', sections: terms.map(([h, b]) => ({ h, b })) };
+  }
+  docVals() {
+    const k = this.state.doc;
+    return {
+      docOpen: !!k, doc: k ? this.legalDoc(k) : { sections: [] },
+      openTerms: () => this.setState({ doc: 'terms' }), openPrivacy: () => this.setState({ doc: 'privacy' }),
+      closeDoc: () => this.setState({ doc: null })
+    };
+  }
+  guestCheck() {
+    if (this.guestChecked) return;
+    this.guestChecked = true;
+    try {
+      if (sessionStorage.getItem('arch.openAuth') === '1') {
+        sessionStorage.removeItem('arch.openAuth');
+        if (!this.props.signedIn) this.state.auth = { tab: 'login', id: '', pw: '', auto: true, email: '', sid: '', spw: '', spw2: '', note: '로그인하면 기록하고 저장할 수 있어요.' };
+      }
+    } catch (e) {}
+  }
+  renderVals() {
+    this.guestCheck();
+    const ink = this.props.ink ?? '#141414';
+    const s = this.state;
+    const defs = [
+      { id: 'recommend', num: '01', label: '피드' },
+      { id: 'record', num: '02', label: '기록하기' },
+      { id: 'mine', num: '03', label: '프로필' },
+      { id: 'curation', num: '04', label: '큐레이션' }
+    ];
+    const picked = s.picked;
+    const dest = defs.find((d) => d.id === picked) || defs[0];
+    const d = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    const progress = Math.min(s.pull / this.threshold, 1);
+    const ease = 'transform .35s cubic-bezier(.2,.8,.2,1)';
+    return {
+      ground: this.props.ground ?? '#141414',
+      ink: ink,
+      noticeText: (() => { let t = this.unreadTicker(); while (t.length < 140) t += t; return t; })(),
+      paper: this.colors[s.color],
+      today: d.getFullYear() + '/' + pad(d.getMonth() + 1) + '/' + pad(d.getDate()),
+      onDown: (e) => this.down(e),
+      onMove: (e) => this.move(e),
+      onUp: () => this.up(),
+      pull: s.pull,
+      pullTrans: s.dragging ? 'none' : ease,
+      showSpinner: s.pull > 0 || s.refreshing,
+      spinnerLabel: s.refreshing ? '새로고침 중' : '당겨서 새로고침',
+      spinnerY: 10 + Math.min(s.pull, this.threshold) * 0.55,
+      spinnerOpacity: s.refreshing ? 1 : progress,
+      spinnerTrans: s.dragging ? 'none' : ease + ', opacity .3s ease',
+      spinnerRot: s.refreshing ? 0 : progress * 270,
+      spinnerClass: s.refreshing ? 'spinning' : '',
+      arcDash: s.refreshing ? 70 : Math.round(progress * 80),
+      tabs: defs.map((t, i) => ({
+        ...t,
+        checked: picked === t.id,
+        pressed: picked === t.id ? 'true' : 'false',
+        divider: i < defs.length - 1 ? '1px solid ' + ink : '0',
+        pick: () => this.pick(t.id)
+      })),
+      showTicket: !s.arrived,
+      upperClass: s.tearing ? 'jolt' : '',
+      stubClass: s.tearing ? 'tear' : '',
+      arrived: s.arrived,
+      destNum: dest.num,
+      destLabel: dest.label,
+      showFeedLink: dest.id === 'recommend' || dest.id === 'mine',
+      acctOpen: !!s.acctOpen,
+      acctExpanded: s.acctOpen ? 'true' : 'false',
+      acctChevron: s.acctOpen ? 0 : 180,
+      goAbout: () => { try { sessionStorage.setItem('arch.aboutFrom', this.props.signedIn ? 'in' : 'out'); } catch (e) {} },
+      leave: () => { this.markFromHome(); this.setState({ picked: null, tearing: false, arrived: false, acctOpen: false }); },
+      toggleAcct: () => this.setState({ acctOpen: !this.state.acctOpen }),
+      signedIn: !!this.props.signedIn,
+      signedOut: !this.props.signedIn,
+      profileLinkRef: (el) => { this.profileLink = el; },
+      curationLinkRef: (el) => { this.curationLink = el; },
+      recordLinkRef: (el) => { this.recordLink = el; },
+      destHref: dest.id === 'recommend' ? 'FeedMobile.dc.html' : dest.id === 'mine' ? 'ProfileMobile.dc.html' : '',
+      feedLinkRef: (el) => { this.feedLink = el; },
+      back: () => this.setState({ picked: null, tearing: false, arrived: false }),
+      openAuth: () => this.openAuth('login'),
+      ...this.authVals(),
+      ...this.docVals()
+    };
+  }
+}
+</script>
+</body>
+</html>
