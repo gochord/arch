@@ -964,8 +964,13 @@ class Component extends DCLogic {
     } catch (e) { return null; }
   }
   makePosts(n) {
-    if (this.live) return this.live;
-    if (window.archApi && archApi.sb) return [];
+    // real records first, then the canvas's sample records (no photo) below them
+    if (window.archApi && archApi.sb && !this.__sampling) {
+      this.__sampling = true;
+      const extra = this.makePosts(n).filter((p) => !p.mine);
+      this.__sampling = false;
+      return (this.live || []).concat(extra);
+    }
     const out = [];
     const base = this.samples.length;
     for (let i = 0; i < n; i++) {
