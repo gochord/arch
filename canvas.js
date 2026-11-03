@@ -127,6 +127,30 @@
   }
 
 
+
+  /* ---------- glass confirm used in place of the browser's confirm() ---------- */
+  window.archConfirm = function (message, opts = {}) {
+    return new Promise((resolve) => {
+      const [title, ...rest] = String(message).split(/(?<=[?？])\s+/);
+      const danger = /차단|삭제|탈퇴/.test(message);
+      const m = document.createElement('div');
+      m.className = 'ac-modal';
+      m.innerHTML = '<div class="ac-card" role="alertdialog" aria-modal="true" aria-labelledby="acTitle"><h2 id="acTitle"></h2><p></p><div class="ac-row"><button type="button" class="ac-no">닫기</button><button type="button" class="ac-yes"></button></div></div>';
+      m.querySelector('h2').textContent = title;
+      m.querySelector('p').textContent = rest.join(' ');
+      if (!rest.length) m.querySelector('p').remove();
+      const yes = m.querySelector('.ac-yes');
+      yes.textContent = opts.ok || (/차단/.test(message) ? '차단하기' : /삭제/.test(message) ? '삭제하기' : '확인');
+      yes.classList.toggle('danger', danger);
+      const done = (v) => { m.remove(); resolve(v); };
+      yes.onclick = () => done(true);
+      m.querySelector('.ac-no').onclick = () => done(false);
+      m.onclick = (e) => { if (e.target === m) done(false); };
+      document.body.appendChild(m);
+      yes.focus();
+    });
+  };
+
   /* ---------- guest browsing bar on the feed ---------- */
   function setupGuestBar() {
     const head = $('#recommend .feed-header');
