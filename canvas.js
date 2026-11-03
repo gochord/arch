@@ -43,7 +43,7 @@
       </div>
       <button id="homeAuthCTA" type="button" style="display:none!important" tabindex="-1" aria-hidden="true"></button>`;
     home.querySelector('[data-go="about"]').onclick = () => go('about');
-    $('#tkStore').onclick = () => notice('스토어는 곧 열려요.');
+    $('#tkStore').onclick = () => go('store');
     $('#tkAccount').onclick = () => $('#accountBtn')?.click();
     home.querySelectorAll('.tk-tile').forEach((tile) => {
       tile.onclick = () => {
@@ -87,11 +87,11 @@
   }
 
   /* ---------- mobile menu wheel ---------- */
-  const WHEEL = [['home', '홈'], ['recommend', '피드'], ['archive', '기록하기'], ['curation', '큐레이션'], ['profile', '프로필'], ['about', 'ABOUT']];
+  const WHEEL = [['home', '홈'], ['recommend', '피드'], ['archive', '기록하기'], ['curation', '큐레이션'], ['store', '스토어'], ['profile', '프로필'], ['about', 'ABOUT']];
   function setupWheel() {
     const dk = document.createElement('div');
     dk.className = 'dk';
-    const step = 30, span = step * (WHEEL.length - 1);
+    const step = 26, span = step * (WHEEL.length - 1);
     dk.innerHTML = `
       <div class="dk-scrim"></div>
       <div class="dk-disc" aria-hidden="true"><b>MENU</b><small>탭해서 이동</small></div>
