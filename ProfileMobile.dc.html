@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <title>arch; 프로필 · 모바일</title>
 <meta name="viewport" content="width=390">
-<script src="./shell.js?v=8"></script>
+<script src="./shell.js?v=9"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="./arch-api.js?v=8"></script>
+<script src="./arch-api.js?v=9"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -1069,7 +1069,7 @@ class Component extends DCLogic {
     if (other && archApi.user && uid === archApi.user.id) { location.replace('ProfileMobile.dc.html'); return; }
     if (this.__loadedFor === uid + ':' + !!archApi.user) return;
     this.__loadedFor = uid + ':' + !!archApi.user;
-    Promise.all([other ? archApi.profileById(uid) : Promise.resolve(archApi.profile), archApi.userPosts(uid), archApi.people(uid), archApi.collections(uid), other ? archApi.isFollowing(uid) : false]).then(([pr, posts, people, colls, fol]) => {
+    Promise.all([other ? archApi.profileById(uid) : Promise.resolve(archApi.profile), archApi.userPosts(uid), archApi.people(uid), archApi.collections(uid), other ? archApi.followState(uid) : false]).then(([pr, posts, people, colls, fol]) => {
       if (!pr) return;
       if (archApi.user) archApi.blocks().then((b) => { this.liveBlocks = b; this.forceUpdate(); });
       if (archApi.user) archApi.people(archApi.user.id).then((pp) => { this.myFollowing = new Set(pp.following.map((u) => u.id)); this.followers = new Set(pp.followers.map((u) => u.handle)); this.forceUpdate(); });
@@ -1080,9 +1080,10 @@ class Component extends DCLogic {
       this.posts = posts.map((r) => ({ id: r.id, name: pr.nickname || '', handle: pr.username || '', caption: r.caption || '', place: r.place_name || '', photo: r.photo || '', date: fmt(r.created_at), at: r.created_at }));
       this.livePeople = people;
       const idx = new Map(this.posts.map((p, i) => [p.id, i]));
-      const collections = colls.filter((c) => !archApi.isSaveBox(c)).map((c) => ({ id: c.id, title: c.title || '', desc: c.description || '', records: (c.collection_items || []).filter((it) => idx.has(it.post_id)).map((it) => 'm' + idx.get(it.post_id)), color: '#C8FF42', vis: c.visibility || 'public', cover: c.cover_url || null, updated: new Date(c.created_at).getTime() }));
+      const collections = colls.filter((c) => !archApi.isSaveBox(c)).map((c) => ({ id: c.id, title: c.title || '', desc: c.description || '', records: (c.collection_items || []).filter((it) => idx.has(it.post_id)).map((it) => 'm' + idx.get(it.post_id)), color: '#C8FF42', vis: c.visibility || 'public', cover: null, coverRaw: c.cover_url || null, updated: new Date(c.created_at).getTime() }));
       const profile = { ...this.state.profile, name: pr.nickname || '', id: pr.username || '', status: pr.status_message || '', interests: pr.interests || [], isPrivate: !!pr.is_private, photo: pr.avatar_url || null };
       this.setState({ profile, collections, savedPosts: [], savedPlaces: [], followOther: other ? fol : false });
+      collections.forEach((c) => { if (c.coverRaw) archApi.photoUrl(c.coverRaw).then((u) => this.setState({ collections: this.state.collections.map((x) => (x.id === c.id ? { ...x, cover: u } : x)) })); });
       if (!other) Promise.all([archApi.saves('post'), archApi.saves('place')]).then(async ([sp, pl]) => {
         const ids = sp.map((x) => x.post_id).filter(Boolean);
         const { data } = ids.length ? await archApi.sb.from('posts').select('id,user_id,caption,place_name,created_at').in('id', ids) : { data: [] };
@@ -1370,7 +1371,7 @@ class Component extends DCLogic {
     const next = cur === true || cur === 'requested' ? false : (priv ? 'requested' : true);
     this.setState({ followOther: next });
     this.setRel(this.state.profile.id, next);
-    if (this.uid) { if (!archApi.user) { location.href = 'TicketMobile.dc.html'; return; } archApi.toggleFollow(this.uid, cur === true || cur === 'requested').catch(() => this.setState({ followOther: cur })); }
+    if (this.uid) { if (!archApi.user) { location.href = 'TicketMobile.dc.html'; return; } archApi.setFollow(this.uid, cur, priv).then((st) => this.setState({ followOther: st }), (err) => { this.setState({ followOther: cur }); this.showToast(err.message); }); }
     if (next === 'requested') this.showToast('팔로우 요청을 보냈어요');
   }
   shareLink(path, label) {
@@ -1442,7 +1443,7 @@ class Component extends DCLogic {
           const next = on ? false : (u.priv ? 'requested' : true);
           this.setState({ peopleFollow: { ...this.state.peopleFollow, [u.handle]: next } });
           this.setRel(u.handle, next);
-          if (u.id && archApi.user) archApi.toggleFollow(u.id, on).catch(() => {});
+          if (u.id && archApi.user) archApi.setFollow(u.id, st, u.priv).then((v) => this.setState({ peopleFollow: { ...this.state.peopleFollow, [u.handle]: v } }), () => this.setState({ peopleFollow: { ...this.state.peopleFollow, [u.handle]: st } }));
           if (next === 'requested') this.showToast('@' + u.handle + ' 님에게 팔로우 요청을 보냈어요');
         },
         canRemove: !this.props.other && pk === 'followers',
@@ -1654,9 +1655,10 @@ class Component extends DCLogic {
         const f = e.target.files && e.target.files[0];
         if (!f) return;
         this.updateColl(cur.id, { cover: URL.createObjectURL(f) });
+        if (archApi.user) archApi.toJpeg(f, 1400).then((bl) => archApi.uploadCover(cur.id, bl)).catch((err) => this.showToast('커버를 저장하지 못했어요: ' + err.message));
         e.target.value = '';
       };
-      out.removeCover = () => this.updateColl(cur.id, { cover: null });
+      out.removeCover = () => { this.updateColl(cur.id, { cover: null }); if (archApi.user) archApi.removeCover(cur.id).catch(() => {}); };
     }
     if (pk && cur) {
       const q = pk.query.trim();
@@ -1831,7 +1833,7 @@ class Component extends DCLogic {
         : n.type === 'comment' ? '님이 내 기록에 댓글을 남겼어요.'
         : n.type === 'follow' ? '님이 나를 팔로우하기 시작했어요.'
         : n.type === 'support' ? ' 문의에 답변이 도착했어요.' : '님이 팔로우를 요청했어요.';
-      const req = n.type === 'request' ? this.notifReq : '';
+      const req = n.type === 'request' ? ((this.reqDone || {})[n.id] || '') : '';
       return {
         ...n, msg: msg, cls: unread ? 'nt-row unread' : 'nt-row', unread: unread, initial: n.who[0],
         first: k === 0 || data[k - 1].group !== n.group,
@@ -1854,8 +1856,8 @@ class Component extends DCLogic {
         backBg: this.relOf(n.handle) === true ? 'rgba(247,249,233,.18)' : '#141414', backFg: this.relOf(n.handle) === true ? '#F7F9E9' : '#C8FF42',
         backPressed: this.relOf(n.handle) === true ? 'true' : 'false',
         toggleBack: () => { const on = this.relOf(n.handle) === true; this.setRel(n.handle, !on); mark(n.id); if (window.archApi && n.userId) archApi.toggleFollow(n.userId, on).catch(() => this.setRel(n.handle, on)); },
-        accept: () => { this.notifReq = 'accepted'; this.notifStore('arch.notifReq', 'accepted'); this.setRel(n.handle, this.relOf(n.handle)); mark(n.id); },
-        decline: () => { this.notifReq = 'declined'; this.notifStore('arch.notifReq', 'declined'); mark(n.id); }
+        accept: () => { this.reqDone = { ...(this.reqDone || {}), [n.id]: 'accepted' }; mark(n.id); archApi.acceptRequest(n.userId).catch((err) => { this.reqDone = { ...this.reqDone, [n.id]: '' }; this.forceUpdate(); alert(err.message); }); },
+        decline: () => { this.reqDone = { ...(this.reqDone || {}), [n.id]: 'declined' }; mark(n.id); archApi.declineRequest(n.userId).catch(() => {}); }
       };
     });
     const open = !!s.notifOpen;

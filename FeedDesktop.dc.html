@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <title>arch; 피드 · 데스크톱</title>
 <meta name="viewport" content="width=1280">
-<script src="./shell.js?v=8"></script>
+<script src="./shell.js?v=9"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="./arch-api.js?v=8"></script>
+<script src="./arch-api.js?v=9"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -770,7 +770,7 @@ class Component extends DCLogic {
   __archSub() {
     if (this.__unsub || !window.archApi) return;
     const load = () => archApi.feed().then((rows) => {
-      this.live = rows.map((r) => ({ id: r.id, userId: r.userId, name: r.mine ? '나' : r.name, handle: r.handle, time: r.time, ago: (Date.now() - new Date(r.createdAt)) / 60000, caption: r.caption, place: r.place, coords: r.address, following: r.following, likes: r.likes - (r.liked ? 1 : 0), photo: r.photo, mine: r.mine }));
+      this.live = rows.map((r) => ({ id: r.id, userId: r.userId, name: r.mine ? '나' : r.name, handle: r.handle, time: r.time, ago: (Date.now() - new Date(r.createdAt)) / 60000, caption: r.caption, place: r.place, coords: r.address, following: r.following, priv: r.priv, likes: r.likes - (r.liked ? 1 : 0), photo: r.photo, mine: r.mine }));
       const liked = {}; rows.forEach((r, i) => { if (r.liked) liked[i] = true; });
       this.setState({ liked, follow: {}, comments: {} });
       Promise.all([archApi.saves('post'), archApi.saves('place')]).then(([sp, pl]) => {
@@ -1037,7 +1037,7 @@ class Component extends DCLogic {
       followPressed: following ? 'true' : 'false',
       followBg: following ? 'rgba(20,20,20,.13)' : '#141414',
       followFg: following ? '#141414' : '#C8FF42',
-      toggleFollow: () => { this.setState({ follow: { ...s.follow, [i]: !following } }); if (p.userId) archApi.toggleFollow(p.userId, following).catch(() => this.setState({ follow: { ...this.state.follow, [i]: following } })); },
+      toggleFollow: () => { this.setState({ follow: { ...s.follow, [i]: !following } }); if (p.userId) archApi.setFollow(p.userId, following ? true : (p.requested ? 'requested' : false), p.priv).then((st) => { p.requested = st === 'requested'; this.setState({ follow: { ...this.state.follow, [i]: st === true } }); if (st === 'requested') this.feedToastShow('팔로우 요청을 보냈어요'); }, () => this.setState({ follow: { ...this.state.follow, [i]: following } })); },
       comments: comments.map((c, ci) => ({ ...c, mine: c.name === '나', del: () => { if (c.id) archApi.deleteComment(c.id).catch(() => {}); this.setState({ comments: { ...this.state.comments, [i]: (this.state.comments[i] || []).filter((_, j) => j !== ci) } }); } })),
       share: () => {
         try { if (navigator.clipboard) navigator.clipboard.writeText('https://arch.example/record/' + i); } catch (e) {}
@@ -1175,7 +1175,7 @@ class Component extends DCLogic {
         : n.type === 'comment' ? '님이 내 기록에 댓글을 남겼어요.'
         : n.type === 'follow' ? '님이 나를 팔로우하기 시작했어요.'
         : n.type === 'support' ? ' 문의에 답변이 도착했어요.' : '님이 팔로우를 요청했어요.';
-      const req = n.type === 'request' ? this.notifReq : '';
+      const req = n.type === 'request' ? ((this.reqDone || {})[n.id] || '') : '';
       return {
         ...n, msg: msg, cls: unread ? 'nt-row unread' : 'nt-row', unread: unread, initial: n.who[0],
         first: k === 0 || data[k - 1].group !== n.group,
@@ -1198,8 +1198,8 @@ class Component extends DCLogic {
         backBg: this.relOf(n.handle) === true ? 'rgba(247,249,233,.18)' : '#141414', backFg: this.relOf(n.handle) === true ? '#F7F9E9' : '#C8FF42',
         backPressed: this.relOf(n.handle) === true ? 'true' : 'false',
         toggleBack: () => { const on = this.relOf(n.handle) === true; this.setRel(n.handle, !on); mark(n.id); if (window.archApi && n.userId) archApi.toggleFollow(n.userId, on).catch(() => this.setRel(n.handle, on)); },
-        accept: () => { this.notifReq = 'accepted'; this.notifStore('arch.notifReq', 'accepted'); this.setRel(n.handle, this.relOf(n.handle)); mark(n.id); },
-        decline: () => { this.notifReq = 'declined'; this.notifStore('arch.notifReq', 'declined'); mark(n.id); }
+        accept: () => { this.reqDone = { ...(this.reqDone || {}), [n.id]: 'accepted' }; mark(n.id); archApi.acceptRequest(n.userId).catch((err) => { this.reqDone = { ...this.reqDone, [n.id]: '' }; this.forceUpdate(); alert(err.message); }); },
+        decline: () => { this.reqDone = { ...(this.reqDone || {}), [n.id]: 'declined' }; mark(n.id); archApi.declineRequest(n.userId).catch(() => {}); }
       };
     });
     const open = !!s.notifOpen;

@@ -1,0 +1,5 @@
+-- Applied to project mifptmkljrkwsuwrxtwd on 2026-11-03 via the Supabase connector.
+-- user_saves: saved posts / places / curations (moved out of the interim hidden collections)
+-- follow_requests: private accounts approve followers; request alerts via user_notifications
+-- follows: the followed person may remove a follower
+-- See the migration "user_saves_and_follow_requests" in the Supabase dashboard for the full SQL.

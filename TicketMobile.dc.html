@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <title>arch; 첫 화면 티켓 · 모바일</title>
 <meta name="viewport" content="width=390">
-<script src="./shell.js?v=8"></script>
+<script src="./shell.js?v=9"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="./arch-api.js?v=8"></script>
+<script src="./arch-api.js?v=9"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -522,7 +522,7 @@ class Component extends DCLogic {
   }
   unreadTicker() {
     if (!archSignedIn()) return '로그인하면 새 알림을 여기서 볼 수 있어요     •     ';
-    const msg = { like: '님이 내 기록을 좋아해요', comment: '님이 댓글을 남겼어요', follow: '님이 나를 팔로우하기 시작했어요', support: ' 문의에 답변이 도착했어요' };
+    const msg = { like: '님이 내 기록을 좋아해요', comment: '님이 댓글을 남겼어요', follow: '님이 나를 팔로우하기 시작했어요', request: '님이 팔로우를 요청했어요', support: ' 문의에 답변이 도착했어요' };
     const items = archApi.notifs.filter((n) => !n.read).map((n) => [n.id, n.who + (msg[n.type] || '') + (n.text ? ' “' + n.text + '”' : n.place ? ' · ' + n.place : '')]);
     if (!items.length) return '새 알림이 없어요     •     ';
     return items.map(([, t]) => t).join('     •     ') + '     •     ';

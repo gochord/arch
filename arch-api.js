@@ -76,7 +76,7 @@
       const ids = [...new Set(rows.map((r) => r.user_id).filter(Boolean))];
       const postIds = rows.map((r) => r.id);
       const [profiles, likes, follows] = await Promise.all([
-        ids.length ? sb.from('profiles').select('id,nickname,username,avatar_url').in('id', ids) : { data: [] },
+        ids.length ? sb.from('profiles').select('id,nickname,username,avatar_url,is_private').in('id', ids) : { data: [] },
         postIds.length ? sb.from('post_likes').select('post_id,user_id').in('post_id', postIds) : { data: [] },
         api.user ? sb.from('follows').select('following_id').eq('follower_id', api.user.id) : { data: [] }
       ]);
@@ -91,7 +91,7 @@
           photo: r.photo_url || '', caption: r.caption || '', place: r.place_name || '', address: r.place_address || '',
           createdAt: r.created_at, time: api.relTime(r.created_at),
           likes: lk.length, liked: !!api.user && lk.some((l) => l.user_id === api.user.id),
-          following: following.has(r.user_id)
+          following: following.has(r.user_id), priv: !!p.is_private
         };
       });
     },
@@ -353,39 +353,70 @@
     api.notifs.forEach((n) => { if (ids.includes(n.id)) n.read = true; });
   };
 
-  // saves live in private collections tagged in their description, so no new table is needed
-  const BOX = { post: '저장한 기록', place: '저장한 장소', curation: '저장한 큐레이션' };
-  const tag = (kind) => '__arch_saves:' + kind;
-  api.isSaveBox = (c) => typeof c.description === 'string' && c.description.startsWith('__arch_saves:');
-  const box = async (kind, create) => {
-    const uid = need();
-    const { data } = await sb.from('collections').select('id').eq('user_id', uid).eq('description', tag(kind)).limit(1);
-    if (data && data[0]) return data[0].id;
-    if (!create) return null;
-    const ins = await sb.from('collections').insert({ user_id: uid, title: BOX[kind], description: tag(kind), visibility: 'private' }).select('id').single();
-    if (ins.error) throw ins.error;
-    return ins.data.id;
-  };
+  // saved posts, places and curations (public.user_saves)
+  api.isSaveBox = () => false;
   api.saves = async (kind) => {
     if (!api.user) return [];
-    const id = await box(kind, false);
-    if (!id) return [];
-    const { data } = await sb.from('collection_items').select('id,post_id,place_id,title,note,place_name,place_address,latitude,longitude,created_at').eq('collection_id', id).order('created_at', { ascending: false });
-    return data || [];
+    const { data } = await sb.from('user_saves').select('key,data,created_at').eq('user_id', api.user.id).eq('kind', kind).order('created_at', { ascending: false });
+    return (data || []).map((r) => ({ post_id: kind === 'post' ? r.key : null, place_id: r.key, title: r.data.title || null, place_name: r.data.place || null, place_address: r.data.address || null, latitude: r.data.lat ?? null, longitude: r.data.lng ?? null, created_at: r.created_at }));
   };
   api.save = async (kind, key, info = {}) => {
-    const id = await box(kind, true);
-    const row = kind === 'post'
-      ? { collection_id: id, item_type: 'post', post_id: key }
-      : { collection_id: id, item_type: 'place', place_id: String(key), title: info.title || null, place_name: info.place || null, place_address: info.address || null, latitude: info.lat ?? null, longitude: info.lng ?? null };
-    const { error } = await sb.from('collection_items').insert(row);
+    const data = {};
+    ['title', 'place', 'address', 'lat', 'lng'].forEach((k) => { if (info[k] !== undefined && info[k] !== null) data[k] = info[k]; });
+    const { error } = await sb.from('user_saves').insert({ user_id: need(), kind, key: String(key), data });
     if (error && error.code !== '23505') throw error;
   };
   api.unsave = async (kind, key) => {
-    const id = await box(kind, false);
-    if (!id) return;
-    const q = sb.from('collection_items').delete().eq('collection_id', id);
-    const { error } = await (kind === 'post' ? q.eq('post_id', key) : q.eq('place_id', String(key)));
+    const { error } = await sb.from('user_saves').delete().eq('user_id', need()).eq('kind', kind).eq('key', String(key));
+    if (error) throw error;
+  };
+
+  // follow requests for private accounts
+  api.followState = async (userId) => {
+    if (!api.user) return false;
+    const [f, r] = await Promise.all([
+      sb.from('follows').select('following_id').eq('follower_id', api.user.id).eq('following_id', userId).maybeSingle(),
+      sb.from('follow_requests').select('target_id').eq('requester_id', api.user.id).eq('target_id', userId).maybeSingle()
+    ]);
+    return f.data ? true : r.data ? 'requested' : false;
+  };
+  api.requestFollow = async (userId) => {
+    const { error } = await sb.from('follow_requests').insert({ requester_id: need(), target_id: userId });
+    if (error && error.code !== '23505') throw error;
+  };
+  api.cancelRequest = async (userId) => {
+    const { error } = await sb.from('follow_requests').delete().eq('requester_id', need()).eq('target_id', userId);
+    if (error) throw error;
+  };
+  api.acceptRequest = async (userId) => {
+    need();
+    const { error } = await sb.rpc('arch_accept_follow_request', { requester: userId });
+    if (error) throw error;
+  };
+  api.declineRequest = async (userId) => {
+    const { error } = await sb.from('follow_requests').delete().eq('requester_id', userId).eq('target_id', need());
+    if (error) throw error;
+  };
+  // one call for every follow button: public accounts follow at once, private ones get a request
+  api.setFollow = async (userId, current, isPrivate) => {
+    if (current === true) return api.toggleFollow(userId, true).then(() => false);
+    if (current === 'requested') return api.cancelRequest(userId).then(() => false);
+    if (isPrivate) return api.requestFollow(userId).then(() => 'requested');
+    return api.toggleFollow(userId, false).then(() => true);
+  };
+
+  // collection cover image
+  api.uploadCover = async (collectionId, blob) => {
+    const path = `${need()}/covers/${collectionId}-${Date.now()}.jpg`;
+    const up = await sb.storage.from('record-images').upload(path, blob, { contentType: 'image/jpeg' });
+    if (up.error) throw up.error;
+    const { data } = sb.storage.from('record-images').getPublicUrl(path);
+    const { error } = await sb.from('collections').update({ cover_url: data.publicUrl, updated_at: new Date().toISOString() }).eq('id', collectionId).eq('user_id', api.user.id);
+    if (error) throw error;
+    return api.photoUrl(data.publicUrl);
+  };
+  api.removeCover = async (collectionId) => {
+    const { error } = await sb.from('collections').update({ cover_url: null }).eq('id', collectionId).eq('user_id', need());
     if (error) throw error;
   };
 

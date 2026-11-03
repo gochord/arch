@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <title>arch; 큐레이션 · 모바일</title>
 <meta name="viewport" content="width=390">
-<script src="./shell.js?v=8"></script>
+<script src="./shell.js?v=9"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="./arch-api.js?v=8"></script>
+<script src="./arch-api.js?v=9"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -803,7 +803,7 @@ class Component extends DCLogic {
         : n.type === 'comment' ? '님이 내 기록에 댓글을 남겼어요.'
         : n.type === 'follow' ? '님이 나를 팔로우하기 시작했어요.'
         : n.type === 'support' ? ' 문의에 답변이 도착했어요.' : '님이 팔로우를 요청했어요.';
-      const req = n.type === 'request' ? this.notifReq : '';
+      const req = n.type === 'request' ? ((this.reqDone || {})[n.id] || '') : '';
       return {
         ...n, msg: msg, cls: unread ? 'nt-row unread' : 'nt-row', unread: unread, initial: n.who[0],
         first: k === 0 || data[k - 1].group !== n.group,
@@ -826,8 +826,8 @@ class Component extends DCLogic {
         backBg: this.relOf(n.handle) === true ? 'rgba(247,249,233,.18)' : '#141414', backFg: this.relOf(n.handle) === true ? '#F7F9E9' : '#C8FF42',
         backPressed: this.relOf(n.handle) === true ? 'true' : 'false',
         toggleBack: () => { const on = this.relOf(n.handle) === true; this.setRel(n.handle, !on); mark(n.id); if (window.archApi && n.userId) archApi.toggleFollow(n.userId, on).catch(() => this.setRel(n.handle, on)); },
-        accept: () => { this.notifReq = 'accepted'; this.notifStore('arch.notifReq', 'accepted'); this.setRel(n.handle, this.relOf(n.handle)); mark(n.id); },
-        decline: () => { this.notifReq = 'declined'; this.notifStore('arch.notifReq', 'declined'); mark(n.id); }
+        accept: () => { this.reqDone = { ...(this.reqDone || {}), [n.id]: 'accepted' }; mark(n.id); archApi.acceptRequest(n.userId).catch((err) => { this.reqDone = { ...this.reqDone, [n.id]: '' }; this.forceUpdate(); alert(err.message); }); },
+        decline: () => { this.reqDone = { ...(this.reqDone || {}), [n.id]: 'declined' }; mark(n.id); archApi.declineRequest(n.userId).catch(() => {}); }
       };
     });
     const open = !!s.notifOpen;
