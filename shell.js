@@ -16,3 +16,32 @@
   if (/^Ticket(Desktop|DesktopIn)\.dc\.html$/.test(f)) s.textContent += '.amb-home{width:100vw!important;height:100vh!important;min-height:760px}body{overflow:hidden}';
   document.head.appendChild(s);
 })();
+
+/* Desktop home ring: show each ticket's front or back from its real angle each frame,
+   instead of trusting backface-visibility (Safari ignores it on the masked ticket halves). */
+(function () {
+  if (!/^Ticket(Desktop|DesktopIn)\.dc\.html$/.test(location.pathname.split('/').pop())) return;
+  const angleOf = (el) => {
+    const t = getComputedStyle(el).transform;
+    if (!t || t === 'none') return 0;
+    const m = t.match(/matrix3d\(([^)]+)\)/);
+    if (!m) return 0;
+    const v = m[1].split(',').map(Number);
+    return Math.atan2(-v[2], v[0]); // rotateY: m11 = cos, m13 = -sin
+  };
+  const tick = () => {
+    const ring = document.querySelector('.ring');
+    if (ring) {
+      const a = angleOf(ring);
+      [...ring.children].forEach((slot, i) => {
+        const faces = slot.querySelectorAll(':scope > .face');
+        if (faces.length < 2) return;
+        const front = Math.cos(a + (i * 2 * Math.PI) / ring.children.length) > 0;
+        faces[0].style.visibility = front ? 'visible' : 'hidden';
+        faces[1].style.visibility = front ? 'hidden' : 'visible';
+      });
+    }
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+})();
